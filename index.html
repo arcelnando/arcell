@@ -3,254 +3,234 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MOONDARK Store</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <title>ACONG STORE</title>
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      font-family: 'Share Tech Mono', monospace;
-      background: #0d0d0d;
-      color: #fff;
-      overflow-x: hidden;
+      box-sizing: border-box;
     }
-
-    #particles-js {
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      background: url('https://i.ibb.co/G4MYnQXq/IMG-20250802-171007-951.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    #intro {
       position: fixed;
       width: 100%;
       height: 100%;
-      z-index: -1;
-      background: #0d0d0d;
-    }
-
-    .intro {
+      background: rgba(0, 0, 0, 0.9);
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      height: 100vh;
-      animation: fadeOut 2s ease 3s forwards;
-      text-align: center;
+      z-index: 9999;
     }
-
-    .intro h1 {
-      font-size: 32px;
-      background: linear-gradient(to right, #9f5cff, #ffffff);
+    #intro h1 {
+      font-size: 3em;
+      background: linear-gradient(90deg, #ff00cc, #00ffff, #ff00cc);
       -webkit-background-clip: text;
-      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      animation: flicker 2s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; }
+      100% { opacity: 0.7; text-shadow: 0 0 10px #0ff, 0 0 20px #ff00cc; }
+    }
+    main {
+      display: none;
+      padding: 2em;
+      color: white;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .profile {
+      text-align: center;
+      margin-top: 1em;
       animation: fadeIn 2s ease;
     }
-
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        visibility: hidden;
-        display: none;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .main-content {
-      padding: 30px 15px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .show {
-      display: flex !important;
-    }
-
     .profile img {
-      width: 120px;
-      height: 120px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #9f5cff;
-      box-shadow: 0 0 15px #9f5cff;
-      margin-bottom: 10px;
+      border: 3px solid #0ff;
+      box-shadow: 0 0 15px #0ff;
+      transition: transform 0.3s ease;
     }
-
-    h2 {
-      font-size: 26px;
-      margin-bottom: 25px;
-      background: linear-gradient(to right, #9f5cff, #ffffff);
-      -webkit-background-clip: text;
-      color: transparent;
+    .profile img:hover {
+      transform: scale(1.05);
     }
-
-    .product-list {
-      width: 100%;
-      max-width: 600px;
-    }
-
-    .product {
-      background: #1a1a1a;
-      border-left: 5px solid #9f5cff;
-      padding: 15px 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 10px #111;
-      text-align: left;
-    }
-
-    .product h3 {
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .price {
-      font-size: 14px;
-      color: #ccc;
-    }
-
-    ul {
-      margin-top: 10px;
-      padding-left: 20px;
-      font-size: 14px;
-    }
-
-    ul li::marker {
-      color: #9f5cff;
-    }
-
-    .info {
-      margin-top: 30px;
-      font-size: 14px;
-    }
-
-    .info a {
-      color: #9f5cff;
-      text-decoration: none;
+    .profile-name {
+      margin-top: 0.5em;
+      font-size: 1.8em;
+      color: #0ff;
+      text-shadow: 0 0 8px #0ff;
       font-weight: bold;
     }
-
-    .info a:hover {
+    .profile-desc {
+      font-size: 1em;
+      color: #ccc;
+      font-style: italic;
+    }
+    .section {
+      margin: 2em 0;
+    }
+    h2 {
+      color: #0ff;
+      margin-bottom: 0.5em;
+      text-shadow: 0 0 8px #0ff;
+    }
+    ul {
+      list-style-type: square;
+      padding-left: 1.5em;
+    }
+    ul li {
+      margin-bottom: 0.5em;
+    }
+    a {
+      color: #0ff;
+      text-decoration: none;
+    }
+    a:hover {
       text-decoration: underline;
     }
+    footer {
+      text-align: center;
+      padding: 1em;
+      color: #ccc;
+      margin-top: 2em;
+      font-size: 0.9em;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="particles-js"></div>
-
-  <!-- Intro Animasi -->
-  <div class="intro">
-    <h1>MOONDARK Store</h1>
+  <div id="intro">
+    <h1>ACONG STORE</h1>
   </div>
 
-  <!-- Konten Utama -->
-  <div class="main-content" id="main-content">
+  <main>
     <div class="profile">
-      <img src="https://i.ibb.co/8ggpT9c8/IMG-20250801-150907-717.jpg" alt="Profil">
+      <img src="https://i.ibb.co/JjYqCC7G/IMG-20250802-171037.jpg" alt="Foto Profil" />
+      <div class="profile-name">ACONGSTORE888</div>
+      <div class="profile-desc">lagi sad ni babi</div>
     </div>
 
-    <h2>Produk & Layanan</h2>
-    <div class="product-list">
-      <div class="product">
-        <h3>MuridWeb - 55K Permanen</h3>
-      </div>
-
-      <div class="product">
-        <h3>Banned WA - 10K (Tinjau)</h3>
-      </div>
-
-      <div class="product">
-        <h3>Banned WA - 25K (Hard Batu)</h3>
-      </div>
-
-      <div class="product">
-        <h3>Nokos Indo - 5K</h3>
-      </div>
-
-      <div class="product">
-        <h3>Nokos Indo Unli Verif - 15K</h3>
-      </div>
-
-      <div class="product">
-        <h3>Murband - 45K <span class="price">(Khusus Jumat 20K)</span></h3>
-        <ul>
-          <li>Bisa jadi kang band / jasa band</li>
-          <li>Balmod kalau lu usaha</li>
-          <li>Bisa band mantan</li>
-          <li><strong>Note:</strong> Jangan disalahgunakan</li>
-        </ul>
-      </div>
-
-      <div class="product">
-        <h3>PT Band - 60K <span class="price">(Khusus Jumat 20K)</span></h3>
-        <ul>
-          <li>Bisa jadi kang band</li>
-          <li>Bisa open murband</li>
-          <li>Dapat teks tinjau langsung permanen</li>
-          <li>Dapat panel bot</li>
-        </ul>
-      </div>
+    <div class="section">
+      <h2>PROMO RILIS APLIKASI BUG SENJU CRASHER VERSION 1</h2>
+      <ul>
+        <li><strong>Harga:</strong> 15K No Up V2, 30K Free Up V2</li>
+        <li><strong>Efek Bug:</strong> Force Close New, Delay Invis Hard, Blank UI</li>
+        <li><strong>Benefit:</strong>
+          <ul>
+            <li>Bug memakai aplikasi</li>
+            <li>Bug no sender</li>
+            <li>Memakai username dan password</li>
+            <li>Function anti ampas</li>
+            <li>Dll</li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
-    <div class="info">
-      🔗 Join Saluran WhatsApp:<br>
-      <a href="https://whatsapp.com/channel/0029VbAaxLeL7UVTUDU80G38" target="_blank">Klik di sini</a>
-      <br><br>
-      📩 Minat? PV langsung ke Telegram:<br>
-      <a href="https://t.me/celz2" target="_blank">Klik di sini</a>
+    <div class="section">
+      <h2>MAU BELAJAR BAND?</h2>
+      <p>
+        ᴍᴀᴜ ʙᴇʟᴀᴊᴀʀ ʙᴀɴᴅ? ᴊᴏɪɴ ᴋᴇ ʀᴇꜱxᴢ ᴀᴊᴀ ꜱɪɴɪ, ᴅɪᴊᴀᴍɪɴ ᴡᴏʀᴋ! 🥳<br><br>
+        💸 <strong>PRICE:</strong> 20ᴋ ᴀᴊᴀ!<br><br>
+        <strong>𝐊𝐄𝐔𝐍𝐓𝐔𝐍𝐆𝐀𝐍:</strong><br>
+        → ʙɪꜱᴀ ʙᴀɴᴅ ɴᴏᴍᴏʀ ʀɪᴘᴇʀ, ᴍᴀɴᴛᴀɴ, ɢᴜʀᴜ — ᴀᴜᴛᴏ ᴍᴏᴋᴀᴅ!<br>
+        → ᴅᴀᴘᴇᴛ ᴀᴘᴋ ᴄᴇᴋ ʙᴀɴᴅ, ᴡʜᴀᴛꜱᴀᴘᴘ ꜰᴄ<br>
+        → ꜰᴜʟʟ ᴘᴇɴɢᴀᴊᴀʀᴀɴ ᴠɪᴅᴇᴏ<br>
+        → ᴛᴇᴋꜱ ᴀɴᴛɪ ᴀᴍᴘᴀꜱ<br>
+        → ɢᴀᴋ ᴘᴇʀʟᴜ ᴘᴀᴋᴇ ɴᴏ ᴏʟᴅ<br>
+        → ᴀɴᴛɪ ɢɪᴍᴍɪᴄᴋ! ɴᴏ ᴋᴏʀʙᴀɴ<br>
+        → ᴘᴇʀᴍᴀɴᴇɴᴛ ʀᴇꜱᴜʟᴛ, ᴋᴏʀʙᴀɴ ɢᴀ ʙɪꜱᴀ ᴀᴋꜱᴇꜱ ʟᴀɢɪ<br>
+        → ᴍᴛ ᴜᴘᴅᴀᴛᴇ ʜᴀʀɪᴀɴ<br>
+        → ᴛᴜᴛᴏʀ ᴍᴜᴅᴀʜ, ʙɪꜱᴀ ᴏᴘᴇɴ ᴊᴀꜱᴀ ꜱᴇɴᴅɪʀɪ<br>
+        → ʙᴀʟɪᴋ ᴍᴏᴅᴀʟ? ᴘᴀꜱᴛɪ!<br>
+        → ʙᴏɴᴜꜱ ᴍᴛ ꜱᴘᴀᴍ ᴛᴏ ᴘᴇʀᴍᴀ
+      </p>
     </div>
-  </div>
 
-  <!-- Script Animasi Intro + Partikel -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <div class="section">
+      <h2>🔥 GEMBUL OPEN PT VVIP 🔥</h2>
+      <ul>
+        <li><strong>Harga Join:</strong> 30K</li>
+        <li><strong>Benefit:</strong>
+          <ul>
+            <li>Free APK nonton bioskop</li>
+            <li>Free repo ubot modul177</li>
+            <li>Get base keren, function</li>
+            <li>Tutor pasang ubot, add DB/data</li>
+            <li>Admin room public</li>
+            <li>SC add token, APK premium, SC obf, murlog, murid suntik, murban WA</li>
+            <li>Tutor add funct, APK + Web nokos</li>
+            <li>SC ubot phishing, SC CPanel no enc</li>
+            <li>Dikasih buyer pas gw sibuk</li>
+            <li>RES SC Syren, Demon Flower</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>BOT & PRODUK LAINNYA</h2>
+      <ul>
+        <li>Bot Spaceman VVIP: 30K</li>
+        <li>Bot Spaceman VIP: 20K</li>
+        <li>Bot Spaceman Biasa: 6K</li>
+        <li>Nokos Indo: 5K</li>
+        <li>Murid Suntik: 5K</li>
+        <li>Nokos Allnegara</li>
+        <li>Murid Nokos</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Kontak</h2>
+      <ul>
+        <li>Dana: 081262011820</li>
+        <li>WA: 085766541588</li>
+        <li>WA: +639462173123</li>
+        <li>Telegram: <a href="https://t.me/asesino8" target="_blank">t.me/asesino8</a></li>
+      </ul>
+    </div>
+
+    <footer>by Arcelz</footer>
+  </main>
+
+  <audio id="bgmusic" autoplay loop>
+    <source src="https://files.catbox.moe/hcd0zc.m4a" type="audio/mp3">
+    Browsermu tidak mendukung audio.
+  </audio>
+
   <script>
-    // Tampilkan konten utama setelah intro selesai
-    setTimeout(() => {
-      document.getElementById("main-content").classList.add("show");
-    }, 3000);
-
-    // Partikel config
-    particlesJS("particles-js", {
-      "particles": {
-        "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#9f5cff" },
-        "shape": {
-          "type": "circle",
-          "stroke": { "width": 0, "color": "#000000" }
-        },
-        "opacity": { "value": 0.5 },
-        "size": { "value": 3 },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#9f5cff",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 2,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": { "enable": true, "mode": "repulse" },
-          "onclick": { "enable": true, "mode": "push" },
-          "resize": true
-        },
-        "modes": {
-          "repulse": { "distance": 100, "duration": 0.4 },
-          "push": { "particles_nb": 4 }
-        }
-      },
-      "retina_detect": true
+    window.addEventListener("DOMContentLoaded", () => {
+      const audio = document.getElementById("bgmusic");
+      audio.play().catch(() => {
+        console.warn("Autoplay diblokir. Sentuh layar untuk mulai musik.");
+        const resumeAudio = () => {
+          audio.play();
+          document.removeEventListener("click", resumeAudio);
+        };
+        document.addEventListener("click", resumeAudio);
+      });
     });
+
+    setTimeout(() => {
+      document.getElementById('intro').style.display = 'none';
+      document.querySelector('main').style.display = 'block';
+      document.body.style.overflow = 'auto';
+    }, 2000);
   </script>
 </body>
-          </html>
+              </html>
