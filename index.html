@@ -1,236 +1,326 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ACONG STORE</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      font-family: 'Share Tech Mono', monospace;
-      overflow: hidden;
-      background: url('https://i.ibb.co/G4MYnQXq/IMG-20250802-171007-951.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    #intro {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    #intro h1 {
-      font-size: 3em;
-      background: linear-gradient(90deg, #ff00cc, #00ffff, #ff00cc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-      animation: flicker 2s infinite alternate;
-    }
-    @keyframes flicker {
-      0% { opacity: 1; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; }
-      100% { opacity: 0.7; text-shadow: 0 0 10px #0ff, 0 0 20px #ff00cc; }
-    }
-    main {
-      display: none;
-      padding: 2em;
-      color: white;
-      min-height: 100vh;
-      overflow-y: auto;
-      background-color: rgba(0, 0, 0, 0.7);
-    }
-    .profile {
-      text-align: center;
-      margin-top: 1em;
-      animation: fadeIn 2s ease;
-    }
-    .profile img {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      border: 3px solid #0ff;
-      box-shadow: 0 0 15px #0ff;
-      transition: transform 0.3s ease;
-    }
-    .profile img:hover {
-      transform: scale(1.05);
-    }
-    .profile-name {
-      margin-top: 0.5em;
-      font-size: 1.8em;
-      color: #0ff;
-      text-shadow: 0 0 8px #0ff;
-      font-weight: bold;
-    }
-    .profile-desc {
-      font-size: 1em;
-      color: #ccc;
-      font-style: italic;
-    }
-    .section {
-      margin: 2em 0;
-    }
-    h2 {
-      color: #0ff;
-      margin-bottom: 0.5em;
-      text-shadow: 0 0 8px #0ff;
-    }
-    ul {
-      list-style-type: square;
-      padding-left: 1.5em;
-    }
-    ul li {
-      margin-bottom: 0.5em;
-    }
-    a {
-      color: #0ff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    footer {
-      text-align: center;
-      padding: 1em;
-      color: #ccc;
-      margin-top: 2em;
-      font-size: 0.9em;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album Digital Khirza - Premium</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffd6e8, #ffb3d1, #ff99c7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Heart particles */
+.particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.3);
+  transform: rotate(45deg);
+  animation: float 8s linear infinite;
+  border-radius: 50%;
+}
+.particle::before,
+.particle::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+.particle::before { top:-6px; left:0; }
+.particle::after { left:-6px; top:0; }
+
+@keyframes float {
+  0% { transform: translate(0,0) rotate(45deg); opacity:0.2; }
+  25% { transform: translate(50px,-150px) rotate(45deg); opacity:0.5; }
+  50% { transform: translate(-60px,-300px) rotate(45deg); opacity:0.7; }
+  75% { transform: translate(40px,-450px) rotate(45deg); opacity:0.5; }
+  100% { transform: translate(0,0) rotate(45deg); opacity:0.2; }
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  padding: 15px 0;
+}
+.navbar button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.1em;
+  margin: 0 20px;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+.navbar button:hover { color: #ffc0de; transform: scale(1.1); }
+
+/* Pages */
+.page { 
+  width:100%; height:100%; display:none; justify-content:center; align-items:center; flex-direction:column; 
+  opacity:0; transition: opacity 0.8s ease-in-out; position:absolute; top:0; left:0; overflow:hidden;
+}
+.active-page { display:flex; opacity:1; }
+
+/* Album styles */
+.album-wrapper { 
+  position:relative; text-align:center; width:90%; max-width:700px; z-index:2; 
+}
+.romantic-text { font-size:2em; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; }
+.album-container {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  touch-action: pan-x pan-y;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px);
+}
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 1s ease-in-out;
+  border-radius: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+.photo.active { opacity:1; transform:scale(1.05); z-index:2; }
+
+/* Navigation buttons */
+.nav-btn {
+  position:absolute; top:50%; transform:translateY(-50%); font-size:2em; color:white; background:rgba(255,255,255,0.2);
+  border:none; border-radius:50%; width:50px; height:50px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:3; transition:background 0.3s;
+}
+.nav-btn:hover { background:rgba(255,255,255,0.4); }
+.prev-btn { left:10px; } 
+.next-btn { right:10px; }
+
+/* Info boxes */
+.info-box {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  padding:30px;
+  border-radius:20px;
+  color:#fff;
+  text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+.info-box a { color:#ffc0de; text-decoration:none; font-weight:bold; }
+.info-box a:hover { text-decoration:underline; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .romantic-text { font-size:1.5em; }
+  .album-container { height: 450px; }
+  .nav-btn { width:40px; height:40px; font-size:1.5em; }
+}
+
+/* Intro overlay */
+#introOverlay {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
+  flex-direction:column; z-index:2000; cursor:pointer;
+}
+#introText {
+  color:#fff; font-size:2.5em; text-align:center; text-shadow:0 0 20px rgba(255,255,255,0.7);
+  transform: scale(0.8); opacity:0; transition: all 1s ease;
+}
+</style>
 </head>
 <body>
-  <div id="intro">
-    <h1>ACONG STORE</h1>
+
+<!-- Navbar -->
+<div class="navbar">
+  <button id="homeBtn">Home</button>
+  <button id="aboutBtn">About Us</button>
+  <button id="contactBtn">Contact</button>
+</div>
+
+<!-- Intro overlay -->
+<div id="introOverlay">
+  <div id="introText">𝐀𝐋𝐁𝐔𝐌 𝐙𝐀𝐙𝐀<br>𝐊𝐋𝐈𝐊 𝐔𝐍𝐓𝐔𝐊 𝐌𝐄𝐋𝐈𝐇𝐀𝐓</div>
+</div>
+
+<!-- Pages -->
+<div class="page active-page" id="homePage">
+  <div class="album-wrapper">
+    <div class="romantic-text">𝐙𝐀𝐙𝐀</div>
+    <div class="album-container" id="albumContainer"></div>
+    <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+    <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
   </div>
+</div>
 
-  <main>
-    <div class="profile">
-      <img src="https://i.ibb.co/JjYqCC7G/IMG-20250802-171037.jpg" alt="Foto Profil" />
-      <div class="profile-name">ACONGSTORE888</div>
-      <div class="profile-desc">lagi sad ni babi</div>
-    </div>
+<div class="page" id="aboutPage">
+  <div class="info-box">
+    <h2>About Us</h2>
+    <p>Developer: <strong>Nando Developers</strong></p>
+    <p>𝐀𝐋𝐁𝐔𝐌 𝐃𝐈𝐆𝐈𝐓𝐀𝐋 𝐁𝐘 𝐂𝐄𝐋𝐙</p>
+  </div>
+</div>
 
-    <div class="section">
-      <h2>PROMO RILIS APLIKASI BUG SENJU CRASHER VERSION 1</h2>
-      <ul>
-        <li><strong>Harga:</strong> 15K No Up V2, 30K Free Up V2</li>
-        <li><strong>Efek Bug:</strong> Force Close New, Delay Invis Hard, Blank UI</li>
-        <li><strong>Benefit:</strong>
-          <ul>
-            <li>Bug memakai aplikasi</li>
-            <li>Bug no sender</li>
-            <li>Memakai username dan password</li>
-            <li>Function anti ampas</li>
-            <li>Dll</li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+<div class="page" id="contactPage">
+  <div class="info-box">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:arcelbussines@email.com">arcelbussines@email.com</a></p>
+    <p>Telegram: <a href="https://t.me/humans26" target="_blank">@humans26</a></p>
+  </div>
+</div>
 
-    <div class="section">
-      <h2>MAU BELAJAR BAND?</h2>
-      <p>
-        ᴍᴀᴜ ʙᴇʟᴀᴊᴀʀ ʙᴀɴᴅ? ᴊᴏɪɴ ᴋᴇ ʀᴇꜱxᴢ ᴀᴊᴀ ꜱɪɴɪ, ᴅɪᴊᴀᴍɪɴ ᴡᴏʀᴋ! 🥳<br><br>
-        💸 <strong>PRICE:</strong> 20ᴋ ᴀᴊᴀ!<br><br>
-        <strong>𝐊𝐄𝐔𝐍𝐓𝐔𝐍𝐆𝐀𝐍:</strong><br>
-        → ʙɪꜱᴀ ʙᴀɴᴅ ɴᴏᴍᴏʀ ʀɪᴘᴇʀ, ᴍᴀɴᴛᴀɴ, ɢᴜʀᴜ — ᴀᴜᴛᴏ ᴍᴏᴋᴀᴅ!<br>
-        → ᴅᴀᴘᴇᴛ ᴀᴘᴋ ᴄᴇᴋ ʙᴀɴᴅ, ᴡʜᴀᴛꜱᴀᴘᴘ ꜰᴄ<br>
-        → ꜰᴜʟʟ ᴘᴇɴɢᴀᴊᴀʀᴀɴ ᴠɪᴅᴇᴏ<br>
-        → ᴛᴇᴋꜱ ᴀɴᴛɪ ᴀᴍᴘᴀꜱ<br>
-        → ɢᴀᴋ ᴘᴇʀʟᴜ ᴘᴀᴋᴇ ɴᴏ ᴏʟᴅ<br>
-        → ᴀɴᴛɪ ɢɪᴍᴍɪᴄᴋ! ɴᴏ ᴋᴏʀʙᴀɴ<br>
-        → ᴘᴇʀᴍᴀɴᴇɴᴛ ʀᴇꜱᴜʟᴛ, ᴋᴏʀʙᴀɴ ɢᴀ ʙɪꜱᴀ ᴀᴋꜱᴇꜱ ʟᴀɢɪ<br>
-        → ᴍᴛ ᴜᴘᴅᴀᴛᴇ ʜᴀʀɪᴀɴ<br>
-        → ᴛᴜᴛᴏʀ ᴍᴜᴅᴀʜ, ʙɪꜱᴀ ᴏᴘᴇɴ ᴊᴀꜱᴀ ꜱᴇɴᴅɪʀɪ<br>
-        → ʙᴀʟɪᴋ ᴍᴏᴅᴀʟ? ᴘᴀꜱᴛɪ!<br>
-        → ʙᴏɴᴜꜱ ᴍᴛ ꜱᴘᴀᴍ ᴛᴏ ᴘᴇʀᴍᴀ
-      </p>
-    </div>
+<!-- Music -->
+<audio id="bgMusic" src="https://raw.githubusercontent.com/arcelnando/musik-bot/main/musik.mp3" loop></audio>
 
-    <div class="section">
-      <h2>🔥ACONG OPEN PT VVIP🔥</h2>
-      <ul>
-        <li><strong>Harga Join:</strong> 30K</li>
-        <li><strong>Benefit:</strong>
-          <ul>
-            <li>Free APK nonton bioskop</li>
-            <li>Free repo ubot modul177</li>
-            <li>Get base keren, function</li>
-            <li>Tutor pasang ubot, add DB/data</li>
-            <li>Admin room public</li>
-            <li>SC add token, APK premium, SC obf, murlog, murid suntik, murban WA</li>
-            <li>Tutor add funct, APK + Web nokos</li>
-            <li>SC ubot phishing, SC CPanel no enc</li>
-            <li>Dikasih buyer pas gw sibuk</li>
-            <li>RES SC Syren, Demon Flower</li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+<script>
+const albumContainer = document.getElementById('albumContainer');
+const homeBtn = document.getElementById('homeBtn');
+const aboutBtn = document.getElementById('aboutBtn');
+const contactBtn = document.getElementById('contactBtn');
+const pages = { home: document.getElementById('homePage'), about: document.getElementById('aboutPage'), contact: document.getElementById('contactPage') };
+const music = document.getElementById('bgMusic');
 
-    <div class="section">
-      <h2>BOT & PRODUK LAINNYA</h2>
-      <ul>
-        <li>Bot Spaceman VVIP: 30K</li>
-        <li>Bot Spaceman VIP: 20K</li>
-        <li>Bot Spaceman Biasa: 6K</li>
-        <li>Nokos Indo: 5K</li>
-        <li>Murid Suntik: 5K</li>
-        <li>Nokos Allnegara</li>
-        <li>Murid Nokos</li>
-      </ul>
-    </div>
+// Album photos 22
+const photos = [
+  "https://images2.imgbox.com/07/6d/flAblCPU_o.jpg",
+  "https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg",
+  "https://images2.imgbox.com/17/93/x3zJwzr8_o.jpg",
+  "https://images2.imgbox.com/9f/c4/0HZK3fj6_o.jpg",
+  "https://images2.imgbox.com/d4/f3/y30RHo1v_o.jpg",
+  "https://images2.imgbox.com/d0/ef/utCLLETK_o.jpg",
+  "https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg",
+  "https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg",
+  "https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg",
+  "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
+  "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
+  "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
+  "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
+  "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
+  "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
+  "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
+  "https://images2.imgbox.com/aa/b9/HsnXJMTE_o.jpg",
+  "https://images2.imgbox.com/9d/1e/44qSzju4_o.jpg",
+  "https://images2.imgbox.com/94/ec/28ile6qy_o.jpg",
+  "https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg",
+  "https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg"
+];
 
-    <div class="section">
-      <h2>Kontak</h2>
-      <ul>
-        <li>Dana: 081262011820</li>
-        <li>WA: 085766541588</li>
-        <li>WA: +639462173123</li>
-        <li>Telegram: <a href="https://t.me/asesino8" target="_blank">t.me/asesino8</a></li>
-      </ul>
-    </div>
+let current = 0, prevPhotoEl = null;
 
-    <footer>ACONGSTORE888</footer>
-  </main>
+// Heart particles di HP
+if(window.innerWidth <= 600){
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.top=Math.random()*100+'%';
+    p.style.left=Math.random()*100+'%';
+    const size=Math.random()*12+5;
+    p.style.width=size+'px';
+    p.style.height=size+'px';
+    p.style.animationDuration=(5+Math.random()*8)+'s';
+    document.body.prepend(p);
+  }
+}
 
-  <audio id="bgmusic" autoplay loop>
-    <source src="https://files.catbox.moe/hcd0zc.m4a" type="audio/mp3">
-    Browsermu tidak mendukung audio.
-  </audio>
+// Album functions
+function showPhoto(index){
+  if(prevPhotoEl) prevPhotoEl.classList.remove('active');
+  const img = document.createElement('img');
+  img.src = photos[index];
+  img.className = 'photo active';
+  albumContainer.prepend(img);
+  prevPhotoEl = img;
+}
 
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const audio = document.getElementById("bgmusic");
-      audio.play().catch(() => {
-        console.warn("Autoplay diblokir. Sentuh layar untuk mulai musik.");
-        const resumeAudio = () => {
-          audio.play();
-          document.removeEventListener("click", resumeAudio);
-        };
-        document.addEventListener("click", resumeAudio);
-      });
-    });
+// Buttons
+document.getElementById('prevBtn').addEventListener('click',()=>{current=(current-1+photos.length)%photos.length; showPhoto(current);});
+document.getElementById('nextBtn').addEventListener('click',()=>{current=(current+1)%photos.length; showPhoto(current);});
 
-    setTimeout(() => {
-      document.getElementById('intro').style.display = 'none';
-      document.querySelector('main').style.display = 'block';
-      document.body.style.overflow = 'auto';
-    }, 2000);
-  </script>
+// Swipe (HP)
+let startX=0;
+albumContainer.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
+albumContainer.addEventListener('touchend', e => {
+  let endX = e.changedTouches[0].clientX;
+  if (endX - startX > 50) { current = (current - 1 + photos.length) % photos.length; showPhoto(current); }
+  else if (startX - endX > 50) { current = (current + 1) % photos.length; showPhoto(current); }
+});
+
+// Mouse drag desktop
+let isDown = false, startClientX = 0;
+albumContainer.addEventListener('mousedown', e => { isDown = true; startClientX = e.clientX; });
+albumContainer.addEventListener('mouseup', e => {
+  if (!isDown) return;
+  let diff = e.clientX - startClientX;
+  if (diff > 50) { current = (current - 1 + photos.length) % photos.length; showPhoto(current); }
+  else if (diff < -50) { current = (current + 1) % photos.length; showPhoto(current); }
+  isDown = false;
+});
+
+// Page navigation tetap stay
+function showPage(page) {
+  for (const key in pages) {
+    if (key === page) {
+      pages[key].style.display = 'flex';
+      setTimeout(()=>{pages[key].classList.add('active-page');},50);
+    } else {
+      pages[key].classList.remove('active-page');
+      setTimeout(()=>{pages[key].style.display = 'none';},500);
+    }
+  }
+}
+homeBtn.addEventListener('click', ()=>showPage('home'));
+aboutBtn.addEventListener('click', ()=>showPage('about'));
+contactBtn.addEventListener('click', ()=>showPage('contact'));
+
+// Musik muncul saat klik pertama
+let musicPlayed = false;
+document.body.addEventListener('click', ()=>{
+  if(!musicPlayed){
+    music.play();
+    musicPlayed=true;
+  }
+}, {once:true});
+
+// Tampilkan foto pertama
+showPhoto(current);
+
+// Intro animation
+const introOverlay = document.getElementById('introOverlay');
+const introText = document.getElementById('introText');
+
+setTimeout(()=>{ 
+  introText.style.opacity = '1'; 
+  introText.style.transform = 'scale(1)'; 
+}, 200);
+
+introOverlay.addEventListener('click', ()=>{
+  introOverlay.style.transition = 'all 0.8s ease';
+  introOverlay.style.opacity = '0';
+  setTimeout(()=>{ introOverlay.style.display = 'none'; }, 800);
+});
+</script>
 </body>
-              </html>
+  </html>
