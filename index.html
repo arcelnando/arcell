@@ -5,46 +5,172 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Album Digital Khirza - Premium Glow</title>
 <style>
-html, body {margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;overflow:hidden;background:linear-gradient(135deg,#ffd6e8,#ffb3d1,#ff99c7);display:flex;justify-content:center;align-items:center;}
-#particleContainer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;}
-.particle{position:absolute;width:8px;height:8px;background:rgba(255,182,193,0.35);transform:rotate(45deg);border-radius:50%;animation-name:float;animation-timing-function:linear;animation-iteration-count:infinite;}
-.particle::before,.particle::after{content:'';position:absolute;width:8px;height:8px;background:rgba(255,182,193,0.35);border-radius:50%;}
-.particle::before{top:-4px;left:0;} .particle::after{left:-4px;top:0;}
-@keyframes float{0%{transform:translate(0,0) rotate(45deg);opacity:0.2;}50%{transform:translate(var(--x), var(--y)) rotate(45deg);opacity:0.7;}100%{transform:translate(0,0) rotate(45deg);opacity:0.2;}}
+html, body {
+  margin:0; padding:0;
+  font-family:'Poppins',sans-serif;
+  height:100%; width:100%;
+  overflow:hidden;
+  background:linear-gradient(135deg,#ffd6e8,#ffb3d1,#ff99c7);
+  display:flex; justify-content:center; align-items:center;
+}
 
-.navbar{position:fixed;top:0;left:0;width:100%;background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;padding:12px 0;z-index:1000;box-shadow:0 2px 15px rgba(0,0,0,0.1);}
-.navbar ul{list-style:none;display:flex;gap:35px;margin:0;padding:0;}
-.navbar button{background:none;border:none;color:white;font-size:1em;cursor:pointer;letter-spacing:1px;position:relative;transition:color 0.3s;}
-.navbar button::after{content:'';position:absolute;left:0;bottom:0;width:0%;height:2px;background:#ffc0de;transition:width 0.3s;}
-.navbar button:hover{color:#ffe3f1;}
-.navbar button:hover::after{width:100%;}
-.menu-toggle{display:none;flex-direction:column;cursor:pointer;position:absolute;right:20px;top:14px;}
-.menu-toggle span{width:25px;height:3px;background:white;margin:4px 0;border-radius:2px;}
-@media(max-width:700px){.navbar ul{flex-direction:column;background:rgba(255,255,255,0.15);position:fixed;top:55px;right:-100%;width:60%;height:100vh;text-align:center;transition:right 0.4s ease;padding-top:60px;}.navbar ul.active{right:0;}.menu-toggle{display:flex;}}
+/* Particle Background */
+#particleContainer{
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  overflow:hidden; z-index:0;
+}
+.particle{
+  position:absolute; width:8px; height:8px;
+  background:rgba(255,182,193,0.35);
+  transform:rotate(45deg); border-radius:50%;
+  animation-name:float; animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+.particle::before,.particle::after{
+  content:''; position:absolute; width:8px; height:8px;
+  background:rgba(255,182,193,0.35); border-radius:50%;
+}
+.particle::before{ top:-4px; left:0; }
+.particle::after{ left:-4px; top:0; }
+@keyframes float{
+  0%{transform:translate(0,0) rotate(45deg);opacity:0.2;}
+  50%{transform:translate(var(--x), var(--y)) rotate(45deg);opacity:0.7;}
+  100%{transform:translate(0,0) rotate(45deg);opacity:0.2;}
+}
 
-.page{width:100%;height:100%;display:none;justify-content:center;align-items:center;flex-direction:column;opacity:0;transition:opacity 0.8s ease-in-out;position:absolute;top:0;left:0;}
-.active-page{display:flex;opacity:1;}
+/* Navbar */
+.navbar{
+  position:fixed; top:0; left:0;
+  width:100%;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  display:flex; justify-content:center; align-items:center;
+  padding:12px 0; z-index:1000;
+  box-shadow:0 2px 15px rgba(0,0,0,0.1);
+  display:none;
+}
+.navbar ul{
+  list-style:none; display:flex; gap:35px; margin:0; padding:0;
+}
+.navbar button{
+  background:none; border:none; color:white; font-size:1em;
+  cursor:pointer; letter-spacing:1px; position:relative; transition:color 0.3s;
+}
+.navbar button::after{
+  content:''; position:absolute; left:0; bottom:0; width:0%; height:2px;
+  background:#ffc0de; transition:width 0.3s;
+}
+.navbar button:hover{ color:#ffe3f1; }
+.navbar button:hover::after{ width:100%; }
+.menu-toggle{ display:none; flex-direction:column; cursor:pointer; position:absolute; right:20px; top:14px; }
+.menu-toggle span{ width:25px; height:3px; background:white; margin:4px 0; border-radius:2px; }
+@media(max-width:700px){
+  .navbar ul{ flex-direction:column; background:rgba(255,255,255,0.15);
+    position:fixed; top:55px; right:-100%; width:60%; height:100vh;
+    text-align:center; transition:right 0.4s ease; padding-top:60px; }
+  .navbar ul.active{ right:0; }
+  .menu-toggle{ display:flex; }
+}
 
-.album-wrapper{position:relative;text-align:center;width:90%;max-width:700px;z-index:2;}
-.romantic-text{font-size:2em;margin-bottom:20px;text-shadow:0 0 20px rgba(255,255,255,0.6);color:#fff;}
-.album-container{position:relative;width:100%;height:650px;border-radius:25px;overflow:hidden;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);box-shadow:0 15px 35px rgba(0,0,0,0.3);touch-action:pan-x;}
-.photo{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.3s ease-in-out, transform 1.3s ease-in-out, box-shadow 1.3s ease-in-out;border-radius:20px;box-shadow:0 0 0px rgba(255,192,222,0);}
-.photo.active{opacity:1;z-index:2;transform:scale(1.03);box-shadow:0 0 40px rgba(255,192,222,0.6);}
-.nav-btn{position:absolute;top:50%;transform:translateY(-50%);font-size:2em;color:white;background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:50px;height:50px;cursor:pointer;z-index:3;transition:background 0.3s;}
-.nav-btn:hover{background:rgba(255,255,255,0.4);}
-.prev-btn{left:10px;} .next-btn{right:10px;}
-.info-box{background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); padding:30px; border-radius:20px; color:#fff; text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.3);}
-.info-box a{color:#ffc0de;text-decoration:none;font-weight:bold;}
-.info-box a:hover{text-decoration:underline;}
-#introOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:2000;cursor:pointer;}
-#introText{color:#fff;font-size:2.5em;text-align:center;text-shadow:0 0 20px rgba(255,255,255,0.7);transform:scale(0.8);opacity:0;transition: all 1s ease;}
-@media(max-width:600px){.romantic-text{font-size:1.5em;}.album-container{height:450px;}.nav-btn{width:40px;height:40px;font-size:1.5em;}}
+/* Page */
+.page{
+  width:100%; height:100%;
+  display:none; justify-content:center; align-items:center; flex-direction:column;
+  opacity:0; transition:opacity 0.8s ease-in-out;
+  position:absolute; top:0; left:0;
+}
+.active-page{ display:flex; opacity:1; }
+
+/* Album */
+.album-wrapper{ position:relative; text-align:center; width:90%; max-width:700px; z-index:2; opacity:0; transition:opacity 1.2s ease; }
+.album-wrapper.show{ opacity:1; }
+.romantic-text{ font-size:2em; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; }
+.album-container{
+  position:relative; width:100%; height:650px;
+  border-radius:25px; overflow:hidden;
+  border:2px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(12px);
+  box-shadow:0 15px 35px rgba(0,0,0,0.3);
+  touch-action:pan-x;
+}
+.photo{
+  width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;
+  opacity:0; transition:opacity 1.3s ease-in-out, transform 1.3s ease-in-out, box-shadow 1.3s ease-in-out;
+  border-radius:20px; box-shadow:0 0 0px rgba(255,192,222,0);
+}
+.photo.active{ opacity:1; z-index:2; transform:scale(1.03); box-shadow:0 0 40px rgba(255,192,222,0.6); }
+.nav-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:2em; color:white; background:rgba(255,255,255,0.2);
+  border:none; border-radius:50%; width:50px; height:50px; cursor:pointer; z-index:3; transition:background 0.3s;
+}
+.nav-btn:hover{ background:rgba(255,255,255,0.4); }
+.prev-btn{ left:10px; } .next-btn{ right:10px; }
+
+/* Menu bawah foto */
+.photo-menu{
+  position:relative;
+  margin-top:20px;
+  display:flex; gap:20px; justify-content:center; background:rgba(255,255,255,0.15);
+  padding:10px 20px; border-radius:25px; backdrop-filter:blur(10px); z-index:4;
+}
+.photo-menu button{
+  background:none; border:none; color:white; font-size:1em; cursor:pointer; transition:0.3s;
+  position:relative;
+}
+.photo-menu button:hover{ color:#ffb3d1; }
+
+/* Info Box */
+.info-box{ background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+  padding:30px; border-radius:20px; color:#fff; text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+.info-box a{ color:#ffc0de; text-decoration:none; font-weight:bold; }
+.info-box a:hover{ text-decoration:underline; }
+
+/* Login */
+#loginPage{
+  width:100%; height:100%; display:flex; justify-content:center; align-items:center;
+  flex-direction:column; z-index:1000;
+}
+#loginTitle{
+  color:#fff; font-size:2em; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.7); text-align:center;
+}
+#loginBox{
+  background:rgba(255,255,255,0.1); backdrop-filter:blur(12px);
+  padding:40px 30px; border-radius:25px; box-shadow:0 15px 40px rgba(0,0,0,0.3);
+  display:flex; flex-direction:column; gap:20px; width:300px; max-width:90%;
+}
+#loginBox input{
+  padding:12px 15px; border-radius:15px; border:none; outline:none;
+  font-size:1em; background:rgba(255,255,255,0.2); color:white;
+}
+#loginBox button{
+  padding:12px; border:none; border-radius:15px;
+  background:#ff99c7; color:white; font-weight:bold; cursor:pointer; transition:0.3s;
+}
+#loginBox button:hover{ background:#ffb3d1; }
+.show-pass{
+  position:relative; color:#fff; font-size:0.9em; cursor:pointer; text-align:right; margin-top:-15px;
+}
+#loginError{color:#ffb3b3; font-size:0.9em; text-align:center; display:none;}
+
+/* Responsive */
+@media(max-width:600px){
+  .romantic-text{ font-size:1.5em; }
+  .album-container{ height:450px; }
+  .nav-btn{ width:40px; height:40px; font-size:1.5em; }
+}
 </style>
 </head>
 <body>
 
 <div id="particleContainer"></div>
 
+<!-- Navbar -->
 <nav class="navbar">
   <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
   <ul id="navMenu">
@@ -54,14 +180,28 @@ html, body {margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;widt
   </ul>
 </nav>
 
-<div id="introOverlay">
-  <div id="introText">𝐀𝐋𝐁𝐔𝐌 𝐙𝐀𝐙𝐀<br>𝐊𝐋𝐈𝐊 𝐔𝐍𝐓𝐔𝐊 𝐌𝐄𝐋𝐈𝐇𝐀𝐓</div>
+<!-- Login Page -->
+<div class="page active-page" id="loginPage">
+  <div id="loginTitle">𝗟𝗢𝗚𝗜𝗡 𝗨𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝗔𝗟𝗕𝗨𝗠</div>
+  <div id="loginBox">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <div class="show-pass" id="togglePass">Show Password</div>
+    <button id="loginBtn">Login</button>
+    <div id="loginError">Username atau Password salah!</div>
+  </div>
 </div>
 
-<div class="page active-page" id="homePage">
-  <div class="album-wrapper">
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝐍𝐓𝐔𝐊 𝐌𝐄𝐋𝐈𝐇𝐀𝐓 𝐅𝐎𝐓𝐎 𝐒𝐄𝐋𝐀𝐍𝐉𝐔𝐓𝐍𝐘𝐀</div>
+<!-- Album Page -->
+<div class="page" id="homePage">
+  <div class="album-wrapper" id="albumWrapper">
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝐋𝐀𝗡𝗝𝗨𝗧𝗡𝗬𝗔</div>
     <div class="album-container" id="albumContainer"></div>
+    <div class="photo-menu" id="photoMenu">
+      <button id="shareBtn">Share</button>
+      <button id="likeBtn">Like</button>
+      <button id="downloadBtn">Download</button>
+    </div>
     <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
     <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
   </div>
@@ -71,7 +211,7 @@ html, body {margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;widt
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝐔𝐌 𝐃𝐈𝐆𝐈𝐓𝐀𝐋 𝐁𝐘 𝐂𝐄𝐋𝐙</p>
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝐀𝗟 𝐁𝗬 𝐂𝐄𝐋𝗭</p>
   </div>
 </div>
 
@@ -86,17 +226,55 @@ html, body {margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;widt
 <audio id="bgMusic" src="https://h.top4top.io/m_35969emdf0.m4a" loop></audio>
 
 <script>
-const navMenu=document.getElementById('navMenu');
-const menuToggle=document.getElementById('menuToggle');
+// Navbar toggle
+const navMenu = document.getElementById('navMenu');
+const menuToggle = document.getElementById('menuToggle');
 menuToggle.addEventListener('click',()=>navMenu.classList.toggle('active'));
 
-const pages={ home:document.getElementById('homePage'), about:document.getElementById('aboutPage'), contact:document.getElementById('contactPage') };
-function showPage(page){for(const key in pages){pages[key].style.display=(key===page)?'flex':'none';pages[key].classList.toggle('active-page',key===page);}}
-document.getElementById('homeBtn').onclick=()=>showPage('home');
-document.getElementById('aboutBtn').onclick=()=>showPage('about');
-document.getElementById('contactBtn').onclick=()=>showPage('contact');
+// Pages
+const pages = { login: document.getElementById('loginPage'), home: document.getElementById('homePage'), about: document.getElementById('aboutPage'), contact: document.getElementById('contactPage') };
+function showPage(page){ 
+  for(const key in pages){ 
+    pages[key].style.display = (key===page)?'flex':'none'; 
+    pages[key].classList.toggle('active-page', key===page); 
+  } 
+  if(page==='home') playMusicIfAlbum();
+}
 
-const albumContainer=document.getElementById('albumContainer');
+// Login
+const loginBtn = document.getElementById('loginBtn');
+const loginError = document.getElementById('loginError');
+const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
+const togglePass = document.getElementById('togglePass');
+const albumWrapper = document.getElementById('albumWrapper');
+const music = document.getElementById('bgMusic');
+
+togglePass.addEventListener('click', ()=>{
+  if(passwordInput.type==='password'){ 
+    passwordInput.type='text'; 
+    togglePass.textContent='Hide Password'; 
+  } else { 
+    passwordInput.type='password'; 
+    togglePass.textContent='Show Password'; 
+  }
+});
+
+loginBtn.addEventListener('click', ()=>{
+  const user = usernameInput.value.trim();
+  const pass = passwordInput.value.trim();
+  if(user==='zaza' && pass==='zaza'){ 
+    loginError.style.display='none';
+    document.querySelector('.navbar').style.display='flex';
+    showPage('home');
+    albumWrapper.classList.add('show');
+    initAlbum();
+  } else {
+    loginError.style.display='block';
+  }
+});
+
+// Album
 const photos=[
 "https://images2.imgbox.com/07/6d/flAblCPU_o.jpg",
 "https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg",
@@ -122,33 +300,58 @@ const photos=[
 "https://images2.imgbox.com/7a/11/Example22_o.jpg"
 ];
 let current=0;
-function showPhoto(i){albumContainer.innerHTML='';const img=document.createElement('img');img.src=photos[i];img.className='photo active';albumContainer.appendChild(img);}
-showPhoto(current);
-document.getElementById('prevBtn').onclick=()=>{current=(current-1+photos.length)%photos.length;showPhoto(current);};
-document.getElementById('nextBtn').onclick=()=>{current=(current+1)%photos.length;showPhoto(current);};
+const albumContainer = document.getElementById('albumContainer');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let autoSwipeInterval;
 
-let startX=0;
-albumContainer.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
-albumContainer.addEventListener('touchend',e=>{const endX=e.changedTouches[0].clientX;if(endX-startX>50) document.getElementById('prevBtn').click();if(startX-endX>50) document.getElementById('nextBtn').click();});
+function showPhoto(i){
+  albumContainer.innerHTML='';
+  const img=document.createElement('img');
+  img.src=photos[i]; img.className='photo active';
+  albumContainer.appendChild(img);
+}
 
-const music=document.getElementById('bgMusic');
-music.addEventListener('play',()=>{setInterval(()=>{current=(current+1)%photos.length;showPhoto(current);},3000);});
+function initAlbum(){
+  showPhoto(current);
+  prevBtn.onclick = () => { current=(current-1+photos.length)%photos.length; showPhoto(current); resetAutoSwipe(); };
+  nextBtn.onclick = () => { current=(current+1)%photos.length; showPhoto(current); resetAutoSwipe(); };
 
-let played=false;
-const introOverlay=document.getElementById('introOverlay');
-const introText=document.getElementById('introText');
-setTimeout(()=>{introText.style.opacity=1;introText.style.transform='scale(1)';},400);
-document.body.addEventListener('click',()=>{if(!played){music.play();played=true;introOverlay.style.opacity=0;setTimeout(()=>introOverlay.remove(),800);}});
+  // Swipe
+  let startX=0;
+  albumContainer.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+  albumContainer.addEventListener('touchend',e=>{
+    const endX = e.changedTouches[0].clientX;
+    if(endX-startX>50) prevBtn.click();
+    if(startX-endX>50) nextBtn.click();
+  });
 
+  startAutoSwipe();
+}
+
+function startAutoSwipe(){
+  autoSwipeInterval = setInterval(()=>{ nextBtn.click(); }, 5000);
+}
+
+function resetAutoSwipe(){
+  clearInterval(autoSwipeInterval);
+  startAutoSwipe();
+}
+
+// Navbar buttons
+document.getElementById('homeBtn').onclick=()=>showPage('home');
+document.getElementById('aboutBtn').onclick=()=>showPage('about');
+document.getElementById('contactBtn').onclick=()=>showPage('contact');
+
+// Particle
 const particleContainer = document.getElementById('particleContainer');
-const particleCount = 200;
-for(let i=0;i<particleCount;i++){
+for(let i=0;i<200;i++){
   const p = document.createElement('div');
   p.classList.add('particle');
   const x = Math.random()*window.innerWidth - window.innerWidth/2;
   const y = -Math.random()*300 - 200;
   const size = Math.random()*12 + 6;
-  const duration = Math.random()*15 + 5;
+  const duration = Math.random()*5 + 5
   p.style.setProperty('--x', `${x}px`);
   p.style.setProperty('--y', `${y}px`);
   p.style.width = `${size}px`;
@@ -158,6 +361,78 @@ for(let i=0;i<particleCount;i++){
   p.style.top = `${Math.random()*100}%`;
   particleContainer.appendChild(p);
 }
+
+// Photo menu actions
+const likeBtn = document.getElementById('likeBtn');
+const shareBtn = document.getElementById('shareBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+
+let liked = false;
+
+// Like: tampilkan hati merah di tombol
+likeBtn.addEventListener('click', ()=>{
+  liked = !liked;
+  if(liked){
+    if(!document.getElementById('heartIcon')){
+      const heart = document.createElement('span');
+      heart.id = 'heartIcon';
+      heart.textContent = '❤️';
+      heart.style.marginLeft = '10px';
+      heart.style.fontSize = '1.2em';
+      likeBtn.appendChild(heart);
+    }
+  } else {
+    const heart = document.getElementById('heartIcon');
+    if(heart) likeBtn.removeChild(heart);
+  }
+});
+
+// Share: ke berbagai platform
+shareBtn.addEventListener('click', ()=>{
+  const url = encodeURIComponent(photos[current]);
+  const text = encodeURIComponent('Lihat foto ini di Album Digital Khirza!');
+  const shareOptions = `
+    Pilih platform untuk membagikan foto:
+    1. WhatsApp
+    2. Twitter
+    3. Facebook
+    4. Telegram
+    5. LinkedIn
+    6. Pinterest
+    7. Email
+  `;
+  const choice = prompt(shareOptions,'1');
+  if(!choice) return;
+
+  switch(choice){
+    case '1': window.open(`https://wa.me/?text=${text}%20${url}`,'_blank'); break;
+    case '2': window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank'); break;
+    case '3': window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,'_blank'); break;
+    case '4': window.open(`https://t.me/share/url?url=${url}&text=${text}`,'_blank'); break;
+    case '5': window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`,'_blank'); break;
+    case '6': window.open(`https://pinterest.com/pin/create/button/?url=${url}&description=${text}`,'_blank'); break;
+    case '7': window.open(`mailto:?subject=${text}&body=${url}`,'_blank'); break;
+    default: alert('Pilihan tidak valid!'); break;
+  }
+});
+
+// Download langsung
+downloadBtn.addEventListener('click', ()=>{
+  const link = document.createElement('a');
+  link.href = photos[current];
+  link.download = `Foto-${current+1}.jpg`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+// Musik album otomatis play ketika halaman home
+function playMusicIfAlbum(){
+  music.play().catch(()=>{}); // catch untuk mencegah error autoplay di mobile
+}
+
+// Play music on first click (fallback)
+document.body.addEventListener('click', ()=>{ music.play(); }, {once:true});
 </script>
 </body>
-</html>
+  </html>
