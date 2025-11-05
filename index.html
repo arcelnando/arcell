@@ -3,170 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Album Digital Khirza - Premium</title>
+<title>Album Digital Khirza - Premium Glow</title>
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  background: linear-gradient(135deg, #ffd6e8, #ffb3d1, #ff99c7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+html, body {margin:0;padding:0;font-family:'Poppins',sans-serif;height:100%;width:100%;overflow:hidden;background:linear-gradient(135deg,#ffd6e8,#ffb3d1,#ff99c7);display:flex;justify-content:center;align-items:center;}
+#particleContainer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0;}
+.particle{position:absolute;width:8px;height:8px;background:rgba(255,182,193,0.35);transform:rotate(45deg);border-radius:50%;animation-name:float;animation-timing-function:linear;animation-iteration-count:infinite;}
+.particle::before,.particle::after{content:'';position:absolute;width:8px;height:8px;background:rgba(255,182,193,0.35);border-radius:50%;}
+.particle::before{top:-4px;left:0;} .particle::after{left:-4px;top:0;}
+@keyframes float{0%{transform:translate(0,0) rotate(45deg);opacity:0.2;}50%{transform:translate(var(--x), var(--y)) rotate(45deg);opacity:0.7;}100%{transform:translate(0,0) rotate(45deg);opacity:0.2;}}
 
-/* Heart particles */
-.particle {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(255,255,255,0.3);
-  transform: rotate(45deg);
-  animation: float 8s linear infinite;
-  border-radius: 50%;
-}
-.particle::before,
-.particle::after {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 50%;
-}
-.particle::before { top:-6px; left:0; }
-.particle::after { left:-6px; top:0; }
+.navbar{position:fixed;top:0;left:0;width:100%;background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;padding:12px 0;z-index:1000;box-shadow:0 2px 15px rgba(0,0,0,0.1);}
+.navbar ul{list-style:none;display:flex;gap:35px;margin:0;padding:0;}
+.navbar button{background:none;border:none;color:white;font-size:1em;cursor:pointer;letter-spacing:1px;position:relative;transition:color 0.3s;}
+.navbar button::after{content:'';position:absolute;left:0;bottom:0;width:0%;height:2px;background:#ffc0de;transition:width 0.3s;}
+.navbar button:hover{color:#ffe3f1;}
+.navbar button:hover::after{width:100%;}
+.menu-toggle{display:none;flex-direction:column;cursor:pointer;position:absolute;right:20px;top:14px;}
+.menu-toggle span{width:25px;height:3px;background:white;margin:4px 0;border-radius:2px;}
+@media(max-width:700px){.navbar ul{flex-direction:column;background:rgba(255,255,255,0.15);position:fixed;top:55px;right:-100%;width:60%;height:100vh;text-align:center;transition:right 0.4s ease;padding-top:60px;}.navbar ul.active{right:0;}.menu-toggle{display:flex;}}
 
-@keyframes float {
-  0% { transform: translate(0,0) rotate(45deg); opacity:0.2; }
-  25% { transform: translate(50px,-150px) rotate(45deg); opacity:0.5; }
-  50% { transform: translate(-60px,-300px) rotate(45deg); opacity:0.7; }
-  75% { transform: translate(40px,-450px) rotate(45deg); opacity:0.5; }
-  100% { transform: translate(0,0) rotate(45deg); opacity:0.2; }
-}
+.page{width:100%;height:100%;display:none;justify-content:center;align-items:center;flex-direction:column;opacity:0;transition:opacity 0.8s ease-in-out;position:absolute;top:0;left:0;}
+.active-page{display:flex;opacity:1;}
 
-/* Navbar */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-  padding: 15px 0;
-}
-.navbar button {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.1em;
-  margin: 0 20px;
-  cursor: pointer;
-  transition: color 0.3s, transform 0.2s;
-}
-.navbar button:hover { color: #ffc0de; transform: scale(1.1); }
-
-/* Pages */
-.page { 
-  width:100%; height:100%; display:none; justify-content:center; align-items:center; flex-direction:column; 
-  opacity:0; transition: opacity 0.8s ease-in-out; position:absolute; top:0; left:0; overflow:hidden;
-}
-.active-page { display:flex; opacity:1; }
-
-/* Album styles */
-.album-wrapper { 
-  position:relative; text-align:center; width:90%; max-width:700px; z-index:2; 
-}
-.romantic-text { font-size:2em; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; }
-.album-container {
-  position: relative;
-  width: 100%;
-  height: 650px;
-  border-radius: 25px;
-  overflow: hidden;
-  border: 2px solid rgba(255,255,255,0.3);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-  touch-action: pan-x pan-y;
-  background: rgba(255,255,255,0.07);
-  backdrop-filter: blur(12px);
-}
-.photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: all 1s ease-in-out;
-  border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-}
-.photo.active { opacity:1; transform:scale(1.05); z-index:2; }
-
-/* Navigation buttons */
-.nav-btn {
-  position:absolute; top:50%; transform:translateY(-50%); font-size:2em; color:white; background:rgba(255,255,255,0.2);
-  border:none; border-radius:50%; width:50px; height:50px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:3; transition:background 0.3s;
-}
-.nav-btn:hover { background:rgba(255,255,255,0.4); }
-.prev-btn { left:10px; } 
-.next-btn { right:10px; }
-
-/* Info boxes */
-.info-box {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  padding:30px;
-  border-radius:20px;
-  color:#fff;
-  text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,0.3);
-}
-.info-box a { color:#ffc0de; text-decoration:none; font-weight:bold; }
-.info-box a:hover { text-decoration:underline; }
-
-/* Responsive */
-@media (max-width: 600px) {
-  .romantic-text { font-size:1.5em; }
-  .album-container { height: 450px; }
-  .nav-btn { width:40px; height:40px; font-size:1.5em; }
-}
-
-/* Intro overlay */
-#introOverlay {
-  position: fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
-  flex-direction:column; z-index:2000; cursor:pointer;
-}
-#introText {
-  color:#fff; font-size:2.5em; text-align:center; text-shadow:0 0 20px rgba(255,255,255,0.7);
-  transform: scale(0.8); opacity:0; transition: all 1s ease;
-}
+.album-wrapper{position:relative;text-align:center;width:90%;max-width:700px;z-index:2;}
+.romantic-text{font-size:2em;margin-bottom:20px;text-shadow:0 0 20px rgba(255,255,255,0.6);color:#fff;}
+.album-container{position:relative;width:100%;height:650px;border-radius:25px;overflow:hidden;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.07);backdrop-filter:blur(12px);box-shadow:0 15px 35px rgba(0,0,0,0.3);touch-action:pan-x;}
+.photo{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.3s ease-in-out, transform 1.3s ease-in-out, box-shadow 1.3s ease-in-out;border-radius:20px;box-shadow:0 0 0px rgba(255,192,222,0);}
+.photo.active{opacity:1;z-index:2;transform:scale(1.03);box-shadow:0 0 40px rgba(255,192,222,0.6);}
+.nav-btn{position:absolute;top:50%;transform:translateY(-50%);font-size:2em;color:white;background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:50px;height:50px;cursor:pointer;z-index:3;transition:background 0.3s;}
+.nav-btn:hover{background:rgba(255,255,255,0.4);}
+.prev-btn{left:10px;} .next-btn{right:10px;}
+.info-box{background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); padding:30px; border-radius:20px; color:#fff; text-align:center; box-shadow:0 15px 40px rgba(0,0,0,0.3);}
+.info-box a{color:#ffc0de;text-decoration:none;font-weight:bold;}
+.info-box a:hover{text-decoration:underline;}
+#introOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:2000;cursor:pointer;}
+#introText{color:#fff;font-size:2.5em;text-align:center;text-shadow:0 0 20px rgba(255,255,255,0.7);transform:scale(0.8);opacity:0;transition: all 1s ease;}
+@media(max-width:600px){.romantic-text{font-size:1.5em;}.album-container{height:450px;}.nav-btn{width:40px;height:40px;font-size:1.5em;}}
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-  <button id="homeBtn">Home</button>
-  <button id="aboutBtn">About Us</button>
-  <button id="contactBtn">Contact</button>
-</div>
+<div id="particleContainer"></div>
 
-<!-- Intro overlay -->
+<nav class="navbar">
+  <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
+  <ul id="navMenu">
+    <li><button id="homeBtn">Home</button></li>
+    <li><button id="aboutBtn">About</button></li>
+    <li><button id="contactBtn">Contact</button></li>
+  </ul>
+</nav>
+
 <div id="introOverlay">
   <div id="introText">𝐀𝐋𝐁𝐔𝐌 𝐙𝐀𝐙𝐀<br>𝐊𝐋𝐈𝐊 𝐔𝐍𝐓𝐔𝐊 𝐌𝐄𝐋𝐈𝐇𝐀𝐓</div>
 </div>
 
-<!-- Pages -->
 <div class="page active-page" id="homePage">
   <div class="album-wrapper">
     <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝐍𝐓𝐔𝐊 𝐌𝐄𝐋𝐈𝐇𝐀𝐓 𝐅𝐎𝐓𝐎 𝐒𝐄𝐋𝐀𝐍𝐉𝐔𝐓𝐍𝐘𝐀</div>
@@ -178,7 +69,7 @@ html, body {
 
 <div class="page" id="aboutPage">
   <div class="info-box">
-    <h2>About Us</h2>
+    <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
     <p>𝐀𝐋𝐁𝐔𝐌 𝐃𝐈𝐆𝐈𝐓𝐀𝐋 𝐁𝐘 𝐂𝐄𝐋𝐙</p>
   </div>
@@ -192,135 +83,81 @@ html, body {
   </div>
 </div>
 
-<!-- Music -->
 <audio id="bgMusic" src="https://h.top4top.io/m_35969emdf0.m4a" loop></audio>
 
 <script>
-const albumContainer = document.getElementById('albumContainer');
-const homeBtn = document.getElementById('homeBtn');
-const aboutBtn = document.getElementById('aboutBtn');
-const contactBtn = document.getElementById('contactBtn');
-const pages = { home: document.getElementById('homePage'), about: document.getElementById('aboutPage'), contact: document.getElementById('contactPage') };
-const music = document.getElementById('bgMusic');
+const navMenu=document.getElementById('navMenu');
+const menuToggle=document.getElementById('menuToggle');
+menuToggle.addEventListener('click',()=>navMenu.classList.toggle('active'));
 
-// Album photos 22
-const photos = [
-  "https://images2.imgbox.com/07/6d/flAblCPU_o.jpg",
-  "https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg",
-  "https://images2.imgbox.com/17/93/x3zJwzr8_o.jpg",
-  "https://images2.imgbox.com/9f/c4/0HZK3fj6_o.jpg",
-  "https://images2.imgbox.com/d4/f3/y30RHo1v_o.jpg",
-  "https://images2.imgbox.com/d0/ef/utCLLETK_o.jpg",
-  "https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg",
-  "https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg",
-  "https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg",
-  "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
-  "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
-  "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
-  "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
-  "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
-  "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
-  "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
-  "https://images2.imgbox.com/aa/b9/HsnXJMTE_o.jpg",
-  "https://images2.imgbox.com/9d/1e/44qSzju4_o.jpg",
-  "https://images2.imgbox.com/94/ec/28ile6qy_o.jpg",
-  "https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg",
-  "https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg"
+const pages={ home:document.getElementById('homePage'), about:document.getElementById('aboutPage'), contact:document.getElementById('contactPage') };
+function showPage(page){for(const key in pages){pages[key].style.display=(key===page)?'flex':'none';pages[key].classList.toggle('active-page',key===page);}}
+document.getElementById('homeBtn').onclick=()=>showPage('home');
+document.getElementById('aboutBtn').onclick=()=>showPage('about');
+document.getElementById('contactBtn').onclick=()=>showPage('contact');
+
+const albumContainer=document.getElementById('albumContainer');
+const photos=[
+"https://images2.imgbox.com/07/6d/flAblCPU_o.jpg",
+"https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg",
+"https://images2.imgbox.com/17/93/x3zJwzr8_o.jpg",
+"https://images2.imgbox.com/9f/c4/0HZK3fj6_o.jpg",
+"https://images2.imgbox.com/d4/f3/y30RHo1v_o.jpg",
+"https://images2.imgbox.com/d0/ef/utCLLETK_o.jpg",
+"https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg",
+"https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg",
+"https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg",
+"https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
+"https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
+"https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
+"https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
+"https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
+"https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
+"https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
+"https://images2.imgbox.com/aa/b9/HsnXJMTE_o.jpg",
+"https://images2.imgbox.com/9d/1e/44qSzju4_o.jpg",
+"https://images2.imgbox.com/94/ec/28ile6qy_o.jpg",
+"https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg",
+"https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg",
+"https://images2.imgbox.com/7a/11/Example22_o.jpg"
 ];
-
-let current = 0, prevPhotoEl = null;
-
-// Heart particles di HP
-if(window.innerWidth <= 600){
-  for(let i=0;i<40;i++){
-    const p=document.createElement('div');
-    p.className='particle';
-    p.style.top=Math.random()*100+'%';
-    p.style.left=Math.random()*100+'%';
-    const size=Math.random()*12+5;
-    p.style.width=size+'px';
-    p.style.height=size+'px';
-    p.style.animationDuration=(5+Math.random()*8)+'s';
-    document.body.prepend(p);
-  }
-}
-
-// Album functions
-function showPhoto(index){
-  if(prevPhotoEl) prevPhotoEl.classList.remove('active');
-  const img = document.createElement('img');
-  img.src = photos[index];
-  img.className = 'photo active';
-  albumContainer.prepend(img);
-  prevPhotoEl = img;
-}
-
-// Buttons
-document.getElementById('prevBtn').addEventListener('click',()=>{current=(current-1+photos.length)%photos.length; showPhoto(current);});
-document.getElementById('nextBtn').addEventListener('click',()=>{current=(current+1)%photos.length; showPhoto(current);});
-
-// Swipe (HP)
-let startX=0;
-albumContainer.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; });
-albumContainer.addEventListener('touchend', e => {
-  let endX = e.changedTouches[0].clientX;
-  if (endX - startX > 50) { current = (current - 1 + photos.length) % photos.length; showPhoto(current); }
-  else if (startX - endX > 50) { current = (current + 1) % photos.length; showPhoto(current); }
-});
-
-// Mouse drag desktop
-let isDown = false, startClientX = 0;
-albumContainer.addEventListener('mousedown', e => { isDown = true; startClientX = e.clientX; });
-albumContainer.addEventListener('mouseup', e => {
-  if (!isDown) return;
-  let diff = e.clientX - startClientX;
-  if (diff > 50) { current = (current - 1 + photos.length) % photos.length; showPhoto(current); }
-  else if (diff < -50) { current = (current + 1) % photos.length; showPhoto(current); }
-  isDown = false;
-});
-
-// Page navigation tetap stay
-function showPage(page) {
-  for (const key in pages) {
-    if (key === page) {
-      pages[key].style.display = 'flex';
-      setTimeout(()=>{pages[key].classList.add('active-page');},50);
-    } else {
-      pages[key].classList.remove('active-page');
-      setTimeout(()=>{pages[key].style.display = 'none';},500);
-    }
-  }
-}
-homeBtn.addEventListener('click', ()=>showPage('home'));
-aboutBtn.addEventListener('click', ()=>showPage('about'));
-contactBtn.addEventListener('click', ()=>showPage('contact'));
-
-// Musik muncul saat klik pertama
-let musicPlayed = false;
-document.body.addEventListener('click', ()=>{
-  if(!musicPlayed){
-    music.play();
-    musicPlayed=true;
-  }
-}, {once:true});
-
-// Tampilkan foto pertama
+let current=0;
+function showPhoto(i){albumContainer.innerHTML='';const img=document.createElement('img');img.src=photos[i];img.className='photo active';albumContainer.appendChild(img);}
 showPhoto(current);
+document.getElementById('prevBtn').onclick=()=>{current=(current-1+photos.length)%photos.length;showPhoto(current);};
+document.getElementById('nextBtn').onclick=()=>{current=(current+1)%photos.length;showPhoto(current);};
 
-// Intro animation
-const introOverlay = document.getElementById('introOverlay');
-const introText = document.getElementById('introText');
+let startX=0;
+albumContainer.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+albumContainer.addEventListener('touchend',e=>{const endX=e.changedTouches[0].clientX;if(endX-startX>50) document.getElementById('prevBtn').click();if(startX-endX>50) document.getElementById('nextBtn').click();});
 
-setTimeout(()=>{ 
-  introText.style.opacity = '1'; 
-  introText.style.transform = 'scale(1)'; 
-}, 200);
+const music=document.getElementById('bgMusic');
+music.addEventListener('play',()=>{setInterval(()=>{current=(current+1)%photos.length;showPhoto(current);},3000);});
 
-introOverlay.addEventListener('click', ()=>{
-  introOverlay.style.transition = 'all 0.8s ease';
-  introOverlay.style.opacity = '0';
-  setTimeout(()=>{ introOverlay.style.display = 'none'; }, 800);
-});
+let played=false;
+const introOverlay=document.getElementById('introOverlay');
+const introText=document.getElementById('introText');
+setTimeout(()=>{introText.style.opacity=1;introText.style.transform='scale(1)';},400);
+document.body.addEventListener('click',()=>{if(!played){music.play();played=true;introOverlay.style.opacity=0;setTimeout(()=>introOverlay.remove(),800);}});
+
+const particleContainer = document.getElementById('particleContainer');
+const particleCount = 200;
+for(let i=0;i<particleCount;i++){
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  const x = Math.random()*window.innerWidth - window.innerWidth/2;
+  const y = -Math.random()*300 - 200;
+  const size = Math.random()*12 + 6;
+  const duration = Math.random()*15 + 5;
+  p.style.setProperty('--x', `${x}px`);
+  p.style.setProperty('--y', `${y}px`);
+  p.style.width = `${size}px`;
+  p.style.height = `${size}px`;
+  p.style.animationDuration = `${duration}s`;
+  p.style.left = `${Math.random()*100}%`;
+  p.style.top = `${Math.random()*100}%`;
+  particleContainer.appendChild(p);
+}
 </script>
 </body>
-  </html>
+</html>
