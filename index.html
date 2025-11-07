@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Album Digital Khirza</title>
+<title>Album Digital Khirza - Premium Glow</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 /* Reset & Global */
@@ -120,9 +120,10 @@ html, body {
 .nav-btn:hover{ background:rgba(255,255,255,0.4); transform:translateY(-50%) scale(1.1); }
 .prev-btn{ left:10px; } .next-btn{ right:10px; }
 
-/* Photo Indicator (Dots) */
+/* Photo Indicator (Dihilangkan, tapi CSS-nya dipertahankan sebagai placeholder jika diperlukan) */
 .photo-indicator{
-  display:flex; justify-content:center; margin-top:15px; gap:8px; z-index:4;
+  display:none; /* Sembunyikan indikator titik */
+  justify-content:center; margin-top:15px; gap:8px; z-index:4;
 }
 .dot{
   width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.4);
@@ -151,6 +152,27 @@ html, body {
   display:flex; align-items:center; gap:5px;
 }
 .photo-menu button:hover{ color:#ffb3d1; transform:scale(1.05); }
+
+/* Double Tap Like Animation */
+.heart-anim {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 5em;
+    color: #ff3366; /* Merah muda cerah */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    animation: doubleTapHeart 0.8s ease-out forwards;
+}
+
+@keyframes doubleTapHeart {
+    0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+}
+
 
 /* Info Box */
 .info-box{ background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
@@ -355,11 +377,10 @@ html, body {
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
-    <div class="photo-indicator" id="mainPhotoIndicator"></div>
-    <div class="photo-menu" id="photoMenu">
-      <button id="shareBtn"><span class="icon"></span> Share</button>
-      <button id="likeBtn"><span class="icon"></span> Like</button>
-      <button id="downloadBtn"><span class="icon"></span> Download</button>
+    <div class="photo-indicator" id="mainPhotoIndicator"></div> <div class="photo-menu" id="photoMenu">
+      <button id="shareBtn" onclick="sharePhoto('main')"><span class="icon"></span> Share</button>
+      <button id="likeBtn" onclick="toggleLike('main')"><span class="icon"></span> Like</button>
+      <button id="downloadBtn" onclick="downloadPhoto('main')"><span class="icon"></span> Download</button>
     </div>
     <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
     <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
@@ -370,11 +391,10 @@ html, body {
   <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder1">
     <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝗧 𝐅𝗢𝗧𝗢</div>
-    <div class="album-container folder-album-container">
+    <div class="album-container folder-album-container" id="folder1Container">
       <div class="loading-spinner" id="folder1Spinner"></div>
     </div>
-    <div class="photo-indicator folder-photo-indicator"></div>
-    <div class="photo-menu">
+    <div class="photo-indicator folder-photo-indicator" id="folder1Indicator"></div> <div class="photo-menu">
       <button onclick="sharePhoto('folder1')"><span class="icon"></span> Share</button>
       <button onclick="toggleLike('folder1')"><span class="icon"></span> Like</button>
       <button onclick="downloadPhoto('folder1')"><span class="icon"></span> Download</button>
@@ -387,12 +407,11 @@ html, body {
 <div class="page" id="folder2Page">
   <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder2">
-    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟐 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝐓 𝐅𝗢𝗧𝗢</div>
-    <div class="album-container folder-album-container">
+    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟐 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝗧 𝐅𝗢𝗧𝗢</div>
+    <div class="album-container folder-album-container" id="folder2Container">
       <div class="loading-spinner" id="folder2Spinner"></div>
     </div>
-    <div class="photo-indicator folder-photo-indicator"></div>
-    <div class="photo-menu">
+    <div class="photo-indicator folder-photo-indicator" id="folder2Indicator"></div> <div class="photo-menu">
       <button onclick="sharePhoto('folder2')"><span class="icon"></span> Share</button>
       <button onclick="toggleLike('folder2')"><span class="icon"></span> Like</button>
       <button onclick="downloadPhoto('folder2')"><span class="icon"></span> Download</button>
@@ -407,7 +426,7 @@ html, body {
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝐓𝐀𝐋 𝐁𝐘 𝐂𝐄𝗟𝗭</p>
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝐀𝗟 𝐁𝐘 𝐂𝐄𝗟𝗭</p>
     <p>Versi: 1.2
   </div>
 </div>
@@ -475,7 +494,8 @@ const albumData = {
     liked: false,
     container: document.getElementById('albumContainer'),
     indicator: document.getElementById('mainPhotoIndicator'),
-    spinner: document.getElementById('mainSpinner')
+    spinner: document.getElementById('mainSpinner'),
+    likeBtnElement: null // Akan diisi saat init
   },
   folder1: {
     photos: [
@@ -494,7 +514,8 @@ const albumData = {
     liked: false,
     container: null,
     indicator: null,
-    spinner: null
+    spinner: null,
+    likeBtnElement: null
   },
   folder2: {
     photos: [
@@ -509,7 +530,8 @@ const albumData = {
     liked: false,
     container: null,
     indicator: null,
-    spinner: null
+    spinner: null,
+    likeBtnElement: null
   }
 };
 
@@ -552,39 +574,33 @@ startBrowsingBtn.addEventListener('click', () => {
   showPage('home'); // Setelah welcome, langsung ke home (pemilihan folder)
 });
 
-// FUNGSI UTAMA UNTUK MENAMPILKAN HALAMAN (TELAH DIKOREKSI)
+// FUNGSI UTAMA UNTUK MENAMPILKAN HALAMAN
 function showPage(page){
-  // 1. Matikan semua halaman dan hapus kelas aktif
   for(const key in pages){ 
     pages[key].style.display = 'none';
     pages[key].classList.remove('active-page');
   }
 
-  // 2. Tampilkan halaman yang diminta
   if (page === 'home' || page === 'mainAlbum') {
-      // Logika khusus untuk Home Page: Album Selection atau Main Album
       pages['home'].style.display = 'flex';
       pages['home'].classList.add('active-page');
       
       if (page === 'home') {
-           folderSelectWrapper.style.display = 'flex'; // Tampilkan pilihan folder
+           folderSelectWrapper.style.display = 'flex'; 
            albumWrapper.style.display = 'none';
            clearInterval(autoSwipeInterval); 
       } else { // page === 'mainAlbum'
            folderSelectWrapper.style.display = 'none';
-           albumWrapper.style.display = 'block'; // Tampilkan album utama
+           albumWrapper.style.display = 'block'; 
       }
   } else {
-      // Logika untuk halaman lainnya (login, welcome, folder1, folder2, about, contact)
       pages[page].style.display = 'flex'; 
       pages[page].classList.add('active-page'); 
   }
   
-  // Nonaktifkan menu toggle saat mengganti halaman
   navMenu.classList.remove('active');
   menuToggle.classList.remove('active');
 
-  // Putar musik jika bukan halaman login/welcome
   if(page !== 'login' && page !== 'welcome' && page !== 'about' && page !== 'contact') playMusicIfAlbum();
 }
 
@@ -595,21 +611,24 @@ function showPhoto(folder, i){
   data.current = i;
   if (!data.container) return; 
 
-  data.container.innerHTML=''; // Hapus foto sebelumnya
-  if (data.spinner) data.spinner.style.display = 'block'; // Tampilkan spinner
+  data.container.innerHTML=''; 
+  // Hapus semua elemen heart-anim yang mungkin tersisa
+  data.container.querySelectorAll('.heart-anim').forEach(el => el.remove()); 
+
+  if (data.spinner) data.spinner.style.display = 'block'; 
 
   const img=document.createElement('img');
   img.src=data.photos[i]; 
-  img.className='photo'; // Awalnya tidak aktif
+  img.className='photo'; 
 
   img.onload = () => {
-    if (data.spinner) data.spinner.style.display = 'none'; // Sembunyikan spinner setelah dimuat
+    if (data.spinner) data.spinner.style.display = 'none'; 
     data.container.appendChild(img);
-    setTimeout(() => img.classList.add('active'), 50); // Tambahkan kelas active setelah gambar masuk DOM
+    setTimeout(() => img.classList.add('active'), 50); 
   };
 
   img.onerror = () => {
-    if (data.spinner) data.spinner.style.display = 'none'; // Sembunyikan spinner juga jika error
+    if (data.spinner) data.spinner.style.display = 'none'; 
     const fallbackDiv = document.createElement('div');
     fallbackDiv.className = 'photo active fallback-img';
     fallbackDiv.textContent = 'Gambar tidak dapat dimuat 😟';
@@ -617,7 +636,7 @@ function showPhoto(folder, i){
     console.error(`Gagal memuat gambar: ${data.photos[i]}`);
   };
 
-  updatePhotoIndicator(folder); // Perbarui indikator titik
+  // updatePhotoIndicator(folder); // DIHAPUS (Permintaan user)
 }
 
 // Fungsi untuk navigasi foto (prev/next)
@@ -630,57 +649,44 @@ function navPhoto(folder, direction){
 
 // Inisialisasi Album Utama
 function initMainAlbum(){
-  albumData.main.spinner = document.getElementById('mainSpinner'); // Pastikan spinner diinisialisasi
+  albumData.main.spinner = document.getElementById('mainSpinner'); 
+  albumData.main.likeBtnElement = document.getElementById('likeBtn'); // Inisialisasi elemen tombol like utama
   showPhoto('main', albumData.main.current);
   document.getElementById('prevBtn').onclick = () => navPhoto('main', -1);
   document.getElementById('nextBtn').onclick = () => navPhoto('main', 1);
 
-  // Swipe listener for Main Album
+  setupDoubleTap(albumData.main.container, 'main'); // Tambahkan double tap listener
   setupSwipe(albumData.main.container, 'main');
   startAutoSwipe('main');
   albumWrapper.classList.add('show');
-  updateLikeButton(document.getElementById('likeBtn'), albumData.main.liked); // Update status like
+  updateLikeButton(albumData.main.likeBtnElement, albumData.main.liked); 
 }
 
 // Inisialisasi Album Folder
 function initFolderAlbum(folder){
     const data = albumData[folder];
-    data.container = document.querySelector(`#${folder}Page .folder-album-container`);
-    data.indicator = document.querySelector(`#${folder}Page .folder-photo-indicator`);
-    data.spinner = document.getElementById(`${folder}Spinner`); // Inisialisasi spinner per folder
+    data.container = document.getElementById(`${folder}Container`);
+    // data.indicator = document.getElementById(`${folder}Indicator`); // Dihilangkan
+    data.spinner = document.getElementById(`${folder}Spinner`); 
+    data.likeBtnElement = document.querySelector(`#${folder}Page .photo-menu button:nth-child(2)`); // Inisialisasi elemen tombol like folder
+
     
     if (data.photos.length > 0) {
         showPhoto(folder, data.current);
+        setupDoubleTap(data.container, folder); // Tambahkan double tap listener
         setupSwipe(data.container, folder);
         startAutoSwipe(folder);
-        // Update like button for specific folder (ambil elemen tombol dari dalam folder)
-        const likeBtn = document.querySelector(`#${folder}Page .photo-menu button:nth-child(2)`);
-        if(likeBtn) updateLikeButton(likeBtn, data.liked);
+        if(data.likeBtnElement) updateLikeButton(data.likeBtnElement, data.liked);
     } else {
-        // Handle empty folder
         data.container.innerHTML = '<div class="fallback-img active" style="font-size:1.5em; color:#ffb3b3;">Folder ini kosong!</div>';
         if (data.spinner) data.spinner.style.display = 'none';
-        if (data.indicator) data.indicator.innerHTML = ''; // Hapus indikator jika folder kosong
+        // if (data.indicator) data.indicator.innerHTML = ''; // Dihilangkan
     }
 }
 
-// Photo Indicator (Dots)
-function updatePhotoIndicator(folder){
-  const data = albumData[folder];
-  if (!data.indicator) return;
+// Photo Indicator (Dots) - Fungsi dinonaktifkan
+// function updatePhotoIndicator(folder){ ... }
 
-  data.indicator.innerHTML = '';
-  for(let i=0; i < data.photos.length; i++){
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
-    if(i === data.current) dot.classList.add('active');
-    dot.addEventListener('click', () => {
-      showPhoto(folder, i);
-      resetAutoSwipe(folder);
-    });
-    data.indicator.appendChild(dot);
-  }
-}
 
 // Folder Selection Buttons
 document.getElementById('mainAlbumBtn').onclick = ()=>{
@@ -699,7 +705,7 @@ document.getElementById('folder2Btn').onclick = ()=>{
 // Auto Swipe Logic
 function startAutoSwipe(folder){
   clearInterval(autoSwipeInterval); 
-  if (albumData[folder].photos.length > 1) { // Hanya autoswipe jika ada lebih dari 1 foto
+  if (albumData[folder].photos.length > 1) { 
     autoSwipeInterval = setInterval(()=>{ navPhoto(folder, 1); }, 5000);
   }
 }
@@ -715,10 +721,66 @@ function setupSwipe(element, folder){
   element.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
   element.addEventListener('touchend',e=>{
     const endX = e.changedTouches[0].clientX;
-    if(endX-startX>50) navPhoto(folder, -1);
-    if(startX-endX>50) navPhoto(folder, 1);
+    // Cek apakah itu swipe (lebih dari 50px)
+    if(Math.abs(endX - startX) > 50) { 
+      if(endX-startX>50) navPhoto(folder, -1);
+      if(startX-endX>50) navPhoto(folder, 1);
+    }
   });
 }
+
+// Double Tap Setup (untuk Like Animation)
+let lastTap = 0;
+function setupDoubleTap(element, folder) {
+    // Listener untuk perangkat sentuh (Double Tap)
+    element.addEventListener('touchstart', e => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            // Double Tap terdeteksi
+            e.preventDefault(); // Mencegah zoom/scroll
+            handleLikeAction(folder);
+        }
+        lastTap = currentTime;
+    });
+
+    // Listener untuk desktop (Double Click)
+    element.addEventListener('dblclick', e => {
+        e.preventDefault();
+        handleLikeAction(folder);
+    });
+}
+
+// Fungsi untuk menampilkan animasi hati
+function showHeartAnimation(container) {
+    const heart = document.createElement('div');
+    heart.classList.add('heart-anim');
+    heart.textContent = '❤️'; 
+    container.appendChild(heart);
+
+    // Hapus elemen setelah animasi selesai (1 detik)
+    setTimeout(() => {
+        heart.remove();
+    }, 800);
+}
+
+// Fungsi yang menangani aksi Like
+function handleLikeAction(folder) {
+    const data = albumData[folder];
+    if (data.photos.length === 0) return; // Jangan lakukan apa-apa jika album kosong
+
+    // 1. Tampilkan animasi hati
+    showHeartAnimation(data.container);
+
+    // 2. Perbarui status Like (jika belum disukai, jadikan disukai)
+    if (!data.liked) {
+        data.liked = true;
+        updateLikeButton(data.likeBtnElement, data.liked);
+        // Opsi: Tampilkan alert setelah animasi selesai
+        // setTimeout(() => { alert('Anda menyukai foto ini! ❤️'); }, 500);
+    }
+}
+
 
 // Navbar buttons
 document.getElementById('homeBtn').onclick=()=>showPage('home');
@@ -730,31 +792,29 @@ const particleContainer = document.getElementById('particleContainer');
 function createParticle() {
   const p = document.createElement('div');
   p.classList.add('particle');
-  const size = Math.random() * 10 + 5; // Ukuran lebih bervariasi
-  const duration = Math.random() * 8 + 4; // Durasi lebih bervariasi
-  const delay = Math.random() * 5; // Tambah delay agar tidak muncul bersamaan
+  const size = Math.random() * 10 + 5; 
+  const duration = Math.random() * 8 + 4; 
+  const delay = Math.random() * 5; 
   
-  // Posisi awal di atas atau kiri/kanan
-  const startEdge = Math.floor(Math.random() * 4); // 0=top, 1=right, 2=bottom, 3=left
+  const startEdge = Math.floor(Math.random() * 4); 
   let startX, startY;
   
-  if (startEdge === 0) { // Top
+  if (startEdge === 0) { 
       startX = Math.random() * window.innerWidth;
       startY = -size;
-  } else if (startEdge === 1) { // Right
+  } else if (startEdge === 1) { 
       startX = window.innerWidth + size;
       startY = Math.random() * window.innerHeight;
-  } else if (startEdge === 2) { // Bottom
+  } else if (startEdge === 2) { 
       startX = Math.random() * window.innerWidth;
       startY = window.innerHeight + size;
-  } else { // Left
+  } else { 
       startX = -size;
       startY = Math.random() * window.innerHeight;
   }
 
-  // Tujuan akhir di area tengah
-  const endX = startX + (Math.random() * 400 - 200); // Sedikit bergeser dari startX
-  const endY = startY + (Math.random() * 400 - 200); // Sedikit bergeser dari startY
+  const endX = startX + (Math.random() * 400 - 200); 
+  const endY = startY + (Math.random() * 400 - 200); 
 
   p.style.setProperty('--x', `${endX - startX}px`);
   p.style.setProperty('--y', `${endY - startY}px`);
@@ -767,15 +827,13 @@ function createParticle() {
   
   particleContainer.appendChild(p);
 
-  // Hapus partikel setelah selesai animasi untuk efisiensi
   p.addEventListener('animationend', () => {
       p.remove();
-      createParticle(); // Buat partikel baru untuk mengganti
+      createParticle(); 
   });
 }
 
-// Buat beberapa partikel awal
-for(let i=0;i<50;i++){ // Kurangi jumlah partikel awal, akan dibuat ulang secara dinamis
+for(let i=0;i<50;i++){ 
   createParticle();
 }
 
@@ -790,20 +848,27 @@ function updateLikeButton(button, isLiked){
 
 function toggleLike(folder){
   const data = albumData[folder];
+  if (data.photos.length === 0) return;
+
   data.liked = !data.liked;
-  let likeBtn;
-  if(folder === 'main'){
-      likeBtn = document.getElementById('likeBtn');
-  } else {
-      likeBtn = document.querySelector(`#${folder}Page .photo-menu button:nth-child(2)`);
-  }
+  
+  // Ambil tombol like yang benar
+  const likeBtn = data.likeBtnElement;
   
   if(likeBtn) updateLikeButton(likeBtn, data.liked);
+  
+  // Jika menjadi like, tampilkan animasi hati
+  if(data.liked) {
+    showHeartAnimation(data.container);
+  }
+
   alert(data.liked ? 'Anda menyukai foto ini! ❤️' : 'Anda membatalkan suka pada foto ini.');
 }
 
 function sharePhoto(folder){
   const data = albumData[folder];
+  if (data.photos.length === 0) return alert('Folder ini kosong.');
+
   const url = encodeURIComponent(data.photos[data.current]);
   const text = encodeURIComponent(`Lihat foto ini di ${folder==='main'?'Album Digital Khirza':'Folder Album'}!`);
   
@@ -834,11 +899,13 @@ function sharePhoto(folder){
 
 function downloadPhoto(folder){
   const data = albumData[folder];
+  if (data.photos.length === 0) return alert('Folder ini kosong.');
+  
   const downloadUrl = data.photos[data.current]; 
   
   const link = document.createElement('a');
   link.href = downloadUrl;
-  link.download = `Khirza_Album_${folder}_${data.current+1}.jpg`; // Nama file lebih deskriptif
+  link.download = `Khirza_Album_${folder}_${data.current+1}.jpg`; 
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
