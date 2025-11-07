@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Album Digital Khirza - Premium Glow</title>
-<link rel="icon" type="image/png" href="https://i.ibb.co/L5rK39B/heart-icon.png"> <style>
+<style>
 html, body {
   margin:0; padding:0;
   font-family:'Poppins',sans-serif;
@@ -13,23 +13,6 @@ html, body {
   background:linear-gradient(135deg,#ffd6e8,#ffb3d1,#ff99c7);
   display:flex; justify-content:center; align-items:center;
 }
-
-/* --- PRELOADER --- */
-#preloader {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg,#ff99c7, #ffb3d1);
-    z-index: 9999;
-    display: flex; justify-content: center; align-items: center;
-    color: white; font-size: 2.5em; font-weight: bold;
-    letter-spacing: 2px;
-    opacity: 1; visibility: visible;
-    transition: opacity 0.5s, visibility 0.5s;
-    text-shadow: 0 0 10px rgba(255,255,255,0.8);
-}
-#preloader.hidden {
-    opacity: 0; visibility: hidden;
-}
-
 
 /* Particle Background */
 #particleContainer{
@@ -91,25 +74,14 @@ html, body {
   .menu-toggle{ display:flex; }
 }
 
-/* Page Transisi yang Ditingkatkan */
+/* Page */
 .page{
   width:100%; height:100%;
   display:none; justify-content:center; align-items:center; flex-direction:column;
-  opacity:0; 
+  opacity:0; transition:opacity 0.8s ease-in-out;
   position:absolute; top:0; left:0;
-  transform: translateX(100%); /* Siap untuk slide dari kanan */
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
 }
-.active-page{ 
-    display:flex; 
-    opacity:1; 
-    transform: translateX(0); /* Slide ke posisi tengah */
-    z-index: 100;
-}
-#loginPage.active-page, #homePage.active-page {
-    transform: translateX(0);
-}
-
+.active-page{ display:flex; opacity:1; }
 
 /* Album */
 .album-wrapper{ position:relative; text-align:center; width:90%; max-width:700px; z-index:2; opacity:0; transition:opacity 1.2s ease; }
@@ -130,11 +102,7 @@ html, body {
   opacity:0; transition:opacity 1.3s ease-in-out, transform 1.3s ease-in-out, box-shadow 1.3s ease-in-out;
   border-radius:20px; box-shadow:0 0 0px rgba(255,192,222,0);
 }
-.photo.active{ 
-    opacity:1; z-index:2; 
-    transform:scale(1.03); 
-    box-shadow:0 10px 40px rgba(255,192,222,0.8); /* Bayangan Ditingkatkan */
-}
+.photo.active{ opacity:1; z-index:2; transform:scale(1.03); box-shadow:0 0 40px rgba(255,192,222,0.6); }
 .nav-btn{
   position:absolute; top:50%; transform:translateY(-50%);
   font-size:2em; color:white; background:rgba(255,255,255,0.2);
@@ -155,19 +123,6 @@ html, body {
   position:relative;
 }
 .photo-menu button:hover{ color:#ffb3d1; }
-.photo-menu button .heart-icon { 
-    margin-left: 10px; 
-    font-size: 1.2em; 
-    transition: transform 0.2s;
-}
-.photo-menu button .heart-icon.bounce {
-    animation: bounce 0.4s ease;
-}
-@keyframes bounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
 
 /* Info Box */
 .info-box{ background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
@@ -216,22 +171,6 @@ html, body {
 /* Tombol Folder */
 .folder-btn:hover{ background:#ffb3d1 !important; transform:scale(1.05); }
 
-/* Tombol Musik */
-#musicToggle {
-    position: fixed; top: 20px; right: 20px; z-index: 1000;
-    padding: 10px; border-radius: 50%; border: none;
-    background: rgba(255, 255, 255, 0.3); color: white;
-    font-size: 1.2em; cursor: pointer; transition: 0.3s;
-}
-#musicToggle:hover { background: rgba(255, 255, 255, 0.5); }
-#musicToggle.muted { opacity: 0.6; }
-
-/* Indikator Foto */
-.photo-counter {
-    color: white; font-size: 1.2em; margin-bottom: 10px;
-    text-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
-
 
 /* Responsive */
 @media(max-width:600px){
@@ -239,13 +178,10 @@ html, body {
   .album-container{ height:450px; }
   .nav-btn{ width:40px; height:40px; font-size:1.5em; }
   .back-btn{ top:10px; left:10px; padding:8px 12px; font-size:0.9em; }
-  #musicToggle { top: 10px; right: 10px; padding: 8px; font-size: 1em; }
 }
 </style>
 </head>
 <body>
-
-<div id="preloader">Loading... 💖</div>
 
 <div id="particleContainer"></div>
 
@@ -258,7 +194,7 @@ html, body {
   </ul>
 </nav>
 
-<button id="musicToggle">🎶</button> <div class="page active-page" id="loginPage">
+<div class="page active-page" id="loginPage">
   <div id="loginTitle">𝗟𝗢𝗚𝗜𝗡 𝗨𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝗔𝗟𝗕𝗨𝗠</div>
   <div id="loginBox">
     <input type="text" id="username" placeholder="Username">
@@ -270,7 +206,8 @@ html, body {
 </div>
 
 <div class="page" id="homePage">
-  <div class="album-wrapper" id="folderSelectWrapper" style="display:flex; flex-direction:column; gap:20px; max-width:400px; padding:20px; opacity:1;">-text" style="margin-bottom:0;">𝗣𝗜𝗟𝗜𝗛 𝗙𝗢𝗟𝗗𝗘𝗥 𝗔𝗟𝗕𝗨𝗠</div>
+  <div class="album-wrapper" id="folderSelectWrapper" style="display:flex; flex-direction:column; gap:20px; max-width:400px; padding:20px; opacity:1;">
+    <div class="romantic-text" style="margin-bottom:0;">𝗣𝗜𝗟𝗜𝗛 𝗙𝗢𝗟𝗗𝗘𝗥 𝗔𝗟𝗕𝗨𝗠</div>
     <button id="mainAlbumBtn" class="folder-btn" style="padding:15px; border:none; border-radius:15px; background:#ff99c7; color:white; font-weight:bold; cursor:pointer; transition:0.3s;">
         ALBUM UTAMA 💖
     </button>
@@ -283,9 +220,9 @@ html, body {
   </div>
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
-    <button class="back-btn" onclick="askBackToHome()">&#10094; KEMBALI KE HOME</button>
+    <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI KE HOME</button>
     <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝐋𝐀𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
-    <div class="photo-counter" id="mainPhotoCounter"></div> <div class="album-container" id="albumContainer"></div>
+    <div class="album-container" id="albumContainer"></div>
     <div class="photo-menu" id="photoMenu">
       <button id="shareBtn">Share</button>
       <button id="likeBtn">Like</button>
@@ -297,13 +234,13 @@ html, body {
 </div>
 
 <div class="page" id="folder1Page">
-  <button class="back-btn" onclick="askBackToHome()">&#10094; KEMBALI KE HOME</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI KE HOME</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder1">
     <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
-    <div class="photo-counter" id="folder1PhotoCounter"></div> <div class="album-container folder-album-container"></div>
+    <div class="album-container folder-album-container"></div>
     <div class="photo-menu">
       <button onclick="sharePhoto('folder1')">Share</button>
-      <button onclick="toggleLike('folder1')">Like <span class="heart-icon" id="folder1HeartIcon"></span></button>
+      <button onclick="toggleLike('folder1')">Like</button>
       <button onclick="downloadPhoto('folder1')">Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder1', -1)">&#10094;</button>
@@ -312,13 +249,13 @@ html, body {
 </div>
 
 <div class="page" id="folder2Page">
-  <button class="back-btn" onclick="askBackToHome()">&#10094; KEMBALI KE HOME</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI KE HOME</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder2">
     <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟐 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
-    <div class="photo-counter" id="folder2PhotoCounter"></div> <div class="album-container folder-album-container"></div>
+    <div class="album-container folder-album-container"></div>
     <div class="photo-menu">
       <button onclick="sharePhoto('folder2')">Share</button>
-      <button onclick="toggleLike('folder2')">Like <span class="heart-icon" id="folder2HeartIcon"></span></button>
+      <button onclick="toggleLike('folder2')">Like</button>
       <button onclick="downloadPhoto('folder2')">Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder2', -1)">&#10094;</button>
@@ -327,7 +264,6 @@ html, body {
 </div>
 
 <div class="page" id="aboutPage">
-  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI KE HOME</button>
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
@@ -336,7 +272,6 @@ html, body {
 </div>
 
 <div class="page" id="contactPage">
-  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI KE HOME</button>
   <div class="info-box">
     <h2>Contact</h2>
     <p>Email: <a href="mailto:arcelbussines@email.com">arcelbussines@email.com</a></p>
@@ -347,14 +282,12 @@ html, body {
 <audio id="bgMusic" src="https://h.top4top.io/m_35969emdf0.m4a" loop></audio>
 
 <script>
-// --- GLOBAL SETUP ---
+// Navbar toggle
 const navMenu = document.getElementById('navMenu');
 const menuToggle = document.getElementById('menuToggle');
-const music = document.getElementById('bgMusic');
-const musicToggle = document.getElementById('musicToggle');
-let autoSwipeInterval;
+menuToggle.addEventListener('click',()=>navMenu.classList.toggle('active'));
 
-// Pages
+// Pages (Diperbarui)
 const pages = { 
   login: document.getElementById('loginPage'), 
   home: document.getElementById('homePage'), 
@@ -364,60 +297,83 @@ const pages = {
   contact: document.getElementById('contactPage') 
 };
 
-// Data Album (URL sudah diperbaiki)
+// Data Album (Diperbarui)
 const albumData = {
   main: {
+    // ... URL album utama tidak diubah
     photos: [
-      "https://images2.imgbox.com/07/6d/flAblCPU_o.jpg", "https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg", "https://images2.imgbox.com/17/93/x3zJwzr8_o.jpg", "https://images2.imgbox.com/9f/c4/0HZK3fj6_o.jpg", "https://images2.imgbox.com/d4/f3/y30RHo1v_o.jpg", "https://images2.imgbox.com/d0/ef/utCLLETK_o.jpg", "https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg", "https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg", "https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg", "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg", "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg", "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg", "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg", "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg", "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg", "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg", "https://images2.imgbox.com/aa/b9/HsnXJMTE_o.jpg", "https://images2.imgbox.com/9d/1e/44qSzju4_o.jpg", "https://images2.imgbox.com/94/ec/28ile6qy_o.jpg", "https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg", "https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg", "https://images2.imgbox.com/7a/11/Example22_o.jpg"
+      "https://images2.imgbox.com/07/6d/flAblCPU_o.jpg",
+      "https://images2.imgbox.com/8a/48/5WnFlheI_o.jpg",
+      "https://images2.imgbox.com/17/93/x3zJwzr8_o.jpg",
+      "https://images2.imgbox.com/9f/c4/0HZK3fj6_o.jpg",
+      "https://images2.imgbox.com/d4/f3/y30RHo1v_o.jpg",
+      "https://images2.imgbox.com/d0/ef/utCLLETK_o.jpg",
+      "https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg",
+      "https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg",
+      "https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg",
+      "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
+      "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
+      "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
+      "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
+      "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
+      "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
+      "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
+      "https://images2.imgbox.com/aa/b9/HsnXJMTE_o.jpg",
+      "https://images2.imgbox.com/9d/1e/44qSzju4_o.jpg",
+      "https://images2.imgbox.com/94/ec/28ile6qy_o.jpg",
+      "https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg",
+      "https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg",
+      "https://images2.imgbox.com/7a/11/Example22_o.jpg"
     ],
-    current: 0, liked: false, container: document.getElementById('albumContainer'), counter: document.getElementById('mainPhotoCounter')
+    current: 0,
+    liked: false,
+    container: document.getElementById('albumContainer')
   },
   folder1: {
+    // GANTI URL FOTO DI BAWAH INI UNTUK FOLDER 1 (SUDAH DIPERBAIKI)
     photos: [
-      "https://images2.imgbox.com/Nl/T1/NlT17m3Q_o.jpg", "https://images2.imgbox.com/qP/6e/qnP6eqDM_o.jpg", "https://images2.imgbox.com/1B/yz/1Byz1nng_o.jpg", "https://images2.imgbox.com/ln/sY/lnsYm94x_o.jpg", "https://images2.imgbox.com/qO/CU/qoCU0CLO_o.jpg", "https://images2.imgbox.com/hD/dD/hDdDMDO2_o.jpg", "https://images2.imgbox.com/7Y/7H/7Y7Hxs2q_o.jpg", "https://images2.imgbox.com/h8/es/h8esqBbd_o.jpg", "https://images2.imgbox.com/FX/Fn/FXFnE2Jv_o.jpg", "https://images2.imgbox.com/Fu/QI/FuQI0GQf_o.jpg"
+      "https://images2.imgbox.com/Nl/T1/NlT17m3Q_o.jpg", // Menggunakan format direct link
+      "https://images2.imgbox.com/qP/6e/qnP6eqDM_o.jpg", 
+      "https://images2.imgbox.com/1B/yz/1Byz1nng_o.jpg",
+      "https://images2.imgbox.com/ln/sY/lnsYm94x_o.jpg", 
+      "https://images2.imgbox.com/qO/CU/qoCU0CLO_o.jpg", 
+      "https://images2.imgbox.com/hD/dD/hDdDMDO2_o.jpg",
+      "https://images2.imgbox.com/7Y/7H/7Y7Hxs2q_o.jpg",
+      "https://images2.imgbox.com/h8/es/h8esqBbd_o.jpg", 
+      "https://images2.imgbox.com/FX/Fn/FXFnE2Jv_o.jpg",
+      "https://images2.imgbox.com/Fu/QI/FuQI0GQf_o.jpg"
     ],
-    current: 0, liked: false, container: null, counter: document.getElementById('folder1PhotoCounter'), heart: document.getElementById('folder1HeartIcon')
+    current: 0,
+    liked: false,
+    container: null 
   },
   folder2: {
+    // GANTI URL FOTO DI BAWAH INI UNTUK FOLDER 2 (SUDAH DIPERBAIKI)
     photos: [
-      "https://images2.imgbox.com/Ph/NF/PhNFaKki_o.jpg", "https://images2.imgbox.com/DZ/Wr/DZrWryLt_o.jpg", "https://images2.imgbox.com/RP/os/RPosm6vt_o.jpg", "https://images2.imgbox.com/fy/WE/fyWESKIk_o.jpg", "https://images2.imgbox.com/QV/Yq/QVYqyMnR_o.jpg", "https://images2.imgbox.com/ZX/RA/ZXRAxmm2_o.jpg"
+      "https://images2.imgbox.com/Ph/NF/PhNFaKki_o.jpg", // Menggunakan format direct link
+      "https://images2.imgbox.com/DZ/Wr/DZrWryLt_o.jpg",
+      "https://images2.imgbox.com/RP/os/RPosm6vt_o.jpg", 
+      "https://images2.imgbox.com/fy/WE/fyWESKIk_o.jpg",
+      "https://images2.imgbox.com/QV/Yq/QVYqyMnR_o.jpg", 
+      "https://images2.imgbox.com/ZX/RA/ZXRAxmm2_o.jpg"
     ],
-    current: 0, liked: false, container: null, counter: document.getElementById('folder2PhotoCounter'), heart: document.getElementById('folder2HeartIcon')
+    current: 0,
+    liked: false,
+    container: null 
   }
 };
 
-// --- PRELOADER & ONLOAD ---
-window.addEventListener('load', () => {
-    // Sembunyikan preloader setelah 1.5 detik
-    setTimeout(() => {
-        document.getElementById('preloader').classList.add('hidden');
-    }, 1500);
-});
+let autoSwipeInterval;
 
-
-// --- MUSIK ---
-musicToggle.addEventListener('click', () => {
-    if (music.paused) {
-        music.play().catch(e => console.error("Auto-play blocked:", e));
-        musicToggle.textContent = '🎶';
-        musicToggle.classList.remove('muted');
-    } else {
-        music.pause();
-        musicToggle.textContent = '🔇';
-        musicToggle.classList.add('muted');
-    }
-});
-// Fallback untuk Play music on first click
-document.body.addEventListener('click', () => { music.play().catch(() => {}); }, {once:true});
-
-// --- LOGIN ---
+// Login
 const loginBtn = document.getElementById('loginBtn');
 const loginError = document.getElementById('loginError');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const togglePass = document.getElementById('togglePass');
-const albumWrapper = document.getElementById('albumWrapper'); 
+const albumWrapper = document.getElementById('albumWrapper'); // Album Utama
 const folderSelectWrapper = document.getElementById('folderSelectWrapper');
+const music = document.getElementById('bgMusic');
 
 togglePass.addEventListener('click', ()=>{
   passwordInput.type = (passwordInput.type==='password')?'text':'password'; 
@@ -438,79 +394,47 @@ loginBtn.addEventListener('click', ()=>{
   }
 });
 
-// --- NAVIGASI HALAMAN (Ditingkatkan dengan Transisi) ---
+// Fungsi untuk menampilkan halaman (Diperbarui)
 function showPage(page){
   for(const key in pages){ 
-    const isTarget = (key === page || (page === 'mainAlbum' && key === 'home'));
-    
-    // Kelola kelas aktif untuk transisi slide
-    if (isTarget) {
-      pages[key].style.display = 'flex';
-      setTimeout(() => {
-          pages[key].classList.add('active-page');
-      }, 10); // sedikit delay agar transisi berfungsi
+    if (key === 'home') {
+        // Logika kompleks untuk Home Page (folder select vs main album)
+        if (page === 'home') {
+             pages[key].style.display = 'flex';
+             pages[key].classList.add('active-page');
+             folderSelectWrapper.style.display = 'flex';
+             albumWrapper.style.display = 'none';
+             clearInterval(autoSwipeInterval); // Hentikan autoswipe saat kembali ke folder select
+        } else if (page === 'mainAlbum') {
+            pages['home'].style.display = 'flex';
+            pages['home'].classList.add('active-page');
+            folderSelectWrapper.style.display = 'none';
+            albumWrapper.style.display = 'block';
+        } else {
+             pages[key].style.display = 'none';
+             pages[key].classList.remove('active-page');
+        }
     } else {
-      pages[key].classList.remove('active-page');
-      // Sembunyikan elemen setelah transisi selesai (sesuai durasi transisi 0.8s)
-      setTimeout(() => {
-          pages[key].style.display = 'none';
-          // Atur kembali posisi untuk slide berikutnya
-          if(key!=='login') pages[key].style.transform = 'translateX(100%)';
-      }, 800); 
+      pages[key].style.display = (key===page)?'flex':'none'; 
+      pages[key].classList.toggle('active-page', key===page); 
     }
   } 
-
-  // Logika khusus Home (Folder Select vs Album Utama)
-  if(page === 'home'){
-    folderSelectWrapper.style.display = 'flex';
-    albumWrapper.style.display = 'none';
-    clearInterval(autoSwipeInterval);
-  } else if (page === 'mainAlbum') {
-    folderSelectWrapper.style.display = 'none';
-    albumWrapper.style.display = 'block';
-  }
-  
-  // Putar musik jika masuk ke halaman album/folder
-  if(['mainAlbum','folder1','folder2'].includes(page)) {
-      playMusicIfAlbum();
-  } else {
-      // Hentikan musik saat kembali ke login/about/contact/folder select
-      music.pause();
-  }
+  if(page!=='login' && page!=='about' && page!=='contact' && page!=='home') playMusicIfAlbum();
 }
 
-// Konfirmasi saat kembali ke Home/Login
-function askBackToHome(){
-    if(confirm("Yakin ingin kembali ke halaman utama (pemilihan folder)?")){
-        showPage('home');
-    }
-}
-
-
-// --- FUNGSI ALBUM & FOTO ---
 
 // Fungsi untuk menampilkan foto spesifik
 function showPhoto(folder, i){
   const data = albumData[folder];
   data.current = i;
-  if (!data.container || data.photos.length === 0) return; 
+  if (!data.container) return; 
 
   data.container.innerHTML='';
   const img=document.createElement('img');
   img.src=data.photos[i]; img.className='photo active';
   data.container.appendChild(img);
-  
-  // Update Counter Foto
-  if (data.counter) {
-      data.counter.textContent = `${i + 1} / ${data.photos.length}`;
-  }
-  
-  // Update Like Button
-  if (data.heart) {
-      updateLikeButton(data.heart.parentNode, data.liked, data.heart);
-  } else if (folder === 'main') {
-      updateLikeButton(document.getElementById('likeBtn'), data.liked, document.getElementById('likeBtn').querySelector('.heart-icon'));
-  }
+
+  // Update like button status (Harus diimplementasikan di HTML secara spesifik jika ingin update)
 }
 
 // Fungsi untuk navigasi foto (prev/next)
@@ -526,6 +450,8 @@ function initMainAlbum(){
   showPhoto('main', albumData.main.current);
   document.getElementById('prevBtn').onclick = () => navPhoto('main', -1);
   document.getElementById('nextBtn').onclick = () => navPhoto('main', 1);
+
+  // Swipe listener for Main Album
   setupSwipe(albumData.main.container, 'main');
   startAutoSwipe('main');
   albumWrapper.classList.add('show');
@@ -542,17 +468,22 @@ function initFolderAlbum(folder){
     }
 }
 
-// --- BUTTONS FOLDER & NAVIGASI ---
-document.getElementById('mainAlbumBtn').onclick = ()=>{ showPage('mainAlbum'); initMainAlbum(); };
-document.getElementById('folder1Btn').onclick = ()=>{ showPage('folder1'); initFolderAlbum('folder1'); };
-document.getElementById('folder2Btn').onclick = ()=>{ showPage('folder2'); initFolderAlbum('folder2'); };
+// Folder Selection Buttons
+document.getElementById('mainAlbumBtn').onclick = ()=>{
+    showPage('mainAlbum'); 
+    initMainAlbum();
+};
+// Event listener untuk tombol folder
+document.getElementById('folder1Btn').onclick = ()=>{
+    showPage('folder1');
+    initFolderAlbum('folder1');
+};
+document.getElementById('folder2Btn').onclick = ()=>{
+    showPage('folder2');
+    initFolderAlbum('folder2');
+};
 
-document.getElementById('homeBtn').onclick=()=>showPage('home');
-document.getElementById('aboutBtn').onclick=()=>showPage('about');
-document.getElementById('contactBtn').onclick=()=>showPage('contact');
-menuToggle.addEventListener('click',()=>navMenu.classList.toggle('active'));
-
-// --- SWIPE & AUTOSWIPE ---
+// Auto Swipe Logic
 function startAutoSwipe(folder){
   clearInterval(autoSwipeInterval); 
   autoSwipeInterval = setInterval(()=>{ navPhoto(folder, 1); }, 5000);
@@ -563,6 +494,7 @@ function resetAutoSwipe(folder){
   startAutoSwipe(folder);
 }
 
+// Swipe Setup
 function setupSwipe(element, folder){
   let startX=0;
   element.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
@@ -573,92 +505,12 @@ function setupSwipe(element, folder){
   });
 }
 
-// --- PHOTO ACTIONS (LIKE, SHARE, DOWNLOAD) ---
+// Navbar buttons
+document.getElementById('homeBtn').onclick=()=>showPage('home');
+document.getElementById('aboutBtn').onclick=()=>showPage('about');
+document.getElementById('contactBtn').onclick=()=>showPage('contact');
 
-function updateLikeButton(button, isLiked, heartIconElement){
-    if(!heartIconElement){
-        heartIconElement = document.createElement('span');
-        heartIconElement.classList.add('heart-icon');
-        button.appendChild(heartIconElement);
-    }
-    
-    if(isLiked){
-        heartIconElement.textContent = '❤️';
-        heartIconElement.classList.add('bounce');
-        // Hapus class bounce setelah animasi
-        setTimeout(() => heartIconElement.classList.remove('bounce'), 500);
-    } else {
-        heartIconElement.textContent = '';
-        heartIconElement.classList.remove('bounce');
-    }
-}
-
-function toggleLike(folder){
-  const data = albumData[folder];
-  data.liked = !data.liked;
-  let heartIcon;
-  if(folder === 'main'){
-      heartIcon = document.getElementById('likeBtn').querySelector('.heart-icon');
-      if(!heartIcon) {
-          heartIcon = document.createElement('span');
-          heartIcon.classList.add('heart-icon');
-          document.getElementById('likeBtn').appendChild(heartIcon);
-      }
-      updateLikeButton(document.getElementById('likeBtn'), data.liked, heartIcon);
-  } else {
-      updateLikeButton(document.querySelector(`#${folder}Page .photo-menu button:nth-child(2)`), data.liked, data.heart);
-  }
-}
-
-// Inisialisasi ikon hati di album utama
-document.getElementById('likeBtn').innerHTML += '<span class="heart-icon"></span>';
-document.getElementById('likeBtn').addEventListener('click', ()=>toggleLike('main'));
-
-
-function sharePhoto(folder){
-  const data = albumData[folder];
-  const url = encodeURIComponent(data.photos[data.current]);
-  const text = encodeURIComponent(`Lihat foto ini di ${folder==='main'?'Album Digital Khirza':'Folder Album'}!`);
-  
-  const shareOptions = `
-    Pilih platform untuk membagikan foto:
-    1. WhatsApp
-    2. Twitter
-    3. Facebook
-    4. Telegram
-  `;
-  const choice = prompt(shareOptions,'1');
-  if(!choice) return;
-
-  switch(choice){
-    case '1': window.open(`https://wa.me/?text=${text}%20${url}`,'_blank'); break;
-    case '2': window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank'); break;
-    case '3': window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,'_blank'); break;
-    case '4': window.open(`https://t.me/share/url?url=${url}&text=${text}`,'_blank'); break;
-    default: alert('Pilihan tidak valid!'); break;
-  }
-}
-document.getElementById('shareBtn').addEventListener('click', ()=>sharePhoto('main'));
-
-
-function downloadPhoto(folder){
-  const data = albumData[folder];
-  const link = document.createElement('a');
-  link.href = data.photos[data.current];
-  link.download = `Foto-${folder}-${data.current+1}.jpg`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-document.getElementById('downloadBtn').addEventListener('click', ()=>downloadPhoto('main'));
-
-
-// Musik album otomatis play ketika halaman album
-function playMusicIfAlbum(){
-  if(music.paused) music.play().catch(()=>{}); 
-}
-
-// --- PARTICLE (Tidak berubah) ---
+// Particle (Tidak berubah)
 const particleContainer = document.getElementById('particleContainer');
 for(let i=0;i<200;i++){
   const p = document.createElement('div');
@@ -676,6 +528,94 @@ for(let i=0;i<200;i++){
   p.style.top = `${Math.random()*100}%`;
   particleContainer.appendChild(p);
 }
+
+// Photo menu actions (Diperbarui untuk folder)
+function updateLikeButton(button, isLiked){
+    let heart = button.querySelector('#heartIcon');
+    if(isLiked){
+        if(!heart){
+            heart = document.createElement('span');
+            heart.id = 'heartIcon';
+            heart.textContent = '❤️';
+            heart.style.marginLeft = '10px';
+            heart.style.fontSize = '1.2em';
+            button.appendChild(heart);
+        }
+    } else {
+        if(heart) button.removeChild(heart);
+    }
+}
+
+function toggleLike(folder){
+  const data = albumData[folder];
+  data.liked = !data.liked;
+  // Cari tombol 'Like' yang relevan
+  let likeBtn;
+  if(folder === 'main'){
+      likeBtn = document.getElementById('likeBtn');
+  } else {
+      likeBtn = document.querySelector(`#${folder}Page .photo-menu button:nth-child(2)`);
+  }
+  
+  if(likeBtn) updateLikeButton(likeBtn, data.liked);
+}
+// Panggil fungsi like lama untuk Album Utama
+document.getElementById('likeBtn').addEventListener('click', ()=>toggleLike('main'));
+
+
+function sharePhoto(folder){
+  const data = albumData[folder];
+  const url = encodeURIComponent(data.photos[data.current]);
+  const text = encodeURIComponent(`Lihat foto ini di ${folder==='main'?'Album Digital Khirza':'Folder Album'}!`);
+  
+  const shareOptions = `
+    Pilih platform untuk membagikan foto:
+    1. WhatsApp
+    2. Twitter
+    3. Facebook
+    4. Telegram
+    5. LinkedIn
+    6. Pinterest
+    7. Email
+  `;
+  const choice = prompt(shareOptions,'1');
+  if(!choice) return;
+
+  switch(choice){
+    case '1': window.open(`https://wa.me/?text=${text}%20${url}`,'_blank'); break;
+    case '2': window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank'); break;
+    case '3': window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,'_blank'); break;
+    case '4': window.open(`https://t.me/share/url?url=${url}&text=${text}`,'_blank'); break;
+    case '5': window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`,'_blank'); break;
+    case '6': window.open(`https://pinterest.com/pin/create/button/?url=${url}&description=${text}`,'_blank'); break;
+    case '7': window.open(`mailto:?subject=${text}&body=${url}`,'_blank'); break;
+    default: alert('Pilihan tidak valid!'); break;
+  }
+}
+// Panggil fungsi share lama untuk Album Utama
+document.getElementById('shareBtn').addEventListener('click', ()=>sharePhoto('main'));
+
+
+function downloadPhoto(folder){
+  const data = albumData[folder];
+  const link = document.createElement('a');
+  link.href = data.photos[data.current];
+  link.download = `Foto-${folder}-${data.current+1}.jpg`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+// Panggil fungsi download lama untuk Album Utama
+document.getElementById('downloadBtn').addEventListener('click', ()=>downloadPhoto('main'));
+
+
+// Musik album otomatis play ketika halaman album
+function playMusicIfAlbum(){
+  music.play().catch(()=>{}); 
+}
+
+// Play music on first click (fallback)
+document.body.addEventListener('click', ()=>{ music.play(); }, {once:true});
 </script>
 </body>
 </html>
