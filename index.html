@@ -1301,7 +1301,7 @@ document.addEventListener('click', (e) => {
 
 
 function updateChatHeader(usersData) {
-    const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
+    const opponentId = myUserId === 'zaza' ? 'Arcel' : 'zaza';
     opponentInfo = usersData[opponentId] || CHAT_USER_PROFILES[opponentId];
     
     if (opponentInfo) {
@@ -1416,7 +1416,7 @@ socket.on('receive_message', (data) => {
 
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
-    const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
+    const opponentId = myUserId === 'zaza' ? 'Arcel' : 'zaza';
     
     if (onlineIds.includes(opponentId)) {
         chatStatus.textContent = 'Online ✨';
