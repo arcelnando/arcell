@@ -27,7 +27,7 @@ const USER_ACCOUNTS = {
         isVerified: true,
         avatar: 'ZA' 
     },
-    'khirza': { 
+    'Arcel': { 
         id: 'arcel', 
         password: 'arcel', 
         name: 'Arcel', 
