@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Album</title>
+<title>CELZ</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
@@ -354,8 +354,8 @@ html, body {
 .navbar button#logoutBtn::after{
   display:none;
 }
-/* Chat Delete Button */
-.delete-chat-btn {
+/* Chat Delete Button (DIUBAH UNTUK OPSI HAPUS UNTUK SEMUA ORANG) */
+.delete-chat-menu {
     position: absolute;
     top: -5px;
     right: -5px;
@@ -363,18 +363,49 @@ html, body {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.3s;
-    line-height: 20px;
+    line-height: 25px;
     text-align: center;
     z-index: 5;
+    display: flex; align-items: center; justify-content: center;
 }
-.chat-bubble:hover .delete-chat-btn {
+.chat-bubble:hover .delete-chat-menu {
     opacity: 1;
+}
+
+/* Styling Menu Hapus */
+.delete-options {
+    position: absolute;
+    top: 25px;
+    right: 5px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    padding: 5px 0;
+    display: none;
+    min-width: 150px;
+}
+.delete-options button {
+    background: none;
+    border: none;
+    padding: 8px 15px;
+    width: 100%;
+    text-align: left;
+    color: #333;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.delete-options button:hover {
+    background: #f0f0f0;
 }
 
 /* Status Page Styling */
@@ -413,6 +444,32 @@ html, body {
 .status-item:hover {
     background: rgba(255,255,255,0.2);
 }
+
+/* Tombol Hapus Status */
+.delete-status-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff6f91;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    line-height: 25px;
+    text-align: center;
+    z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+}
+.status-item:hover .delete-status-btn {
+    opacity: 1;
+}
+
+
 .status-meta {
     display: flex; justify-content: space-between; align-items: center;
     font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 5px;
@@ -509,7 +566,7 @@ html, body {
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
     <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝐔𝗧𝗡𝗬𝐀</div>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
@@ -650,7 +707,7 @@ html, body {
         <div id="replySection" style="margin-top: 20px; display: none; align-items: center; gap: 10px;">
             <input type="text" id="statusReplyInput" placeholder="Kirim balasan...">
             <button id="sendReplyBtn" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; background: #00bcd4; color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;">
-                <span class="material-icons" style="font-size: 1.2em;">send</span>
+                <span class="material-icons">send</span>
             </button>
         </div>
 
@@ -672,7 +729,7 @@ const loginCredentials = {
 };
 const CHAT_USER_PROFILES = {
     'zaza': { id: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA' },
-    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH' }
+    'acel': { id: 'acel', name: 'acel', isVerified: false, avatar: 'A' }
 };
 
 let myUserId = ''; 
@@ -886,6 +943,10 @@ function showPage(page){
   navMenu.classList.remove('active');
   menuToggle.classList.remove('active');
   
+  // Khusus untuk Chat, muat history
+  if (page === 'chat') {
+      loadChatHistory();
+  }
   // Khusus untuk Status, muat list
   if (page === 'status') {
       renderStatusList();
@@ -1194,8 +1255,9 @@ function saveChatHistory(history) {
     localStorage.setItem(getLocalStorageKey('chatHistory'), JSON.stringify(history));
 }
 
-function deleteChatMessage(id) {
-    if (confirm("Anda yakin ingin menghapus pesan ini?")) {
+// **FUNGSI BARU: HAPUS CHAT UNTUK SAYA**
+function deleteChatMessageForMe(id) {
+    if (confirm("Anda yakin ingin menghapus pesan ini HANYA untuk Anda?")) {
         const messageElement = document.getElementById(`msg-${id}`);
         if (messageElement) messageElement.remove();
 
@@ -1204,6 +1266,39 @@ function deleteChatMessage(id) {
         saveChatHistory(history);
     }
 }
+
+// **FUNGSI BARU: HAPUS CHAT UNTUK SEMUA ORANG** (Simulasi)
+function deleteChatMessageForEveryone(id) {
+    if (confirm("Anda yakin ingin menghapus pesan ini UNTUK SEMUA ORANG? (Simulasi: Pesan akan diganti menjadi 'Pesan ini telah dihapus')")) {
+        
+        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        const index = history.findIndex(msg => msg.id == id);
+
+        if (index !== -1) {
+            // Update data di localStorage untuk simulasi
+            history[index].message = 'Pesan ini telah dihapus.';
+            history[index].media = null;
+            history[index].deleted = true; 
+            saveChatHistory(history);
+            
+            // Re-render chat untuk menampilkan perubahan (simulasi)
+            loadChatHistory();
+            
+            // Broadcast ke server untuk diupdate di sisi lawan (perlu implementasi di backend)
+            socket.emit('delete_message_for_everyone', { id: id, senderId: myUserId });
+        }
+    }
+}
+
+// **FUNGSI BARU: HIDE DELETE OPTIONS**
+document.addEventListener('click', (e) => {
+    document.querySelectorAll('.delete-options').forEach(menu => {
+        if (!menu.contains(e.target) && !e.target.closest('.delete-chat-menu')) {
+            menu.style.display = 'none';
+        }
+    });
+});
+
 
 function updateChatHeader(usersData) {
     const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
@@ -1215,11 +1310,11 @@ function updateChatHeader(usersData) {
     }
 }
 
-// FUNGSI CHAT DENGAN MEDIA (DIUBAH)
+// FUNGSI CHAT DENGAN MEDIA (DIUBAH UNTUK MENU HAPUS)
 function addMessageToChat(data, isHistory = false) {
-    const { message, media, timestamp, senderId, status } = data; // Tambah 'media'
+    const { message, media, timestamp, senderId, status, id, deleted } = data; // Tambah 'deleted'
     const isMe = senderId === myUserId;
-    const messageId = data.id || Date.now();
+    const messageId = id || Date.now();
     const timeDisplay = timestamp || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
     const msgDiv = document.createElement('div');
@@ -1241,11 +1336,15 @@ function addMessageToChat(data, isHistory = false) {
         border-bottom-${isMe ? 'right' : 'left'}-radius: 0;
         margin-bottom: 10px;
         display: inline-block; /* Agar bisa menampung media dengan baik */
+        opacity: ${deleted ? 0.7 : 1}; /* Jika dihapus, agak transparan */
     `;
 
     let contentHTML = '';
-    
-    if (media) {
+    let isDeletedMessage = deleted && message === 'Pesan ini telah dihapus.';
+
+    if (isDeletedMessage) {
+        contentHTML = `<em style="color: ${isMe ? 'white' : '#777'}; font-size: 0.9em;">${message}</em>`;
+    } else if (media) {
         // Konten media, pastikan media-message memiliki styling yang benar
         contentHTML += `<img src="${media}" class="media-message" alt="Media File" style="max-width: 180px; max-height: 180px; display: block; border-radius: 8px;">`;
         if (message) {
@@ -1255,15 +1354,35 @@ function addMessageToChat(data, isHistory = false) {
         contentHTML += message;
     }
 
-
-    // Konten Pesan + Jam + Status (Centang) + Tombol Hapus (DITAMBAH)
-    msgDiv.innerHTML = `
-        ${contentHTML}
+    // Status dan Time hanya ditampilkan jika pesan tidak dihapus
+    const statusAndTimeHTML = isDeletedMessage ? '' : `
         <span style="display: block; font-size: 0.75em; margin-top: 5px; text-align: right; color: ${isMe ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.6)'};">
             ${timeDisplay}
             ${isMe ? `<span class="material-icons message-status" data-id="${messageId}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${status === 'read' ? '#00e676' : 'rgba(255,255,255,0.8)'};">${status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule')}</span>` : ''}
         </span>
-        ${isMe ? `<button class="delete-chat-btn" onclick="deleteChatMessage('${messageId}')">&times;</button>` : ''} 
+    `;
+
+    // Tombol Hapus (Hanya muncul jika isMe dan TIDAK dihapus)
+    const deleteMenuHTML = (isMe && !isDeletedMessage) ? `
+        <button class="delete-chat-menu" onclick="event.stopPropagation(); this.nextElementSibling.style.display = 'block';">
+            <span class="material-icons" style="font-size: 14px;">more_vert</span>
+        </button>
+        <div class="delete-options">
+            <button onclick="deleteChatMessageForMe('${messageId}')">
+                <span class="material-icons" style="font-size: 1em; color:#333;">delete</span> Hapus untuk Saya
+            </button>
+            <button onclick="deleteChatMessageForEveryone('${messageId}')">
+                <span class="material-icons" style="font-size: 1em; color:red;">delete_forever</span> Hapus untuk Semua
+            </button>
+        </div>
+    ` : '';
+
+
+    // Konten Pesan + Jam + Status (Centang) + Tombol Hapus (DITAMBAH)
+    msgDiv.innerHTML = `
+        ${contentHTML}
+        ${statusAndTimeHTML}
+        ${deleteMenuHTML}
     `;
 
     chatMessages.appendChild(msgDiv);
@@ -1283,7 +1402,7 @@ function updateMessageStatus(data) {
     }
 }
 
-// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE) ---
+// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE & DELETE) ---
 socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
 socket.on('load_history', () => { loadChatHistory(); }); 
 socket.on('receive_message', (data) => { 
@@ -1305,6 +1424,25 @@ socket.on('user_status_update', (onlineIds) => {
     } else {
         chatStatus.textContent = 'Offline 😴';
         chatStatus.style.color = '#ffc0de';
+    }
+});
+
+// **BARU: LOGIKA SIMULASI HAPUS CHAT DARI LAWAN**
+socket.on('message_deleted_for_everyone', (data) => {
+    const { id } = data;
+    
+    let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+    const index = history.findIndex(msg => msg.id == id);
+    
+    if (index !== -1) {
+        // Cek apakah pesan ini dikirim oleh lawan bicara (bukan saya)
+        if (history[index].senderId !== myUserId) {
+             history[index].message = 'Pesan ini telah dihapus oleh pengirim.';
+             history[index].media = null;
+             history[index].deleted = true;
+             saveChatHistory(history);
+             loadChatHistory(); // Re-render
+        }
     }
 });
 
@@ -1374,7 +1512,7 @@ chatInput.addEventListener('keypress', (e) => {
 });
 
 
-// **FITUR STATUS (STORIES) MEDIA**
+// **FITUR STATUS (STORIES) MEDIA & HAPUS**
 const createMediaStatusBtn = document.getElementById('createMediaStatusBtn');
 const statusFileInput = document.getElementById('statusFileInput');
 const statusListEl = document.getElementById('statusList');
@@ -1415,8 +1553,20 @@ statusFileInput.addEventListener('change', (e) => {
     }
 });
 
+// **FUNGSI BARU: HAPUS STATUS**
+window.deleteStatus = function(statusId, event) {
+    event.stopPropagation(); // Mencegah klik menyebar ke viewStatus
+    if (confirm("Anda yakin ingin menghapus status ini?")) {
+        let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+        allStatuses = allStatuses.filter(s => s.id !== statusId);
+        localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
+        renderStatusList(); 
+        alert("Status berhasil dihapus.");
+    }
+}
 
-// Fungsi untuk menampilkan daftar status (TIDAK BERUBAH)
+
+// Fungsi untuk menampilkan daftar status (DIPERBARUI DENGAN TOMBOL HAPUS)
 function renderStatusList() {
     statusListEl.innerHTML = '';
     const allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
@@ -1464,7 +1614,15 @@ function renderStatusList() {
             ? `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">image</span> ${previewText || 'Media Status'}`
             : previewText;
 
+        // **TAMBAHKAN TOMBOL HAPUS STATUS JIKA ITU STATUS SAYA**
+        const deleteButton = isMyStatus ? `
+            <button class="delete-status-btn" onclick="deleteStatus(${latestStatus.id}, event)">
+                <span class="material-icons" style="font-size: 14px;">close</span>
+            </button>
+        ` : '';
+
         item.innerHTML = `
+            ${deleteButton}
             <div style="font-weight:700; color: #ffe3f1;">
                 ${isMyStatus ? 'Status Saya' : latestStatus.senderName} 
             </div>
@@ -1502,6 +1660,7 @@ function viewStatus(id) {
         viewerMediaEl.src = status.media;
         viewerMediaEl.style.display = 'block';
     } else {
+        viewerMediaEl.src = '';
         viewerMediaEl.style.display = 'none';
     }
 
