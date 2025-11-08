@@ -18,7 +18,7 @@ const io = socketIo(server, {
     }
 });
 
-// Data Akun Statis LENGKAP (Diperbarui dengan 'khirza')
+// Data Akun Statis LENGKAP (Harus sesuai dengan frontend)
 const USER_ACCOUNTS = {
     'zaza': { 
         id: 'zaza', 
@@ -29,14 +29,14 @@ const USER_ACCOUNTS = {
     },
     'khirza': { 
         id: 'khirza', 
-        password: 'cantik', // Password diubah menjadi 'cantik'
+        password: 'cantik', 
         name: 'Khirza', 
         isVerified: false, 
         avatar: 'KH'
     }
 };
 
-const onlineUsers = {}; // Melacak Socket ID
+const onlineUsers = {}; // Melacak Socket ID (Key: userId, Value: socket.id)
 const chatHistory = []; // Menyimpan riwayat pesan sederhana
 
 io.on('connection', (socket) => {
@@ -44,22 +44,20 @@ io.on('connection', (socket) => {
     
     // --- 1. IDENTIFIKASI & RIWAYAT ---
     socket.on('user_login', (userId) => {
-        // Hapus koneksi lama jika ada (optional, tapi baik untuk kebersihan)
-        for (const id in onlineUsers) {
-            if (onlineUsers[id] === socket.id) {
-                delete onlineUsers[id];
-            }
-        }
-
+        // Hapus koneksi lama jika ada (Ini perlu karena Socket ID berubah setiap kali koneksi, 
+        // tapi kita ingin menjaga userId tetap terikat ke satu koneksi aktif)
+        // Kita tidak perlu menghapus secara eksplisit karena kita menimpa di bawah.
+        
         onlineUsers[userId] = socket.id;
         socket.userId = userId;
         console.log(`[ONLINE] ${userId} sekarang online. Socket: ${socket.id}`);
         
-        // Kirim riwayat chat ke klien yang baru login
-        socket.emit('load_history', chatHistory); 
-        
         // Kirim semua detail akun ke klien
         socket.emit('load_users', USER_ACCOUNTS); 
+
+        // Kirim riwayat chat ke klien yang baru login
+        // PENTING: Frontend akan menggunakan data ini untuk mengisi LocalStorage
+        socket.emit('receive_history', chatHistory); 
         
         // Broadcast status
         io.emit('user_status_update', Object.keys(onlineUsers));
@@ -67,33 +65,37 @@ io.on('connection', (socket) => {
     
     // --- 2. LOGIKA CHAT ---
     socket.on('send_message', (data) => {
-        const { senderId, message, media, id } = data; // Menerima data lengkap dari frontend
+        const { senderId, message, media, id } = data; 
         const opponentId = senderId === 'zaza' ? 'khirza' : 'zaza';
         const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        const messageId = id; // Menggunakan ID yang dibuat di frontend
-
+        const messageId = id; 
+        
+        // *Perbaikan 1: Pastikan data pesan menggunakan timestamp server, bukan hanya dari klien (meskipun klien juga mengirim)*
         const messageData = {
             id: messageId,
             senderId: senderId,
-            senderName: USER_ACCOUNTS[senderId].name,
             message: message,
-            media: media, // Memasukkan media ke data pesan
-            timestamp: timestamp,
-            status: 'sent'
+            media: media, 
+            timestamp: timestamp, // Gunakan timestamp server
+            status: 'sent' // Default status setelah dikirim server
         };
         
-        // Perbarui history (cari dan hapus pesan pending jika ada, lalu tambahkan yang baru)
+        // Perbarui history (cari dan ganti/tambahkan pesan)
         const existingIndex = chatHistory.findIndex(msg => msg.id === messageId);
         if (existingIndex !== -1) {
+            // Update pesan yang sudah ada (misalnya, jika status berubah dari 'pending' di klien)
             chatHistory.splice(existingIndex, 1, messageData);
         } else {
+            // Tambahkan pesan baru
             chatHistory.push(messageData);
         }
         
+        // *Perbaikan 2: Kirim kembali ke pengirim untuk mengupdate status dari 'pending' ke 'sent'*
+        if (onlineUsers[senderId]) {
+            io.to(onlineUsers[senderId]).emit('update_status', { id: messageId, status: 'sent' });
+        }
 
-        // Kirim ke Pengirim (untuk update status 'sent')
-        io.to(onlineUsers[senderId]).emit('receive_message', messageData); 
-        
+
         const receiverSocketId = onlineUsers[opponentId];
         if (receiverSocketId) {
             // Kirim ke Penerima
@@ -101,17 +103,24 @@ io.on('connection', (socket) => {
             
             // Simulasi centang biru (read status)
             setTimeout(() => {
-                const readStatusData = {...messageData, status: 'read'};
-                // Update pengirim
-                io.to(onlineUsers[senderId]).emit('update_status', readStatusData); 
-                // Update penerima (optional, untuk menandakan pesan telah dibaca)
+                const readStatusData = {id: messageId, status: 'read'};
+                
+                // *Perbaikan 3: Update status di history server agar bertahan*
+                const historyIndex = chatHistory.findIndex(msg => msg.id === messageId);
+                if (historyIndex !== -1) {
+                    chatHistory[historyIndex].status = 'read';
+                }
+
+                // Update pengirim dan penerima
+                if (onlineUsers[senderId]) {
+                    io.to(onlineUsers[senderId]).emit('update_status', readStatusData); 
+                }
                 io.to(receiverSocketId).emit('update_status', readStatusData); 
             }, 1500); 
             
         } else {
-            // Jika offline, simulasikan centang 1 (sent)
-            const sentStatusData = {...messageData, status: 'sent'};
-            io.to(onlineUsers[senderId]).emit('update_status', sentStatusData);
+            // Jika offline, status tetap 'sent' (centang dua abu-abu) - status ini sudah terkirim ke pengirim di P2.
+             console.log(`[OFFLINE] ${opponentId} offline. Pesan akan dikirim setelah online.`);
         }
     });
 
@@ -127,21 +136,31 @@ io.on('connection', (socket) => {
             chatHistory[index].message = 'Pesan ini telah dihapus oleh pengirim.';
             chatHistory[index].media = null;
             chatHistory[index].deleted = true; 
+            chatHistory[index].status = 'deleted'; // Tambahkan status deleted
+
+            // Kirim notifikasi ke pengirim
+            if (onlineUsers[senderId]) {
+                 io.to(onlineUsers[senderId]).emit('message_deleted_for_everyone', { id: id, senderId: senderId });
+            }
 
             // Kirim notifikasi ke lawan bicara agar mereka juga mengupdate tampilan mereka
             const receiverSocketId = onlineUsers[opponentId];
             if (receiverSocketId) {
                 io.to(receiverSocketId).emit('message_deleted_for_everyone', { id: id, senderId: senderId });
             }
+            console.log(`[DELETE] Pesan ID ${id} dihapus oleh ${senderId} untuk semua orang.`);
         }
     });
 
     // --- 4. DISCONNECT ---
     socket.on('disconnect', () => {
         if (socket.userId) {
-            delete onlineUsers[socket.userId];
-            console.log(`[OFFLINE] ${socket.userId} terputus.`);
-            io.emit('user_status_update', Object.keys(onlineUsers));
+            // Menghapus hanya user yang terikat dengan socket yang terputus
+            if (onlineUsers[socket.userId] === socket.id) {
+                delete onlineUsers[socket.userId];
+                console.log(`[OFFLINE] ${socket.userId} terputus.`);
+                io.emit('user_status_update', Object.keys(onlineUsers));
+            }
         }
     });
 });
