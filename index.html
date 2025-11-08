@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CELZ</title>
+<title>Final</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
@@ -729,7 +729,7 @@ const loginCredentials = {
 };
 const CHAT_USER_PROFILES = {
     'zaza': { id: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA' },
-    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH' } // Key 'khirza' sesuai login
+    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH' }
 };
 
 let myUserId = ''; 
@@ -776,7 +776,7 @@ const albumData = {
       "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
       "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
       "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
-      "https://images2.imgbox.com/d1/42/8VgLICjZp_o.jpg",
+      "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
       "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
       "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
       "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
@@ -852,7 +852,6 @@ window.onload = () => {
         document.querySelector('.navbar').style.display = 'flex';
         document.getElementById('displayUsername').textContent = myUserName.toUpperCase();
         showPage('welcome');
-        // Klien harus login ke server chat
         socket.emit('user_login', myUserId);
     } else {
         showPage('login');
@@ -1270,12 +1269,12 @@ function deleteChatMessageForMe(id) {
 
 // **FUNGSI BARU: HAPUS CHAT UNTUK SEMUA ORANG** (Simulasi)
 function deleteChatMessageForEveryone(id) {
-    if (confirm("Anda yakin ingin menghapus pesan ini UNTUK SEMUA ORANG? (Pesan akan diganti menjadi 'Pesan ini telah dihapus' di semua sisi)")) {
+    if (confirm("Anda yakin ingin menghapus pesan ini UNTUK SEMUA ORANG? (Simulasi: Pesan akan diganti menjadi 'Pesan ini telah dihapus')")) {
         
         let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
         const index = history.findIndex(msg => msg.id == id);
 
-        if (index !== -1 && history[index].senderId === myUserId) {
+        if (index !== -1) {
             // Update data di localStorage untuk simulasi
             history[index].message = 'Pesan ini telah dihapus.';
             history[index].media = null;
@@ -1285,10 +1284,8 @@ function deleteChatMessageForEveryone(id) {
             // Re-render chat untuk menampilkan perubahan (simulasi)
             loadChatHistory();
             
-            // Broadcast ke server untuk diupdate di sisi lawan
+            // Broadcast ke server untuk diupdate di sisi lawan (perlu implementasi di backend)
             socket.emit('delete_message_for_everyone', { id: id, senderId: myUserId });
-        } else if (index !== -1) {
-            alert("Anda hanya dapat menghapus pesan yang Anda kirim.");
         }
     }
 }
@@ -1304,7 +1301,6 @@ document.addEventListener('click', (e) => {
 
 
 function updateChatHeader(usersData) {
-    // Logika lawan bicara: Jika saya 'zaza', lawan saya 'khirza', dan sebaliknya.
     const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
     opponentInfo = usersData[opponentId] || CHAT_USER_PROFILES[opponentId];
     
@@ -1318,8 +1314,8 @@ function updateChatHeader(usersData) {
 function addMessageToChat(data, isHistory = false) {
     const { message, media, timestamp, senderId, status, id, deleted } = data; // Tambah 'deleted'
     const isMe = senderId === myUserId;
-    const messageId = id;
-    const timeDisplay = timestamp;
+    const messageId = id || Date.now();
+    const timeDisplay = timestamp || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('chat-bubble');
@@ -1339,12 +1335,12 @@ function addMessageToChat(data, isHistory = false) {
         background: ${isMe ? '#ff99c7' : 'rgba(255,255,255,0.85)'};
         border-bottom-${isMe ? 'right' : 'left'}-radius: 0;
         margin-bottom: 10px;
-        display: inline-block; 
-        opacity: ${deleted ? 0.7 : 1}; 
+        display: inline-block; /* Agar bisa menampung media dengan baik */
+        opacity: ${deleted ? 0.7 : 1}; /* Jika dihapus, agak transparan */
     `;
 
     let contentHTML = '';
-    let isDeletedMessage = deleted && message.includes('Pesan ini telah dihapus');
+    let isDeletedMessage = deleted && message === 'Pesan ini telah dihapus.';
 
     if (isDeletedMessage) {
         contentHTML = `<em style="color: ${isMe ? 'white' : '#777'}; font-size: 0.9em;">${message}</em>`;
@@ -1408,26 +1404,18 @@ function updateMessageStatus(data) {
 
 // --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE & DELETE) ---
 socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
-socket.on('load_history', (history) => { 
-    // Menggunakan history yang dikirim server sebagai master history
-    localStorage.setItem(getLocalStorageKey('chatHistory'), JSON.stringify(history));
-    loadChatHistory(); 
-}); 
-
+socket.on('load_history', () => { loadChatHistory(); }); 
 socket.on('receive_message', (data) => { 
-    // Menghindari duplikasi id dari server
-    if (!document.getElementById(`msg-${data.id}`)) {
-        addMessageToChat(data); 
+    data.id = data.id || Date.now();
+    addMessageToChat(data); 
 
-        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-        history.push(data);
-        saveChatHistory(history);
-    }
+    let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+    history.push(data);
+    saveChatHistory(history);
 });
 
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
-    // Logika lawan bicara: Jika saya 'zaza', lawan saya 'khirza', dan sebaliknya.
     const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
     
     if (onlineIds.includes(opponentId)) {
@@ -1441,18 +1429,20 @@ socket.on('user_status_update', (onlineIds) => {
 
 // **BARU: LOGIKA SIMULASI HAPUS CHAT DARI LAWAN**
 socket.on('message_deleted_for_everyone', (data) => {
-    const { id, senderId } = data;
+    const { id } = data;
     
     let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
     const index = history.findIndex(msg => msg.id == id);
     
-    if (index !== -1 && history[index].senderId !== myUserId) {
-        // Hanya update jika pesan BUKAN dari saya
-         history[index].message = 'Pesan ini telah dihapus oleh pengirim.';
-         history[index].media = null;
-         history[index].deleted = true;
-         saveChatHistory(history);
-         loadChatHistory(); // Re-render
+    if (index !== -1) {
+        // Cek apakah pesan ini dikirim oleh lawan bicara (bukan saya)
+        if (history[index].senderId !== myUserId) {
+             history[index].message = 'Pesan ini telah dihapus oleh pengirim.';
+             history[index].media = null;
+             history[index].deleted = true;
+             saveChatHistory(history);
+             loadChatHistory(); // Re-render
+        }
     }
 });
 
@@ -1469,7 +1459,6 @@ chatFileInput.addEventListener('change', (e) => {
         reader.onload = (event) => {
             const mediaUrl = event.target.result;
             const caption = prompt("Tambahkan Caption (Opsional):") || "";
-            const messageId = Date.now() + Math.random().toFixed(0); 
 
             const messageData = {
                 senderId: myUserId,
@@ -1477,7 +1466,7 @@ chatFileInput.addEventListener('change', (e) => {
                 media: mediaUrl, // Kirim media
                 timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
                 status: 'pending', 
-                id: messageId 
+                id: Date.now() 
             };
 
             socket.emit('send_message', messageData);
@@ -1489,12 +1478,6 @@ chatFileInput.addEventListener('change', (e) => {
             addMessageToChat(messageData);
             chatFileInput.value = ''; // Reset input
         };
-        // Batasi ukuran file
-        if (file.size > 2 * 1024 * 1024) { 
-            alert("Ukuran file media terlalu besar (Max 2MB).");
-            chatFileInput.value = '';
-            return;
-        }
         reader.readAsDataURL(file);
     }
 });
@@ -1504,15 +1487,13 @@ chatFileInput.addEventListener('change', (e) => {
 sendChatBtn.addEventListener('click', () => {
     const message = chatInput.value.trim();
     if (message !== '' && myUserId) {
-        const messageId = Date.now() + Math.random().toFixed(0);
-
         const messageData = {
             senderId: myUserId,
             message: message,
             media: null, // Pastikan media null jika hanya teks
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
             status: 'pending', 
-            id: messageId 
+            id: Date.now() 
         };
 
         socket.emit('send_message', messageData);
@@ -1546,13 +1527,6 @@ createMediaStatusBtn.addEventListener('click', () => {
 statusFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-        // Batasi ukuran file status
-        if (file.size > 5 * 1024 * 1024) { 
-            alert("Ukuran file media status terlalu besar (Max 5MB).");
-            statusFileInput.value = '';
-            return;
-        }
-        
         const reader = new FileReader();
         reader.onload = (event) => {
             const mediaUrl = event.target.result;
@@ -1574,7 +1548,6 @@ statusFileInput.addEventListener('change', (e) => {
             localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
             renderStatusList();
             statusFileInput.value = ''; // Reset input
-            alert("Status media berhasil diunggah!");
         };
         reader.readAsDataURL(file);
     }
@@ -1619,8 +1592,6 @@ function renderStatusList() {
 
     sortedGroups.forEach(senderId => {
         const group = groupedStatuses[senderId];
-        // Urutkan grup berdasarkan waktu, pastikan status terbaru ada di depan
-        group.sort((a, b) => b.id - a.id);
         const latestStatus = group[0]; 
         const isMyStatus = senderId === myUserId;
         const isViewedByMe = latestStatus.viewers.includes(myUserId);
@@ -1629,13 +1600,8 @@ function renderStatusList() {
         item.classList.add('status-item');
         item.setAttribute('data-id', latestStatus.id);
         
-        // Cek status dilihat dari semua status di grup
-        const hasUnviewedStatus = group.some(s => !s.viewers.includes(myUserId));
-        
-        if (!hasUnviewedStatus && !isMyStatus) {
+        if (isViewedByMe) {
             item.classList.add('viewed');
-        } else if (isMyStatus) {
-            // Status saya dianggap 'viewed' jika ada yang melihat (opsional)
         }
         
         // Klik pada item akan menampilkan status paling baru di grup tersebut
@@ -1668,7 +1634,7 @@ function renderStatusList() {
                         <span class="material-icons" style="font-size:0.9em;">visibility</span> 
                         ${latestStatus.viewers.length} Dilihat
                     </span>`
-                    : (hasUnviewedStatus ? '<span>Baru</span>' : '')
+                    : (isViewedByMe ? '' : '<span>Belum Dilihat</span>')
                 }
             </div>
         `;
@@ -1756,10 +1722,7 @@ document.getElementById('statusLikeBtn').addEventListener('click', () => {
 });
 
 // Handler Reply Status (Tampilkan input)
-document.getElementById('statusReplyBtn').addEventListener('click', () => { 
-    document.getElementById('replySection').style.display = 'flex'; 
-    document.getElementById('statusReplyInput').focus();
-});
+document.getElementById('statusReplyBtn').addEventListener('click', () => { document.getElementById('replySection').style.display = 'flex'; });
 
 // Handler Kirim Reply
 document.getElementById('sendReplyBtn').addEventListener('click', () => {
@@ -1773,22 +1736,19 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
     
     if (statusIndex !== -1) {
         const originalStatus = allStatuses[statusIndex];
-        const messageId = Date.now() + Math.random().toFixed(0);
-
+        
         const messageData = {
             senderId: myUserId,
-            // Format pesan balasan agar lawan tahu konteksnya
             message: `[REPLY STATUS dari ${myUserName} ke ${originalStatus.senderName}: "${originalStatus.message.substring(0, 15)}..."] ${replyText}`,
             media: null,
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
             status: 'pending', 
-            id: messageId 
+            id: Date.now() 
         };
 
         // Kirim pesan ke chat (simulasi)
         socket.emit('send_message', messageData);
         
-        // Simpan ke history lokal (agar terlihat di chat sendiri)
         let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
         history.push(messageData);
         saveChatHistory(history);
@@ -1802,3 +1762,4 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
 </script>
 </body>
 </html>
+
