@@ -28,11 +28,11 @@ const USER_ACCOUNTS = {
         avatar: 'ZA' 
     },
     'khirza': { 
-        id: 'khirza', 
-        password: 'cantik', 
-        name: 'Khirza', 
+        id: 'arcel', 
+        password: 'arcel', 
+        name: 'Arcel', 
         isVerified: false, 
-        avatar: 'KH'
+        avatar: 'AR'
     }
 };
 
