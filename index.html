@@ -108,6 +108,34 @@ html, body {
   touch-action:pan-x;
   display:flex; justify-content:center; align-items:center; 
 }
+/* Tambahkan lapisan untuk Double Tap Like Feedback */
+.album-container::after {
+    content: attr(data-like-feedback);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em;
+    color: #ff4d6d;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 5;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.album-container.double-tap-liked::after {
+    content: '❤️';
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+    animation: fadeOutPop 0.8s ease-out forwards;
+}
+@keyframes fadeOutPop {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+
 .photo{
   width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;
   opacity:0; transition:opacity 1.3s ease-in-out, transform 1.3s ease-in-out, box-shadow 1.3s ease-in-out;
@@ -125,8 +153,7 @@ html, body {
 
 /* Photo Indicator (Dots) */
 .photo-indicator{
-  display:none; /* PERBAIKAN: Menyembunyikan semua indikator foto */
-  /* display:flex; <--- Dihapus */
+  display:none; 
   justify-content:center; margin-top:15px; gap:8px; z-index:4;
 }
 .dot{
@@ -142,7 +169,7 @@ html, body {
 }
 
 
-/* Menu bawah foto */
+/* Menu bawah foto - PERBAIKAN TOMBOL */
 .photo-menu{
   position:relative;
   margin-top:20px;
@@ -151,11 +178,39 @@ html, body {
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 .photo-menu button{
-  background:none; border:none; color:white; font-size:1em; cursor:pointer; transition:0.3s;
+  background:none; border:none; color:white; font-size:1em; cursor:pointer; 
   position:relative; font-weight:600;
   display:flex; align-items:center; gap:5px;
+  transition: color 0.3s, transform 0.3s;
+}
+.photo-menu button .icon {
+  font-size: 1.2em;
+  line-height: 1;
+  vertical-align: middle;
 }
 .photo-menu button:hover{ color:#ffb3d1; transform:scale(1.05); }
+.photo-menu button:hover .icon {
+  transform: scale(1.1);
+}
+
+/* Gaya Khusus untuk Tombol Like (dengan hati yang berdetak) */
+.like-btn .icon {
+    transition: color 0.3s, transform 0.3s;
+}
+/* Menggunakan kelas 'liked' pada tombol untuk feedback visual */
+.like-btn.liked .icon {
+    color: #ff528a; /* Warna merah saat disukai */
+    animation: pulse 0.5s infinite alternate; /* Animasi detak */
+}
+.like-btn:not(.liked) .icon {
+    color: white; /* Warna putih saat belum disukai */
+    animation: none;
+}
+@keyframes pulse {
+    0% { transform: scale(1.0); }
+    100% { transform: scale(1.2); }
+}
+
 
 /* Info Box */
 .info-box{ background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
@@ -532,27 +587,27 @@ html, body {
   <div class="album-wrapper" id="folderSelectWrapper" style="display:flex; flex-direction:column; gap:20px; max-width:400px; padding:20px; opacity:1;">
     <div class="romantic-text" style="margin-bottom:0;">𝗣𝗜𝗟𝗜𝗛 𝗙𝗢𝗟𝗗𝗘𝗥 𝗔𝗟𝗕𝗨𝗠</div>
     <button id="mainAlbumBtn" class="folder-btn">
-        <span class="icon"></span> ALBUM UTAMA
+        <span class="material-icons">folder_open</span> ALBUM UTAMA
     </button>
     <button id="folder1Btn" class="folder-btn">
-        <span class="icon"></span> PAP RANDOM 1
+        <span class="material-icons">folder_open</span> PAP RANDOM 1
     </button>
     <button id="folder2Btn" class="folder-btn">
-        <span class="icon"></span> PAP RANDOM 2 
+        <span class="material-icons">folder_open</span> PAP RANDOM 2 
     </button>
   </div>
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
     <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝗘𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
     <div class="photo-indicator" id="mainPhotoIndicator"></div>
     <div class="photo-menu" id="photoMenu">
-      <button id="shareBtn"><span class="icon"></span> Share</button>
-      <button id="likeBtn"><span class="icon"></span> Like</button>
-      <button id="downloadBtn"><span class="icon"></span> Download</button>
+      <button id="shareBtn" title="Share"><span class="material-icons icon">share</span> Share</button>
+      <button id="likeBtn" class="like-btn" title="Like"><span class="material-icons icon">favorite_border</span> Like</button>
+      <button id="downloadBtn" title="Download"><span class="material-icons icon">cloud_download</span> Download</button>
     </div>
     <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
     <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
@@ -562,15 +617,15 @@ html, body {
 <div class="page" id="folder1Page">
   <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder1">
-    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄ﺭ 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
+    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
     <div class="album-container folder-album-container" id="folder1Container">
       <div class="loading-spinner" id="folder1Spinner"></div>
     </div>
     <div class="photo-indicator folder-photo-indicator" id="folder1PhotoIndicator"></div>
     <div class="photo-menu">
-      <button onclick="sharePhoto('folder1')"><span class="icon"></span> Share</button>
-      <button class="like-btn" data-folder="folder1"><span class="icon"></span> Like</button>
-      <button onclick="downloadPhoto('folder1')"><span class="icon"></span> Download</button>
+      <button onclick="sharePhoto('folder1')" title="Share"><span class="material-icons icon">share</span> Share</button>
+      <button class="like-btn" data-folder="folder1" title="Like"><span class="material-icons icon">favorite_border</span> Like</button>
+      <button onclick="downloadPhoto('folder1')" title="Download"><span class="material-icons icon">cloud_download</span> Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder1', -1)">&#10094;</button>
     <button class="nav-btn next-btn" onclick="navPhoto('folder1', 1)">&#10095;</button>
@@ -586,9 +641,9 @@ html, body {
     </div>
     <div class="photo-indicator folder-photo-indicator" id="folder2PhotoIndicator"></div>
     <div class="photo-menu">
-      <button onclick="sharePhoto('folder2')"><span class="icon"></span> Share</button>
-      <button class="like-btn" data-folder="folder2"><span class="icon"></span> Like</button>
-      <button onclick="downloadPhoto('folder2')"><span class="icon"></span> Download</button>
+      <button onclick="sharePhoto('folder2')" title="Share"><span class="material-icons icon">share</span> Share</button>
+      <button class="like-btn" data-folder="folder2" title="Like"><span class="material-icons icon">favorite_border</span> Like</button>
+      <button onclick="downloadPhoto('folder2')" title="Download"><span class="material-icons icon">cloud_download</span> Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder2', -1)">&#10094;</button>
     <button class="nav-btn next-btn" onclick="navPhoto('folder2', 1)">&#10095;</button>
@@ -600,7 +655,7 @@ html, body {
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝐋 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝗟 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
     <p>Versi: 3.2 Final
   </div>
 </div>
@@ -655,9 +710,11 @@ html, body {
     <div class="info-box">
         
         <div id="zazaAIHeader">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: #99c7ff; color: white; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.2em;">Z</div> <div>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #99c7ff; color: white; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.2em;">Z</div>
+            <div>
                 <h3 style="margin: 0; color: #99c7ff; font-weight: 700; font-size: 1.2em;">Tanya Zaza AI</h3>
-                <p style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.7);">Tanya apa saja, Zaza AI siap menjawab! (Memerlukan Server Node.js)</p> </div>
+                <p style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.7);">Tanya apa saja, Zaza AI siap menjawab!</p>
+            </div>
         </div>
 
         <div id="zazaAIMessages">
@@ -767,6 +824,7 @@ const pages = {
 };
 
 // **DATA ALBUM DIUBAH DENGAN LINK BARU DAN STRUKTUR DISSESUAIKAN**
+// PERBAIKAN: Menambahkan array 'likedPhotos' untuk menyimpan status like per foto
 const albumData = {
   main: { 
     photos: [
@@ -782,7 +840,7 @@ const albumData = {
       "https://images2.imgbox.box.com/17/ad/VpSegle2_o.jpg",
       "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
       "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
-      "https://images2.imgbox.com/d1/42/8VgLikp_o.jpg", // Tautan diganti karena yang lama tidak ada.
+      "https://images2.imgbox.com/d1/42/8VgLikp_o.jpg", 
       "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
       "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
       "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
@@ -798,11 +856,12 @@ const albumData = {
       "https://files.catbox.moe/aynt0u.jpg",
       "https://files.catbox.moe/m78c8s.jpg" 
     ], 
-    current: 0, liked: false, 
+    current: 0, 
+    likedPhotos: [], // Menyimpan indeks foto yang disukai
     container: document.getElementById('albumContainer'), 
     indicator: document.getElementById('mainPhotoIndicator'), 
     spinner: document.getElementById('mainSpinner'),
-    likeBtnElement: document.getElementById('likeBtn') // Diisi di sini
+    likeBtnElement: document.getElementById('likeBtn')
   },
   folder1: { 
     photos: [ 
@@ -821,7 +880,8 @@ const albumData = {
       "https://files.catbox.moe/mrebfs.jpg", 
       "https://files.catbox.moe/j2u52c.jpg"
     ], 
-    current: 0, liked: false, 
+    current: 0, 
+    likedPhotos: [], // Menyimpan indeks foto yang disukai
     container: null, 
     indicator: null, 
     spinner: null,
@@ -840,7 +900,8 @@ const albumData = {
       "https://files.catbox.moe/gbpaup.jpg", 
       "https://files.catbox.moe/jxcxec.jpg"
     ], 
-    current: 0, liked: false, 
+    current: 0, 
+    likedPhotos: [], // Menyimpan indeks foto yang disukai
     container: null, 
     indicator: null, 
     spinner: null,
@@ -853,6 +914,24 @@ let lastTap = 0; // Untuk double tap
 
 // **FUNGSI UTAMA LOCAL STORAGE**
 function getLocalStorageKey(key) { return `${myUserId}_${key}`; }
+
+// FUNGSI BARU: Muat status like dari Local Storage saat inisialisasi
+function loadLikeStatus(folder) {
+    const key = getLocalStorageKey(`${folder}_likedPhotos`);
+    const storedLikes = localStorage.getItem(key);
+    if (storedLikes) {
+        albumData[folder].likedPhotos = JSON.parse(storedLikes);
+    } else {
+        albumData[folder].likedPhotos = [];
+    }
+}
+
+// FUNGSI BARU: Simpan status like ke Local Storage
+function saveLikeStatus(folder) {
+    const key = getLocalStorageKey(`${folder}_likedPhotos`);
+    localStorage.setItem(key, JSON.stringify(albumData[folder].likedPhotos));
+}
+
 
 // **INICIALISASI SAAT STARTUP (SESI PERSISTENCE)**
 window.onload = () => {
@@ -876,7 +955,12 @@ window.onload = () => {
         showPage('login');
     }
     
-    // TAMBAHAN 4: Muat history AI Chat saat halaman dimuat
+    // Muat semua status like untuk semua folder
+    loadLikeStatus('main');
+    loadLikeStatus('folder1');
+    loadLikeStatus('folder2');
+
+    // Muat history AI Chat
     loadZazaAIChatHistory();
 };
 
@@ -913,6 +997,11 @@ loginBtn.addEventListener('click', ()=>{
     displayUsername.textContent = myUserName.toUpperCase(); 
     
     socket.emit('user_login', myUserId);
+    
+    // Muat status like untuk user yang baru login
+    loadLikeStatus('main');
+    loadLikeStatus('folder1');
+    loadLikeStatus('folder2');
     
     showPage('welcome'); 
   } else {
@@ -987,15 +1076,15 @@ function showPhoto(folder, i){
 
     // Hapus semua foto dan dot yang ada
     container.querySelectorAll('.photo').forEach(p => p.remove());
-    data.indicator.innerHTML = ''; // Tetap membersihkan elemen penampung
+    data.indicator.innerHTML = ''; 
     
     if (photos.length === 0) {
         container.innerHTML = '<div class="fallback-img">Tidak ada foto di folder ini.</div>';
         return;
     }
 
-    // Ambil status like dari localStorage
-    data.liked = localStorage.getItem(getLocalStorageKey(`${folder}_liked`)) === 'true';
+    // Cek apakah foto saat ini disukai
+    const isLiked = data.likedPhotos.includes(i);
 
     spinner.style.display = 'block'; 
 
@@ -1031,24 +1120,10 @@ function showPhoto(folder, i){
         };
         
         container.appendChild(img);
-        
-        // **LOGIKA UNTUK MEMBUAT DOTS DIHAPUS DI SINI**
-        // Jika nanti Anda ingin menambahkan fitur navigasi dot lagi, tambahkan kembali:
-        /*
-        const dot = document.createElement('span');
-        dot.className = 'dot';
-        if (index === i) dot.classList.add('active');
-        dot.onclick = () => {
-            resetAutoSwipe(folder);
-            showPhoto(folder, index);
-            startAutoSwipe(folder);
-        };
-        data.indicator.appendChild(dot);
-        */
     });
 
     // Perbarui status like menggunakan likeBtnElement
-    updateLikeButton(data.likeBtnElement, data.liked);
+    updateLikeButton(data.likeBtnElement, isLiked);
 }
 
 function navPhoto(folder, direction){
@@ -1066,15 +1141,12 @@ function navPhoto(folder, direction){
 
 function initMainAlbum(){
     const data = albumData['main'];
-    // Ambil status like dari localStorage saat inisialisasi
-    data.liked = localStorage.getItem(getLocalStorageKey('main_liked')) === 'true';
     
-    // Pastikan container dan indicator kosong saat inisialisasi
     data.container.innerHTML = `<div class="loading-spinner" id="mainSpinner"></div>`;
     data.indicator.innerHTML = '';
     showPhoto('main', data.current);
     setupSwipe(data.container, 'main');
-    setupDoubleTap(data.container, 'main'); // **TIDAK ADA PERUBAHAN DI SINI**
+    setupDoubleTap(data.container, 'main'); 
     startAutoSwipe('main');
     document.getElementById('albumWrapper').classList.add('show');
 }
@@ -1086,8 +1158,6 @@ function initFolderAlbum(folder){
     data.indicator = document.getElementById(`${folder}PhotoIndicator`);
     data.spinner = document.getElementById(`${folder}Spinner`);
     
-    // Ambil status like dari localStorage saat inisialisasi
-    data.liked = localStorage.getItem(getLocalStorageKey(`${folder}_liked`)) === 'true';
     
     // Pastikan container dan indicator kosong saat inisialisasi
     data.container.innerHTML = `<div class="loading-spinner" id="${folder}Spinner"></div>`;
@@ -1095,7 +1165,7 @@ function initFolderAlbum(folder){
     
     showPhoto(folder, data.current);
     setupSwipe(data.container, folder);
-    setupDoubleTap(data.container, folder); // **TIDAK ADA PERUBAHAN DI SINI**
+    setupDoubleTap(data.container, folder); 
     startAutoSwipe(folder);
     document.querySelector(`#${folder}Page .album-wrapper`).classList.add('show');
 }
@@ -1130,7 +1200,7 @@ function setupSwipe(element, folder){
     });
 }
 
-// **FUNGSI BARU: DOUBLE TAP TO LIKE**
+// **PERBAIKAN FUNGSI: DOUBLE TAP TO LIKE**
 function setupDoubleTap(element, folder) {
     element.addEventListener('touchend', (e) => {
         const now = new Date().getTime();
@@ -1139,8 +1209,13 @@ function setupDoubleTap(element, folder) {
         // Cek jika tap kedua terjadi dalam 300ms
         if ((timesince < 300) && (timesince > 0)) {
             e.preventDefault(); 
-            // Panggil fungsi like
             toggleLike(folder); 
+            
+            // Tampilkan feedback visual di container
+            element.classList.add('double-tap-liked');
+            setTimeout(() => {
+                element.classList.remove('double-tap-liked');
+            }, 800);
         }
         lastTap = now;
     });
@@ -1149,6 +1224,12 @@ function setupDoubleTap(element, folder) {
     element.addEventListener('dblclick', (e) => {
         e.preventDefault();
         toggleLike(folder); 
+        
+        // Tampilkan feedback visual di container
+        element.classList.add('double-tap-liked');
+        setTimeout(() => {
+            element.classList.remove('double-tap-liked');
+        }, 800);
     });
 }
 
@@ -1200,21 +1281,39 @@ for(let i=0;i<50;i++){ createParticle(); }
 function updateLikeButton(button, isLiked){
     if (!button) return; // Tambahkan pengaman
     const icon = button.querySelector('.icon');
-    icon.textContent = isLiked ? '❤️' : '🤍';
-    button.title = isLiked ? 'Unlike' : 'Like';
-    button.style.color = isLiked ? '#ff528a' : 'white';
+    
+    if (isLiked) {
+        button.classList.add('liked');
+        icon.textContent = 'favorite'; // Ikon hati penuh
+        button.title = 'Unlike';
+    } else {
+        button.classList.remove('liked');
+        icon.textContent = 'favorite_border'; // Ikon hati kosong
+        button.title = 'Like';
+    }
 }
 
+// PERBAIKAN FUNGSI: Toggle Like hanya pada foto yang sedang aktif
 function toggleLike(folder){
     const data = albumData[folder];
-    data.liked = !data.liked;
+    const currentIndex = data.current;
     
-    // Gunakan likeBtnElement yang sudah dikaitkan
-    updateLikeButton(data.likeBtnElement, data.liked);
+    const isCurrentlyLiked = data.likedPhotos.includes(currentIndex);
     
-    alert(`Foto ${data.liked ? 'disukai' : 'tidak disukai'}!`);
-    // Simpan status like ke localStorage
-    localStorage.setItem(getLocalStorageKey(`${folder}_liked`), data.liked);
+    if (isCurrentlyLiked) {
+        // Unlike: Hapus indeks dari array likedPhotos
+        data.likedPhotos = data.likedPhotos.filter(index => index !== currentIndex);
+        updateLikeButton(data.likeBtnElement, false);
+        // alert(`Foto ${currentIndex + 1} tidak disukai.`); // Dinonaktifkan agar tidak mengganggu
+    } else {
+        // Like: Tambahkan indeks ke array likedPhotos
+        data.likedPhotos.push(currentIndex);
+        updateLikeButton(data.likeBtnElement, true);
+        // alert(`Foto ${currentIndex + 1} disukai!`); // Dinonaktifkan agar tidak mengganggu
+    }
+    
+    // Simpan status like per foto ke localStorage
+    saveLikeStatus(folder);
 }
 
 function sharePhoto(folder){
@@ -1273,7 +1372,7 @@ function getOpponentId() {
 
 function loadChatHistory() {
     const history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Chat hanya berfungsi jika server backend berjalan di localhost:3000 --</div>';
+    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">--  --</div>';
     history.forEach(msg => addMessageToChat(msg, true));
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -1375,18 +1474,25 @@ function updateMessageStatus(data) {
 socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
 socket.on('load_history', () => { loadChatHistory(); }); 
 socket.on('receive_message', (data) => { 
-    data.id = data.id || Date.now();
-    addMessageToChat(data); 
+    // Perbaikan: Pastikan pesan hanya diproses jika ditujukan atau dikirim oleh user saat ini
+    if (data.recipientId === myUserId || data.senderId === myUserId) { 
+        data.id = data.id || Date.now();
+        addMessageToChat(data); 
 
-    let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-    history.push(data);
-    saveChatHistory(history);
+        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        // Cek jika pesan sudah ada (untuk menghindari duplikasi jika pesan dikirim balik oleh server)
+        if (!history.find(msg => msg.id == data.id)) { 
+            history.push(data);
+            saveChatHistory(history);
+        }
+    }
 });
 
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
     const opponentId = getOpponentId(); // <-- FIX: Menggunakan fungsi yang benar
     
+    // Perbaikan: Pastikan kita memeriksa status online dari lawan bicara (opponentId)
     if (onlineIds.includes(opponentId)) {
         chatStatus.textContent = 'Online ✨';
         chatStatus.style.color = '#7aff7a';
@@ -1693,7 +1799,7 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
 });
 
 
-// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (DIPERBARUI MENGGUNAKAN SOCKET.IO)**
+// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (Simulasi)**
 const zazaAIInput = document.getElementById('zazaAIInput');
 const sendZazaAIBtn = document.getElementById('sendZazaAIBtn');
 const zazaAIMessages = document.getElementById('zazaAIMessages');
@@ -1706,23 +1812,12 @@ function addMessageToZazaAIChat(message, sender, isHistory = false) {
     
     msgDiv.classList.add('ai-chat-bubble');
     msgDiv.classList.add(isUser ? 'ai-bubble-user' : 'ai-bubble-zaza');
-    
-    // Tambahkan indikator "Typing..." jika itu adalah balasan AI yang belum final
-    if (sender === 'typing') {
-        msgDiv.innerHTML = '<span class="material-icons" style="font-size: 1.2em; vertical-align: middle;">data_usage</span> Zaza AI sedang mengetik...';
-        msgDiv.id = 'ai-typing-indicator';
-    } else {
-        msgDiv.innerHTML = message;
-    }
-
     msgDiv.style.marginBottom = '10px';
     msgDiv.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
-
+    msgDiv.innerHTML = message;
 
     zazaAIMessages.appendChild(msgDiv);
     if (!isHistory) zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
-    
-    return msgDiv;
 }
 
 // Fungsi untuk menyimpan history chat AI
@@ -1735,10 +1830,10 @@ function saveZazaAIChatHistory(message, sender) {
 // Fungsi untuk memuat history chat AI
 function loadZazaAIChatHistory() {
     let history = JSON.parse(localStorage.getItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY)) || '[]');
-    
-    // Bersihkan dan tambahkan pesan sapaan awal
+    // Bersihkan kecuali pesan sapaan pertama
+    const initialMessage = zazaAIMessages.querySelector('.ai-bubble-zaza:first-child');
     zazaAIMessages.innerHTML = '';
-    addMessageToZazaAIChat("Halo! Saya Zaza AI, asisten virtual Anda. Tanyakan apa saja!", 'zaza', true);
+    if(initialMessage) zazaAIMessages.appendChild(initialMessage);
     
     history.forEach(msg => {
         addMessageToZazaAIChat(msg.message, msg.sender, true);
@@ -1746,49 +1841,29 @@ function loadZazaAIChatHistory() {
     zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
 }
 
-
 // Handler Kirim Pesan ke Zaza AI
 sendZazaAIBtn.addEventListener('click', () => {
     const userMessage = zazaAIInput.value.trim();
-    if (userMessage === '' || !myUserId) return;
+    if (userMessage === '') return;
 
     // 1. Tampilkan pesan user
     addMessageToZazaAIChat(userMessage, 'user');
     saveZazaAIChatHistory(userMessage, 'user');
     zazaAIInput.value = '';
-    
-    // 2. Tampilkan indikator mengetik (akan dihapus saat menerima respons)
-    addMessageToZazaAIChat('', 'typing'); 
 
-    // 3. Kirim prompt ke server melalui Socket.IO
-    // Event ini harus didengarkan oleh server.js
-    socket.emit('send_ai_message', { prompt: userMessage, senderId: myUserId });
+    // 2. Buat respons simulasi AI
+    const aiResponse = generateZazaAIResponse(userMessage);
+
+    // 3. Tampilkan respons AI setelah delay (simulasi typing)
+    setTimeout(() => {
+        addMessageToZazaAIChat(aiResponse, 'zaza');
+        saveZazaAIChatHistory(aiResponse, 'zaza');
+    }, 1500); // Delay 1.5 detik
 });
 
 zazaAIInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendZazaAIBtn.click();
 });
-
-// Listener untuk respons dari server (Socket.IO)
-socket.on('receive_ai_message', (data) => {
-    const { message } = data;
-    
-    // 1. Hapus indikator mengetik
-    const typingIndicator = document.getElementById('ai-typing-indicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
-    
-    // 2. Tampilkan pesan AI final
-    addMessageToZazaAIChat(message, 'zaza');
-    saveZazaAIChatHistory(message, 'zaza');
-});
-
-// Tambahkan listener untuk memuat history saat masuk ke halaman AI
-document.getElementById('zazaAIBtn').onclick = () => {
-    loadZazaAIChatHistory();
-    showPage('zazaAI');
-};
 </script>
 </body>
 </html>
