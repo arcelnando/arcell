@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Album & Chat App</title>
+<title>Final Album Celz</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
@@ -125,7 +125,9 @@ html, body {
 
 /* Photo Indicator (Dots) */
 .photo-indicator{
-  display:flex; justify-content:center; margin-top:15px; gap:8px; z-index:4;
+  display:none; /* PERBAIKAN: Menyembunyikan semua indikator foto */
+  /* display:flex; <--- Dihapus */
+  justify-content:center; margin-top:15px; gap:8px; z-index:4;
 }
 .dot{
   width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.4);
@@ -509,7 +511,7 @@ html, body {
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
     <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝐔𝗧𝗡𝗬𝐀</div>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
@@ -565,7 +567,7 @@ html, body {
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝗟 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝐋 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
     <p>Versi: 3.2 Final
   </div>
 </div>
@@ -719,7 +721,7 @@ const albumData = {
       "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
       "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
       "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
-      "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
+      "https://images2.imgbox.com/d1/42/8VgLikp_o.jpg", // Tautan diganti karena yang lama tidak ada.
       "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
       "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
       "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
@@ -728,7 +730,7 @@ const albumData = {
       "https://images2.imgbox.com/94/ec/28ile6qy_o.jpg",
       "https://images2.imgbox.com/b7/2c/3EgN6c1L_o.jpg",
       "https://images2.imgbox.com/09/6a/BJdQjfwc_o.jpg",
-      "https://images2.imgbox.com/7a/11/Example22_o.jpg"
+      "https://images2.imgbox.com/7a/11/Example22_o.jpg", 
       "https://files.catbox.moe/q9mv31.jpg", 
       "https://files.catbox.moe/gkx423.jpg",
       "https://files.catbox.moe/cohstd.jpg",
@@ -911,7 +913,7 @@ function showPage(page){
 }
 
 
-// FUNGSI ALBUM (DIPERBAIKI UNTUK DATA BARU)
+// FUNGSI ALBUM (DIPERBAIKI UNTUK DATA BARU & MENGHAPUS DOTS)
 
 function showPhoto(folder, i){
     const data = albumData[folder];
@@ -921,7 +923,7 @@ function showPhoto(folder, i){
 
     // Hapus semua foto dan dot yang ada
     container.querySelectorAll('.photo').forEach(p => p.remove());
-    data.indicator.innerHTML = '';
+    data.indicator.innerHTML = ''; // Tetap membersihkan elemen penampung
     
     if (photos.length === 0) {
         container.innerHTML = '<div class="fallback-img">Tidak ada foto di folder ini.</div>';
@@ -933,7 +935,7 @@ function showPhoto(folder, i){
 
     spinner.style.display = 'block'; 
 
-    photos.forEach((photoUrl, index) => { // photoUrl adalah string
+    photos.forEach((photoUrl, index) => { 
         const img = document.createElement('img');
         img.className = 'photo';
         img.src = photoUrl;
@@ -966,6 +968,9 @@ function showPhoto(folder, i){
         
         container.appendChild(img);
         
+        // **LOGIKA UNTUK MEMBUAT DOTS DIHAPUS DI SINI**
+        // Jika nanti Anda ingin menambahkan fitur navigasi dot lagi, tambahkan kembali:
+        /*
         const dot = document.createElement('span');
         dot.className = 'dot';
         if (index === i) dot.classList.add('active');
@@ -975,6 +980,7 @@ function showPhoto(folder, i){
             startAutoSwipe(folder);
         };
         data.indicator.appendChild(dot);
+        */
     });
 
     // Perbarui status like menggunakan likeBtnElement
@@ -1196,6 +1202,10 @@ const opponentAvatarEl = document.getElementById('opponentAvatar');
 const chatFileInput = document.getElementById('chatFileInput');
 const attachMediaBtn = document.getElementById('attachMediaBtn');
 
+function getOpponentId() {
+    return myUserId === 'zaza' ? 'khirza' : 'zaza';
+}
+
 function loadChatHistory() {
     const history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
     chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Chat hanya berfungsi jika server backend berjalan di localhost:3000 --</div>';
@@ -1219,7 +1229,7 @@ function deleteChatMessage(id) {
 }
 
 function updateChatHeader(usersData) {
-    const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
+    const opponentId = getOpponentId(); // <-- FIX: Menggunakan fungsi yang benar
     opponentInfo = usersData[opponentId] || CHAT_USER_PROFILES[opponentId];
     
     if (opponentInfo) {
@@ -1310,7 +1320,7 @@ socket.on('receive_message', (data) => {
 
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
-    const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
+    const opponentId = getOpponentId(); // <-- FIX: Menggunakan fungsi yang benar
     
     if (onlineIds.includes(opponentId)) {
         chatStatus.textContent = 'Online ✨';
@@ -1322,7 +1332,7 @@ socket.on('user_status_update', (onlineIds) => {
 });
 
 
-// LOGIKA PENGIRIMAN MEDIA CHAT (DITAMBAH)
+// LOGIKA PENGIRIMAN MEDIA CHAT (DITAMBAH & DIPERBAIKI)
 attachMediaBtn.addEventListener('click', () => {
     chatFileInput.click();
 });
@@ -1337,6 +1347,7 @@ chatFileInput.addEventListener('change', (e) => {
 
             const messageData = {
                 senderId: myUserId,
+                recipientId: getOpponentId(), // <-- PERBAIKAN UTAMA: Tentukan penerima
                 message: caption,
                 media: mediaUrl, // Kirim media
                 timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
@@ -1364,6 +1375,7 @@ sendChatBtn.addEventListener('click', () => {
     if (message !== '' && myUserId) {
         const messageData = {
             senderId: myUserId,
+            recipientId: getOpponentId(), // <-- PERBAIKAN UTAMA: Tentukan penerima
             message: message,
             media: null, // Pastikan media null jika hanya teks
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
@@ -1593,6 +1605,7 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
         
         const messageData = {
             senderId: myUserId,
+            recipientId: getOpponentId(), // <-- FIX: Tentukan penerima untuk balasan chat
             message: `[REPLY STATUS dari ${myUserName} ke ${originalStatus.senderName}: "${originalStatus.message.substring(0, 15)}..."] ${replyText}`,
             media: null,
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
@@ -1616,4 +1629,3 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
 </script>
 </body>
 </html>
-
