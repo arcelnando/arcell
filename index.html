@@ -308,31 +308,31 @@ html, body {
 }
 
 /* PENAMBAHAN 4: CHAT STYLING (Di Akhir CSS) */
-#chatPage .info-box {
+#chatPage .info-box, #zazaAIPage .info-box {
     max-width: 600px;
     height: 80vh; 
     display: flex;
     flex-direction: column;
     padding: 0;
 }
-#chatHeader {
+#chatHeader, #zazaAIHeader {
     padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.1);
     backdrop-filter: blur(8px);
 }
-#chatMessages {
+#chatMessages, #zazaAIMessages {
     flex-grow: 1;
     overflow-y: auto;
     padding: 20px;
     background: rgba(255,255,255,0.05);
 }
-#chatMessages::-webkit-scrollbar {
+#chatMessages::-webkit-scrollbar, #zazaAIMessages::-webkit-scrollbar {
     width: 6px;
 }
-#chatMessages::-webkit-scrollbar-thumb {
+#chatMessages::-webkit-scrollbar-thumb, #zazaAIMessages::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
 }
-.chat-bubble {
+.chat-bubble, .ai-chat-bubble {
     transition: all 0.3s ease;
     position: relative;
 }
@@ -460,6 +460,39 @@ html, body {
     border-radius: 10px;
     margin-bottom: 15px;
 }
+
+/* AI Chat Styling (tambahan) */
+.ai-bubble-user {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    color: white;
+    word-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 0.95em;
+    line-height: 1.4;
+    align-self: flex-end;
+    background: #99c7ff; /* Warna User AI */
+    border-bottom-right-radius: 0;
+    margin-bottom: 10px;
+}
+.ai-bubble-zaza {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    color: #333;
+    word-wrap: break-word;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 0.95em;
+    line-height: 1.4;
+    align-self: flex-start;
+    background: rgba(255,255,255,0.85);
+    border-bottom-left-radius: 0;
+    margin-bottom: 10px;
+}
+.zaza-ai-footer{
+    padding: 15px; border-top: 1px solid rgba(255,255,255,0.2); display: flex; gap: 10px; align-items: center;
+}
 </style>
 </head>
 <body>
@@ -470,7 +503,7 @@ html, body {
   <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
   <ul id="navMenu">
     <li><button id="homeBtn"><span class="material-icons">home</span> Home</button></li> 
-    <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> 
+    <li><button id="zazaAIBtn"><span class="material-icons">auto_awesome</span> Tanya Zaza AI</button></li> <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> 
     <li><button id="statusNavBtn"><span class="material-icons">auto_stories</span> Status</button></li> 
     <li><button id="aboutBtn"><span class="material-icons">info</span> About</button></li> 
     <li><button id="contactBtn"><span class="material-icons">email</span> Contact</button></li> 
@@ -511,7 +544,7 @@ html, body {
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
     <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝗘𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
@@ -615,6 +648,33 @@ html, body {
     </div>
 </div>
 
+<div class="page" id="zazaAIPage">
+    <button class="back-btn" onclick="showPage('home')">
+        <span class="material-icons">arrow_back</span> KEMBALI
+    </button>
+    <div class="info-box">
+        
+        <div id="zazaAIHeader">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #99c7ff; color: white; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.2em;">Z</div> <div>
+                <h3 style="margin: 0; color: #99c7ff; font-weight: 700; font-size: 1.2em;">Tanya Zaza AI</h3>
+                <p style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.7);">Tanya apa saja, Zaza AI siap menjawab! (Memerlukan Server Node.js)</p> </div>
+        </div>
+
+        <div id="zazaAIMessages">
+             <div class="ai-bubble-zaza">Halo! Saya Zaza AI, asisten virtual Anda. Tanyakan apa saja!</div>
+             </div>
+
+        <div class="zaza-ai-footer">
+            <input type="text" id="zazaAIInput" placeholder="Tanyakan pada Zaza AI..." style="flex-grow: 1; padding: 12px 18px; border-radius: 20px; border: none; background: rgba(255,255,255,0.5); color: #333; outline: none;">
+            
+            <button id="sendZazaAIBtn" style="padding: 10px 15px; border-radius: 50%; width: 40px; height: 40px; background: #99c7ff; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
+                <span class="material-icons" style="font-size: 1.2em;">send</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <div class="page" id="statusPage">
     <button class="back-btn" onclick="showPage('home')">
         <span class="material-icons">arrow_back</span> KEMBALI
@@ -692,7 +752,7 @@ menuToggle.addEventListener('click',()=> {
   menuToggle.classList.toggle('active');
 });
 
-// Pages (Diperbarui dengan 'status')
+// Pages (Diperbarui dengan 'zazaAI')
 const pages = { 
   login: document.getElementById('loginPage'), 
   welcome: document.getElementById('welcomePage'),
@@ -702,7 +762,8 @@ const pages = {
   about: document.getElementById('aboutPage'), 
   contact: document.getElementById('contactPage'),
   chat: document.getElementById('chatPage'),
-  status: document.getElementById('statusPage') 
+  status: document.getElementById('statusPage'),
+  zazaAI: document.getElementById('zazaAIPage') // TAMBAHAN 3: Referensi Halaman Zaza AI
 };
 
 // **DATA ALBUM DIUBAH DENGAN LINK BARU DAN STRUKTUR DISSESUAIKAN**
@@ -718,7 +779,7 @@ const albumData = {
       "https://images2.imgbox.com/6d/9d/TfuuSkGT_o.jpg",
       "https://images2.imgbox.com/9b/14/1Nh4stjQ_o.jpg",
       "https://images2.imgbox.com/05/cf/2lmZVoK0_o.jpg",
-      "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
+      "https://images2.imgbox.box.com/17/ad/VpSegle2_o.jpg",
       "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
       "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
       "https://images2.imgbox.com/d1/42/8VgLikp_o.jpg", // Tautan diganti karena yang lama tidak ada.
@@ -814,6 +875,9 @@ window.onload = () => {
     } else {
         showPage('login');
     }
+    
+    // TAMBAHAN 4: Muat history AI Chat saat halaman dimuat
+    loadZazaAIChatHistory();
 };
 
 
@@ -907,7 +971,7 @@ function showPage(page){
   }
 
   // Putar musik jika bukan halaman non-musik
-  const nonMusicPages = ['login', 'welcome', 'about', 'contact', 'chat', 'status'];
+  const nonMusicPages = ['login', 'welcome', 'about', 'contact', 'chat', 'status', 'zazaAI']; // TAMBAHAN 5: Halaman Zaza AI non-musik
   if(!nonMusicPages.includes(page)) playMusicIfAlbum();
   else music.pause();
 }
@@ -1110,6 +1174,7 @@ document.getElementById('statusNavBtn').onclick=()=>showPage('status');
 document.getElementById('homeBtn').onclick=()=>showPage('home');
 document.getElementById('aboutBtn').onclick=()=>showPage('about');
 document.getElementById('contactBtn').onclick=()=>showPage('contact');
+document.getElementById('zazaAIBtn').onclick=()=>showPage('zazaAI'); // TAMBAHAN 6: Event listener untuk tombol Zaza AI
 
 // Particle (TIDAK BERUBAH)
 const particleContainer = document.getElementById('particleContainer');
@@ -1626,6 +1691,104 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
         document.getElementById('statusViewer').style.display = 'none';
     }
 });
+
+
+// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (DIPERBARUI MENGGUNAKAN SOCKET.IO)**
+const zazaAIInput = document.getElementById('zazaAIInput');
+const sendZazaAIBtn = document.getElementById('sendZazaAIBtn');
+const zazaAIMessages = document.getElementById('zazaAIMessages');
+const ZAZA_AI_HISTORY_KEY = 'zazaAIHistory';
+
+// Fungsi untuk menambahkan pesan ke chat AI
+function addMessageToZazaAIChat(message, sender, isHistory = false) {
+    const msgDiv = document.createElement('div');
+    const isUser = sender === 'user';
+    
+    msgDiv.classList.add('ai-chat-bubble');
+    msgDiv.classList.add(isUser ? 'ai-bubble-user' : 'ai-bubble-zaza');
+    
+    // Tambahkan indikator "Typing..." jika itu adalah balasan AI yang belum final
+    if (sender === 'typing') {
+        msgDiv.innerHTML = '<span class="material-icons" style="font-size: 1.2em; vertical-align: middle;">data_usage</span> Zaza AI sedang mengetik...';
+        msgDiv.id = 'ai-typing-indicator';
+    } else {
+        msgDiv.innerHTML = message;
+    }
+
+    msgDiv.style.marginBottom = '10px';
+    msgDiv.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
+
+
+    zazaAIMessages.appendChild(msgDiv);
+    if (!isHistory) zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
+    
+    return msgDiv;
+}
+
+// Fungsi untuk menyimpan history chat AI
+function saveZazaAIChatHistory(message, sender) {
+    let history = JSON.parse(localStorage.getItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY)) || '[]');
+    history.push({ message, sender, timestamp: new Date().toLocaleString('id-ID') });
+    localStorage.setItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY), JSON.stringify(history));
+}
+
+// Fungsi untuk memuat history chat AI
+function loadZazaAIChatHistory() {
+    let history = JSON.parse(localStorage.getItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY)) || '[]');
+    
+    // Bersihkan dan tambahkan pesan sapaan awal
+    zazaAIMessages.innerHTML = '';
+    addMessageToZazaAIChat("Halo! Saya Zaza AI, asisten virtual Anda. Tanyakan apa saja!", 'zaza', true);
+    
+    history.forEach(msg => {
+        addMessageToZazaAIChat(msg.message, msg.sender, true);
+    });
+    zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
+}
+
+
+// Handler Kirim Pesan ke Zaza AI
+sendZazaAIBtn.addEventListener('click', () => {
+    const userMessage = zazaAIInput.value.trim();
+    if (userMessage === '' || !myUserId) return;
+
+    // 1. Tampilkan pesan user
+    addMessageToZazaAIChat(userMessage, 'user');
+    saveZazaAIChatHistory(userMessage, 'user');
+    zazaAIInput.value = '';
+    
+    // 2. Tampilkan indikator mengetik (akan dihapus saat menerima respons)
+    addMessageToZazaAIChat('', 'typing'); 
+
+    // 3. Kirim prompt ke server melalui Socket.IO
+    // Event ini harus didengarkan oleh server.js
+    socket.emit('send_ai_message', { prompt: userMessage, senderId: myUserId });
+});
+
+zazaAIInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendZazaAIBtn.click();
+});
+
+// Listener untuk respons dari server (Socket.IO)
+socket.on('receive_ai_message', (data) => {
+    const { message } = data;
+    
+    // 1. Hapus indikator mengetik
+    const typingIndicator = document.getElementById('ai-typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+    
+    // 2. Tampilkan pesan AI final
+    addMessageToZazaAIChat(message, 'zaza');
+    saveZazaAIChatHistory(message, 'zaza');
+});
+
+// Tambahkan listener untuk memuat history saat masuk ke halaman AI
+document.getElementById('zazaAIBtn').onclick = () => {
+    loadZazaAIChatHistory();
+    showPage('zazaAI');
+};
 </script>
 </body>
 </html>
