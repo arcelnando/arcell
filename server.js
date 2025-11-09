@@ -7,48 +7,88 @@ const Groq = require("groq-sdk");
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const cors = require('cors');
 const path = require('path');
-
-const app = express();
-const server = http.createServer(app);
 
 // Inisialisasi Groq dengan API Key dari file .env
 // Pastikan variabel lingkungan GROQ_API_KEY sudah terisi di file .env
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+const app = express();
+const server = http.createServer(app);
+
 // Konfigurasi CORS
 const io = socketIo(server, {
     cors: {
         // Mengizinkan semua origin untuk akses dari browser (http://localhost:port_html)
+        // Jika di-deploy ke Render, ini harus disetel ke URL Vercel/frontend Anda
         origin: "*", 
         methods: ["GET", "POST"]
     }
 });
 
-// Data akun statis (harus match dengan HTML)
+// Data akun statis (HARUS MATCH DENGAN DEFAULT DI HTML)
 const USER_ACCOUNTS = {
     'zaza': {
         id: 'zaza',
         password: 'zaza',
         name: 'Zaza',
         isVerified: true,
-        avatar: 'ZA'
+        avatar: 'ZA',
+        role: 'Software Engineer', 
+        bio: 'Mengejar mimpi dan cinta.',
+        isOnline: false, // Tambahkan status awal
+        lastSeen: null
     },
     'khirza': {
         id: 'khirza',
         password: 'cantik',
         name: 'Khirza',
         isVerified: false,
-        avatar: 'KH'
+        avatar: 'KH',
+        role: 'Mahasiswa', 
+        bio: 'Selalu semangat dan tersenyum.',
+        isOnline: false,
+        lastSeen: null
+    },
+    'anomali1': {
+        id: 'anomali1',
+        password: 'anomali1',
+        name: 'Anomali 1',
+        isVerified: false,
+        avatar: '1',
+        role: 'Pengguna', 
+        bio: 'Saya adalah anomali pertama.',
+        isOnline: false,
+        lastSeen: null
+    },
+    'anomali2': {
+        id: 'anomali2',
+        password: 'anomali2',
+        name: 'Anomali 2',
+        isVerified: false,
+        avatar: '2',
+        role: 'Pengguna', 
+        bio: 'Saya adalah anomali kedua.',
+        isOnline: false,
+        lastSeen: null
+    },
+    'anomali3': {
+        id: 'anomali3',
+        password: 'anomali3',
+        name: 'Anomali 3',
+        isVerified: false,
+        avatar: '3',
+        role: 'Pengguna', 
+        bio: 'Saya adalah anomali ketiga.',
+        isOnline: false,
+        lastSeen: null
     }
 };
 
 const onlineUsers = {};
-const chatHistory = []; // Untuk menyimpan history chat biasa
 
 // =======================================================
-// === Fungsi Zaza AI (pakai Groq) ===
+// === Fungsi Zaza AI (Model: llama-3.1-8b-instant) ===
 // =======================================================
 async function getGroqResponse(prompt) {
     const systemMessage = "Anda adalah Zaza AI, asisten virtual yang ramah dan penuh kasih untuk Album Digital Celz. Jawablah dengan nada manis, singkat, dan relevan dengan album digital, Khirza, atau percintaan. Batasi jawaban maksimal 3 kalimat.";
@@ -72,28 +112,48 @@ async function getGroqResponse(prompt) {
 }
 
 // =======================================================
-// === Socket.IO Logika Chat ===
+// === Socket.IO Logika Chat dan Status ===
 // =======================================================
 io.on('connection', (socket) => {
     console.log(`[CONN] Pengguna terhubung: ${socket.id}`);
 
+    // --- UTILITY UNTUK UPDATE STATUS PENGGUNA (FIX LOGIKA LAST SEEN) ---
+    const sendUserStatusUpdate = () => {
+        const usersData = {};
+        
+        // Kumpulkan data terbaru untuk broadcast
+        Object.keys(USER_ACCOUNTS).forEach(userId => {
+            usersData[userId] = {
+                isOnline: USER_ACCOUNTS[userId].isOnline,
+                lastSeen: USER_ACCOUNTS[userId].lastSeen
+            };
+        });
+        // Kirim update status ke semua klien
+        io.emit('user_status_update', usersData);
+    };
+
     // --- LOGIN USER ---
     socket.on('user_login', (userId) => {
-        // Hapus socket ID lama jika ada
-        for (const id in onlineUsers) {
-            if (onlineUsers[id] === socket.id) delete onlineUsers[id];
+        // Logika untuk menangani koneksi duplikat (opsional tapi bagus)
+        if (onlineUsers[userId] && onlineUsers[userId] !== socket.id) {
+            io.to(onlineUsers[userId]).emit('duplicate_login', { message: 'Anda login di tempat lain.' });
         }
-
+        
         onlineUsers[userId] = socket.id;
         socket.userId = userId;
+        socket.join(userId); // Bergabung ke "room" sendiri
+
+        USER_ACCOUNTS[userId].isOnline = true;
+        USER_ACCOUNTS[userId].lastSeen = null; // Reset lastSeen saat login
+        
         console.log(`[ONLINE] ${userId} sekarang online.`);
 
-        // Kirim data awal ke user yang baru login
-        socket.emit('load_history', chatHistory);
-        socket.emit('load_users', USER_ACCOUNTS);
+        // Kirim semua detail akun default (termasuk lastSeen/isOnline) ke client
+        // FIX: Kirim seluruh objek USERS_ACCOUNTS agar client dapat memuat semua profile.
+        io.emit('load_users', USER_ACCOUNTS); 
         
-        // Broadcast status online ke semua
-        io.emit('user_status_update', Object.keys(onlineUsers));
+        // Broadcast status online/offline ke semua
+        sendUserStatusUpdate();
     });
     
     // --- LOGOUT USER ---
@@ -101,61 +161,80 @@ io.on('connection', (socket) => {
         if (onlineUsers[userId]) {
             delete onlineUsers[userId];
             socket.userId = null;
+            
+            USER_ACCOUNTS[userId].isOnline = false;
+            USER_ACCOUNTS[userId].lastSeen = Date.now(); // Set lastSeen
+            
             console.log(`[OFFLINE] ${userId} logged out.`);
-            io.emit('user_status_update', Object.keys(onlineUsers));
+            sendUserStatusUpdate();
         }
     });
 
 
-    // --- CHAT BIASA (Diperbaiki agar status dan recipient ID sesuai HTML) ---
+    // --- CHAT BIASA (FIX: MENGATASI DOUBLE CHAT DAN STATUS) ---
     socket.on('send_message', (data) => {
-        // Data yang diterima: { senderId, recipientId, message, media, timestamp, status }
-        const { senderId, recipientId, message, media, timestamp } = data;
-        const opponentId = recipientId; // Lawan bicara adalah recipientId
+        const { senderId, recipientId } = data;
+        
+        const senderDetails = USER_ACCOUNTS[senderId] || { name: 'Unknown' };
 
-        // Generate ID unik untuk persistence di client
-        const messageId = Date.now() + Math.random().toFixed(0);
-
+        // Server yang memberikan ID unik dan status 'sent'
+        const messageId = Date.now() + Math.floor(Math.random() * 1000);
+        
         const messageData = {
+            ...data,
             id: messageId,
-            senderId,
-            recipientId, // Tambahkan recipientId ke data pesan
-            senderName: USER_ACCOUNTS[senderId].name,
-            message,
-            media, // Tambahkan media
-            timestamp,
-            status: 'sent' // Status awal di server
+            senderName: senderDetails.name, 
+            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            status: 'sent' // Status awal dari server adalah 'sent'
         };
 
-        chatHistory.push(messageData);
-        console.log(`[MESSAGE] Dari ${senderId} ke ${recipientId}: ${message || '[MEDIA]'}`);
+        console.log(`[MESSAGE] Dari ${senderId} ke ${recipientId}: ${messageData.message || '[MEDIA]'}`);
 
-
-        // 1. Kirim pesan kembali ke pengirim (untuk persistence/tampilan)
+        // 1. Kirim pesan kembali ke PENGIRIM (untuk render dengan ID dan status 'sent' yang benar)
+        // Ini menggantikan pesan 'schedule' yang dibuat sementara di frontend.
         io.to(onlineUsers[senderId]).emit('receive_message', messageData);
 
-        // 2. Kirim pesan ke penerima
-        const receiverSocketId = onlineUsers[opponentId];
+        // 2. Kirim pesan ke PENERIMA
+        const receiverSocketId = onlineUsers[recipientId];
         if (receiverSocketId) {
             io.to(receiverSocketId).emit('receive_message', messageData);
-            
-            // Simulasikan status 'read' setelah 1.5 detik
-            setTimeout(() => {
-                const readStatusData = { ...messageData, status: 'read' };
-                // Kirim update status 'read' hanya ke pengirim
-                io.to(onlineUsers[senderId]).emit('update_status', readStatusData);
-            }, 1500);
         } else {
-            // Jika penerima offline, status tetap 'sent'
-            const sentStatusData = { ...messageData, status: 'sent' };
-            io.to(onlineUsers[senderId]).emit('update_status', sentStatusData);
+            // Jika penerima offline, tidak perlu bertindak. Status tetap 'sent'.
         }
     });
 
-    // --- CHAT DENGAN ZAZA AI (Diubah ke event yang dipanggil dari HTML) ---
-    socket.on('send_ai_message', async (data) => {
-        const { prompt } = data; // Data yang diterima: { prompt }
+    // --- STATUS PESAN 'READ' DARI PENERIMA (FIX: MENGUBAH STATUS DI PENGIRIM) ---
+    socket.on('message_read', ({ id, senderId, recipientId }) => {
+        const senderSocketId = onlineUsers[senderId];
+        
+        if (senderSocketId) {
+             console.log(`[STATUS] Pesan ${id} dibaca oleh ${recipientId}.`);
+             const readStatusData = { 
+                 id: id, 
+                 status: 'read', 
+                 senderId: recipientId, // Penerima adalah yang membaca
+                 recipientId: senderId  // Pengirim adalah yang menerima update status
+             };
+             
+             // Kirim status 'read' ke Pengirim
+             io.to(senderSocketId).emit('update_status', readStatusData);
+             
+             // Opsional: Kirim status 'read' ke Penerima itu sendiri agar dia tahu pesan tersebut telah diproses.
+             // io.to(onlineUsers[recipientId]).emit('update_status', readStatusData);
+        }
+    });
+    
+    // --- STATUS STORIES BARU ---
+    socket.on('status_created', (data) => {
+        console.log(`[STATUS] Status baru dibuat oleh: ${data.senderId}. Broadcasting update.`);
+        
+        // Kirim sinyal ke SEMUA klien KECUALI pengirim.
+        socket.broadcast.emit('receive_status_update', data.senderId);
+    });
 
+    // --- CHAT DENGAN ZAZA AI ---
+    socket.on('send_ai_message', async (data) => {
+        const { prompt } = data; 
         try {
             const aiResponseText = await getGroqResponse(prompt);
 
@@ -165,7 +244,6 @@ io.on('connection', (socket) => {
                 timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
             };
             
-            // Kirim balasan kembali ke pengirim (client)
             socket.emit('receive_ai_message', responseData);
         } catch (error) {
             const errorResponse = {
@@ -179,10 +257,14 @@ io.on('connection', (socket) => {
 
     // --- DISCONNECT ---
     socket.on('disconnect', () => {
-        if (socket.userId && onlineUsers[socket.userId]) {
+        if (socket.userId && onlineUsers[socket.userId] === socket.id) {
             delete onlineUsers[socket.userId];
+            
+            USER_ACCOUNTS[socket.userId].isOnline = false;
+            USER_ACCOUNTS[socket.userId].lastSeen = Date.now(); 
+            
             console.log(`[OFFLINE] ${socket.userId} terputus.`);
-            io.emit('user_status_update', Object.keys(onlineUsers));
+            sendUserStatusUpdate();
         }
     });
 });
@@ -190,8 +272,20 @@ io.on('connection', (socket) => {
 // =======================================================
 // === Jalankan Server ===
 // =======================================================
+
+// Express akan mencari file statis (HTML, CSS, JS) di root folder
+app.use(express.static(__dirname)); 
+
+// Mengarahkan ke index.html
+app.get('/', (req, res) => {
+    // Jika Anda hosting di Render, tidak perlu index.html karena Vercel sudah menangani frontend.
+    // Tetapi jika menjalankan secara lokal:
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// FIX: Gunakan variabel lingkungan PORT untuk kompatibilitas hosting
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server Chat & Album Berjalan di http://localhost:${PORT}`);
-    console.log(`Buka file index.html atau akses server di port ini.`);
+    console.log(`Server Chat & Album Berjalan di port ${PORT}`);
+    console.log(`URL Eksternal: Jika ini di-deploy, gunakan URL publik Render Anda.`);
 });
