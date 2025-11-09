@@ -360,9 +360,12 @@ html, body {
   .photo-menu button{ font-size:0.9em; }
   #welcomeMessage h2{ font-size:1.8em; }
   #welcomeMessage p{ font-size:1em; }
+  
+  /* PERBAIKAN: Chat Page lebih kecil di mobile */
+  #chatPage .info-box { height: 80vh !important; }
 }
 
-/* PENAMBAHAN 4: CHAT STYLING (Di Akhir CSS) */
+/* PENAMBAHAN 4: CHAT STYLING */
 #chatPage .info-box, #zazaAIPage .info-box {
     max-width: 600px;
     height: 80vh; 
@@ -379,6 +382,9 @@ html, body {
     overflow-y: auto;
     padding: 20px;
     background: rgba(255,255,255,0.05);
+    /* DITAMBAH: Tata letak Flexbox untuk pesan */
+    display: flex; 
+    flex-direction: column;
 }
 #chatMessages::-webkit-scrollbar, #zazaAIMessages::-webkit-scrollbar {
     width: 6px;
@@ -387,15 +393,73 @@ html, body {
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
 }
-.chat-bubble, .ai-chat-bubble {
+
+/* DITAMBAH: Gaya Gelembung Chat Modern (WhatsApp Style TRANSPARAN) */
+.chat-bubble {
     transition: all 0.3s ease;
     position: relative;
+    max-width: 85%; 
+    word-wrap: break-word;
+    /*box-shadow: 0 2px 5px rgba(0,0,0,0.2);*/ /* Hapus shadow */
+    font-size: 0.95em;
+    line-height: 1.4;
+    margin-bottom: 8px; 
+    padding: 0; 
+    display: flex; 
+    align-items: flex-end; 
+    /* PENTING: Perubahan untuk WhatsApp-style bubble */
+    margin-left: 0;
+    margin-right: 0;
 }
+/* Gelembung pesan dari saya */
+.chat-bubble.is-me {
+    align-self: flex-end; /* Dorong ke kanan */
+    justify-content: flex-end;
+}
+/* Gelembung pesan dari lawan */
+.chat-bubble.is-opponent {
+    align-self: flex-start; /* Dorong ke kiri */
+    justify-content: flex-start;
+}
+/* Inner Bubble (untuk konten dan waktu) */
+.chat-bubble-inner {
+    padding: 10px 15px;
+    border-radius: 15px;
+    position: relative;
+    max-width: 100%;
+    /* PENAMBAHAN: Gaya Transparan/Blurnya */
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+/* Gaya untuk inner bubble saya */
+.chat-bubble.is-me .chat-bubble-inner {
+    color: white;
+    background: #ff99c7; 
+    border-bottom-right-radius: 5px; 
+}
+/* Gaya untuk inner bubble lawan */
+.chat-bubble.is-opponent .chat-bubble-inner {
+    color: #333;
+    background: rgba(255,255,255,0.85); 
+    border-bottom-left-radius: 5px; 
+}
+
 .message-status {
     font-size: 1em !important; 
     margin-left: 3px; 
     vertical-align: middle;
 }
+
+/* FIX: Gaya untuk status pesan yang belum terbaca (sent) */
+.message-status[data-status="sent"] {
+    color: rgba(255,255,255,0.8); /* Putih/abu-abu untuk sent/delivered */
+}
+/* FIX: Gaya untuk status pesan yang sudah terbaca (read) */
+.message-status[data-status="read"] {
+    color: #00e676; /* Hijau untuk read */
+}
+
 
 /* --- Penambahan untuk Logout & Status --- */
 
@@ -440,8 +504,6 @@ html, body {
     height: auto;
     min-height: 400px;
     padding: 30px;
-    display: flex;
-    flex-direction: column;
 }
 #statusList {
     margin-top: 20px;
@@ -492,10 +554,12 @@ html, body {
     padding: 10px; border-radius: 10px; border: none; width: 80%; margin-right: 10px;
     background: rgba(255,255,255,0.9); color: #333;
 }
-#statusLikeBtn, #statusReplyBtn {
+#statusLikeBtn, #statusReplyBtn, #deleteStatusBtn {
     padding: 10px 15px; border-radius: 10px; border: none; background: #ff99c7; color: white; margin-top: 10px; cursor: pointer; transition: 0.3s;
 }
 #statusLikeBtn:hover, #statusReplyBtn:hover { background: #ffb3d1; }
+#deleteStatusBtn { background: #ff6f91; }
+#deleteStatusBtn:hover { background: #ff8da8; }
 
 /* Styling Media Chat */
 .media-message {
@@ -548,6 +612,99 @@ html, body {
 .zaza-ai-footer{
     padding: 15px; border-top: 1px solid rgba(255,255,255,0.2); display: flex; gap: 10px; align-items: center;
 }
+
+/* Styling Profile Page */
+#profilePage .info-box {
+    max-width: 400px;
+    height: auto;
+    min-height: 400px;
+    padding: 30px;
+}
+
+/* Tambahan untuk Avatar kustom */
+.custom-avatar {
+    width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+    margin: 0 auto 15px; border: 3px solid #ffe3f1;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: 700; font-size: 2em; color: white; background: #ff99c7;
+    cursor: pointer; /* Agar terasa dapat diklik */
+    position: relative;
+}
+.custom-avatar::after {
+    content: '\270E'; /* Icon pensil */
+    position: absolute; bottom: 0; right: 0;
+    background: #4CAF50; color: white; border-radius: 50%;
+    padding: 4px; font-size: 0.6em; line-height: 1;
+}
+
+/* Modal Edit Profile */
+#editProfileModal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 2001;
+    display: none; justify-content: center; align-items: center;
+}
+#editProfileContent {
+    background: #222; padding: 30px; border-radius: 15px; max-width: 90%; width: 350px;
+    color: white; animation: fadeInScale 0.5s;
+    display: flex; flex-direction: column; gap: 15px;
+}
+#editProfileContent h3 { color: #ffc0de; margin-top: 0; }
+#editProfileContent input, #editProfileContent textarea {
+    padding: 10px; border-radius: 10px; border: none; background: rgba(255,255,255,0.2);
+    color: white; outline: none;
+}
+#editProfileContent button {
+    padding: 10px 15px; border-radius: 10px; border: none; background: #ff99c7; color: white; 
+    font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+#editProfileContent button:hover { background: #ffb3d1; }
+
+
+/* Modal View Profile */
+#viewProfileModal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); z-index: 2001;
+    display: none; justify-content: center; align-items: center;
+}
+#viewProfileContent {
+    background: #222; padding: 30px; border-radius: 15px; max-width: 90%; width: 350px;
+    color: white; animation: fadeInScale 0.5s;
+    display: flex; flex-direction: column; gap: 15px;
+    text-align: center;
+}
+#viewProfileContent h3 { color: #ffc0de; margin-top: 0; }
+
+
+/* PENAMBAHAN: Select Chat Page */
+#selectChatPage .info-box {
+    max-width: 400px;
+    height: auto;
+    padding: 30px;
+}
+.chat-contact-item {
+    background: rgba(255,255,255,0.15);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.chat-contact-item:hover {
+    background: rgba(255,255,255,0.3);
+}
+.contact-avatar {
+    width: 50px; height: 50px; border-radius: 50%; background: #ff99c7; 
+    display: flex; justify-content: center; align-items: center;
+    font-weight: 700; font-size: 1.5em; color: white;
+}
+
+/* Avatar di dalam chat bubble harus bulat */
+.chat-bubble .contact-avatar {
+    border-radius: 50%; /* Pastikan avatar di dalam bubble bulat */
+}
 </style>
 </head>
 <body>
@@ -558,7 +715,9 @@ html, body {
   <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
   <ul id="navMenu">
     <li><button id="homeBtn"><span class="material-icons">home</span> Home</button></li> 
-    <li><button id="zazaAIBtn"><span class="material-icons">auto_awesome</span> Tanya Zaza AI</button></li> <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> 
+    <li><button id="profileNavBtn"><span class="material-icons">person</span> Profil</button></li> 
+    <li><button id="zazaAIBtn"><span class="material-icons">auto_awesome</span> Tanya Zaza AI</button></li> 
+    <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> 
     <li><button id="statusNavBtn"><span class="material-icons">auto_stories</span> Status</button></li> 
     <li><button id="aboutBtn"><span class="material-icons">info</span> About</button></li> 
     <li><button id="contactBtn"><span class="material-icons">email</span> Contact</button></li> 
@@ -569,7 +728,9 @@ html, body {
 <div class="page active-page" id="loginPage">
   <div id="loginTitle">𝗟𝗢𝗚𝗜𝗡 𝗨𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝗔𝗟𝗕𝗨𝗠</div>
   <div id="loginBox">
-    <input type="text" id="username" placeholder="Username"> <input type="password" id="password" placeholder="Password"> <div class="show-pass" id="togglePass">Show Password</div>
+    <input type="text" id="username" placeholder="Username"> 
+    <input type="password" id="password" placeholder="Password"> 
+    <div class="show-pass" id="togglePass">Show Password</div>
     <button id="loginBtn">Login</button>
     <div id="loginError">Username atau Password salah!</div>
   </div>
@@ -599,7 +760,7 @@ html, body {
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
     <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝐀</div>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝐘𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
@@ -655,7 +816,7 @@ html, body {
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝗟 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝐋 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
     <p>Versi: 3.2 Final
   </div>
 </div>
@@ -670,21 +831,36 @@ html, body {
   </div>
 </div>
 
-<div class="page" id="chatPage">
-    <button class="back-btn" onclick="showPage('home')">
+<div class="page" id="selectChatPage">
+    <button class="back-btn" onclick="showChatBack()">
         <span class="material-icons">arrow_back</span> KEMBALI
     </button>
-    <div class="info-box" style="max-width: 600px; height: 80vh; padding: 0; display: flex; flex-direction: column;">
+    <div class="info-box" style="max-width: 400px; height: auto;">
+        <h2>Pilih Kontak Chat 💬</h2>
+        <p style="font-size: 0.9em; margin-bottom: 20px;">Pilih siapa yang ingin Anda hubungi:</p>
+        <div id="contactList">
+            </div>
+    </div>
+</div>
+
+<div class="page" id="chatPage">
+    <button class="back-btn" onclick="showChatBack()">
+        <span class="material-icons">arrow_back</span> KEMBALI
+    </button>
+    <div class="info-box">
         
-        <div id="chatHeader" style="padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.1);">
-            <div id="opponentAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: #ffc0de; color: white; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.2em;"></div>
+        <div id="chatHeader">
+            <div id="opponentAvatar" class="custom-avatar" style="width: 40px; height: 40px; margin: 0; border: none;"></div>
             <div>
                 <h3 id="opponentName" style="margin: 0; color: #ffe3f1; font-weight: 700; font-size: 1.2em;">Memuat...</h3>
                 <p id="chatStatus" style="margin: 0; font-size: 0.8em; color: rgba(255,255,255,0.7);">Menghubungkan...</p>
             </div>
+            <button onclick="deleteAllChatHistory()" style="margin-left: auto; background: none; border: none; color: white; font-size: 1em; cursor: pointer;" title="Hapus Riwayat Chat">
+                 <span class="material-icons">delete_sweep</span>
+            </button>
         </div>
 
-        <div id="chatMessages" style="flex-grow: 1; overflow-y: auto; padding: 20px; text-align: left; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth;">
+        <div id="chatMessages">
             <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Chat hanya berfungsi jika server backend berjalan di localhost:3000 --</div>
         </div>
 
@@ -693,7 +869,7 @@ html, body {
             <button id="attachMediaBtn" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; background: #99c7ff; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
                 <span class="material-icons" style="font-size: 1.2em;">attach_file</span>
             </button>
-            <input type="file" id="chatFileInput" accept="image/*" style="display:none;">
+            <input type="file" id="chatFileInput" accept="image/*, audio/*" style="display:none;">
             <input type="text" id="chatInput" placeholder="Ketik pesan..." style="flex-grow: 1; padding: 12px 18px; border-radius: 20px; border: none; background: rgba(255,255,255,0.5); color: #333; outline: none;">
             
             <button id="sendChatBtn" style="padding: 10px 15px; border-radius: 50%; width: 40px; height: 40px; background: #ff99c7; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
@@ -739,21 +915,73 @@ html, body {
     <div class="info-box">
         <h2>Stories (Status) ✨</h2>
         
-        <button id="createMediaStatusBtn" class="folder-btn" style="width:100%; margin-top:10px; background:#4CAF50;">
-            <span class="material-icons">add_box</span> Buat Status Media Baru
-        </button>
-        <input type="file" id="statusFileInput" accept="image/*" style="display:none;">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button id="createMediaStatusBtn" class="folder-btn" style="width:50%; background:#4CAF50; padding:12px 20px; font-size:1em;">
+                <span class="material-icons">add_photo_alternate</span> Status Media
+            </button>
+            <button id="createTextStatusBtn" class="folder-btn" style="width:50%; background:#00bcd4; padding:12px 20px; font-size:1em;">
+                <span class="material-icons">notes</span> Status Kata-kata
+            </button>
+        </div>
+
+        <input type="file" id="statusFileInput" accept="image/*,audio/*" style="display:none;">
         <div id="statusList">
             <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9em;">Memuat status...</div>
         </div>
     </div>
 </div>
 
+<div class="page" id="profilePage">
+    <button class="back-btn" onclick="showPage('home')">
+        <span class="material-icons">arrow_back</span> KEMBALI
+    </button>
+    <div class="info-box" id="profileBox">
+        <h2>Profil Pengguna 👤</h2>
+        <div id="profileAvatar" class="custom-avatar"></div>
+        <h3 id="profileName" style="color:#ffe3f1; font-size:1.8em; margin-bottom: 5px;"></h3>
+        <p id="profileRole" style="font-size:1.1em; color: rgba(255,255,255,0.8);"></p>
+        <p id="profileStatus" style="font-style: italic; margin-top: 15px;">"Mengejar mimpi dan cinta."</p>
+        <button id="editProfileBtn" class="folder-btn" style="width:100%; margin-top:20px; background:#4CAF50;">
+            <span class="material-icons">edit</span> Edit Nama / Bio & Avatar
+        </button>
+    </div>
+</div>
+
+<div id="editProfileModal">
+    <div id="editProfileContent">
+        <h3>Edit Profil Anda</h3>
+        <input type="text" id="editNameInput" placeholder="Nama Panggilan">
+        <textarea id="editBioInput" placeholder="Bio Singkat (Max 50 karakter)" maxlength="50"></textarea>
+        <input type="text" id="editRoleInput" placeholder="Role (Hanya untuk Zaza/Khirza)" style="display:none;">
+        
+        <label for="editAvatarInput" style="display:flex; align-items:center; gap:10px; cursor:pointer; color:#ffc0de; font-weight:600;">
+            <span class="material-icons">photo_camera</span> Ganti Foto Profil
+        </label>
+        <input type="file" id="editAvatarInput" accept="image/*" style="display:none;">
+        
+        <button id="saveProfileBtn">Simpan Perubahan</button>
+        <button onclick="document.getElementById('editProfileModal').style.display='none';" style="background:#ff6f91;">Batal</button>
+    </div>
+</div>
+
+<div id="viewProfileModal">
+    <div id="viewProfileContent">
+        <div id="viewProfileAvatar" class="custom-avatar" style="margin-bottom: 0;"></div>
+        <h3 id="viewProfileName" style="color:#ffc0de; margin-top: 10px;">Nama Pengguna</h3>
+        <p id="viewProfileRole" style="font-size:1em; color: rgba(255,255,255,0.8); margin-bottom: 5px;"></p>
+        <p id="viewProfileBio" style="font-style: italic; margin-top: 0; font-size: 0.9em;">"Bio Singkat"</p>
+        
+        <button onclick="document.getElementById('viewProfileModal').style.display='none';" style="background:#ff99c7;">Tutup</button>
+    </div>
+</div>
+
+
 <div id="statusViewer">
     <div id="viewerContent">
         <h3 id="viewerHeader" style="color:#ffc0de;">Status dari <span id="viewerSender"></span> <span id="viewerTime" style="font-size: 0.6em; color: rgba(255,255,255,0.5);"></span></h3>
         
         <img id="viewerMedia" src="" alt="Status Media" style="display:none;">
+        <audio id="viewerAudio" controls style="width: 100%; margin-bottom: 15px; display:none;"></audio>
         <p id="viewerMessage" style="font-size:1.1em; margin: 15px 0;"></p>
         
         <div id="viewerMeta">
@@ -764,6 +992,7 @@ html, body {
         <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
              <button id="statusLikeBtn"><span class="material-icons" style="font-size: 1.1em; vertical-align:middle;">favorite</span> Like</button>
              <button id="statusReplyBtn"><span class="material-icons" style="font-size: 1.1em; vertical-align:middle;">reply</span> Reply</button>
+             <button id="deleteStatusBtn" style="display:none;"><span class="material-icons" style="font-size: 1.1em; vertical-align:middle;">delete</span> Hapus</button>
         </div>
 
         <div id="replySection" style="margin-top: 20px; display: none; align-items: center; gap: 10px;">
@@ -773,33 +1002,55 @@ html, body {
             </button>
         </div>
 
-        <button onclick="document.getElementById('statusViewer').style.display='none';" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:2em; cursor:pointer;">&times;</button>
+        <button onclick="document.getElementById('statusViewer').style.display='none'; document.getElementById('viewerAudio').pause();" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:2em; cursor:pointer;">&times;</button>
     </div>
 </div>
 
 <audio id="bgMusic" src="https://h.top4top.io/m_35969emdf0.m4a" loop></audio>
 
 <script>
-// --- KONFIGURASI CHAT & LOGIN ---
-const CHAT_SERVER_URL = 'http://localhost:3000'; 
-const socket = io(CHAT_SERVER_URL); 
+// --- KONFIGURASI CHAT & LOGIN (DITAMBAH 3 AKUN ANOMALI) ---
+const CHAT_SERVER_URL = ''; 
+const socket = io(CHAT_SERVER_URL);  
 
-// 2 AKUN LOGIN STATIS (HARUS SESUAI DENGAN SERVER.JS)
 const loginCredentials = {
   'zaza': 'zaza',      
-  'khirza': 'cantik'   
+  'khirza': 'cantik',
+  'anomali1': 'anomali1', 
+  'anomali2': 'anomali2', 
+  'anomali3': 'anomali3'  
 };
-const CHAT_USER_PROFILES = {
-    'zaza': { id: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA' },
-    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH' }
+
+// Default Profiles
+const DEFAULT_USER_PROFILES = {
+    'zaza': { id: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA', role: 'Software Engineer', bio: 'Mengejar mimpi dan cinta.', lastSeen: null, isOnline: false },
+    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH', role: 'Mahasiswa', bio: 'Selalu semangat dan tersenyum.', lastSeen: null, isOnline: false },
+    'anomali1': { id: 'anomali1', name: 'Anomali 1', isVerified: false, avatar: '1', role: 'Pengguna', bio: 'Saya adalah anomali pertama.', lastSeen: null, isOnline: false }, 
+    'anomali2': { id: 'anomali2', name: 'Anomali 2', isVerified: false, avatar: '2', role: 'Pengguna', bio: 'Saya adalah anomali kedua.', lastSeen: null, isOnline: false }, 
+    'anomali3': { id: 'anomali3', name: 'Anomali 3', isVerified: false, avatar: '3', role: 'Pengguna', bio: 'Saya adalah anomali ketiga.', lastSeen: null, isOnline: false }  
 };
+
+let CHAT_USER_PROFILES = JSON.parse(JSON.stringify(DEFAULT_USER_PROFILES)); // Kloning untuk penggunaan saat ini
 
 let myUserId = ''; 
 let myUserName = '';
 let opponentInfo = {}; 
+let currentOpponentId = ''; 
+// MENGGUNAKAN KUNCI GLOBAL UNTUK STATUS AGAR DAPAT DIKIRIM KE SEMUA KLIEN
 const STATUS_KEY = 'globalUserStatuses'; 
 let currentStatusId = null; 
 // --- END KONFIGURASI ---
+
+// Fungsi utilitas untuk mendapatkan kunci localStorage
+function getLocalStorageKey(key) { return `${myUserId}_${key}`; }
+
+/**
+ * Mendapatkan kunci unik untuk riwayat chat antara 2 user.
+ */
+function getChatHistoryKey(userId1, userId2) {
+    const sortedIds = [userId1, userId2].sort();
+    return `${sortedIds[0]}_${sortedIds[1]}_chatHistory`;
+}
 
 // Navbar toggle
 const navMenu = document.getElementById('navMenu');
@@ -809,7 +1060,7 @@ menuToggle.addEventListener('click',()=> {
   menuToggle.classList.toggle('active');
 });
 
-// Pages (Diperbarui dengan 'zazaAI')
+// Pages 
 const pages = { 
   login: document.getElementById('loginPage'), 
   welcome: document.getElementById('welcomePage'),
@@ -820,11 +1071,12 @@ const pages = {
   contact: document.getElementById('contactPage'),
   chat: document.getElementById('chatPage'),
   status: document.getElementById('statusPage'),
-  zazaAI: document.getElementById('zazaAIPage') // TAMBAHAN 3: Referensi Halaman Zaza AI
+  zazaAI: document.getElementById('zazaAIPage'),
+  profile: document.getElementById('profilePage'),
+  selectChat: document.getElementById('selectChatPage') 
 };
 
-// **DATA ALBUM DIUBAH DENGAN LINK BARU DAN STRUKTUR DISSESUAIKAN**
-// PERBAIKAN: Menambahkan array 'likedPhotos' untuk menyimpan status like per foto
+// Data Album (Dipotong untuk kerapian)
 const albumData = {
   main: { 
     photos: [
@@ -857,7 +1109,7 @@ const albumData = {
       "https://files.catbox.moe/m78c8s.jpg" 
     ], 
     current: 0, 
-    likedPhotos: [], // Menyimpan indeks foto yang disukai
+    likedPhotos: [], 
     container: document.getElementById('albumContainer'), 
     indicator: document.getElementById('mainPhotoIndicator'), 
     spinner: document.getElementById('mainSpinner'),
@@ -881,7 +1133,7 @@ const albumData = {
       "https://files.catbox.moe/j2u52c.jpg"
     ], 
     current: 0, 
-    likedPhotos: [], // Menyimpan indeks foto yang disukai
+    likedPhotos: [], 
     container: null, 
     indicator: null, 
     spinner: null,
@@ -901,7 +1153,7 @@ const albumData = {
       "https://files.catbox.moe/jxcxec.jpg"
     ], 
     current: 0, 
-    likedPhotos: [], // Menyimpan indeks foto yang disukai
+    likedPhotos: [], 
     container: null, 
     indicator: null, 
     spinner: null,
@@ -910,13 +1162,14 @@ const albumData = {
 };
 
 let autoSwipeInterval;
-let lastTap = 0; // Untuk double tap
+let lastTap = 0; 
 
-// **FUNGSI UTAMA LOCAL STORAGE**
-function getLocalStorageKey(key) { return `${myUserId}_${key}`; }
+// Menggunakan kunci universal untuk status like album
+const GLOBAL_PROFILE_KEY = 'CHAT_USER_PROFILES_CUSTOM';
 
-// FUNGSI BARU: Muat status like dari Local Storage saat inisialisasi
+
 function loadLikeStatus(folder) {
+    // Menggunakan kunci per user untuk data non-universal
     const key = getLocalStorageKey(`${folder}_likedPhotos`);
     const storedLikes = localStorage.getItem(key);
     if (storedLikes) {
@@ -926,51 +1179,126 @@ function loadLikeStatus(folder) {
     }
 }
 
-// FUNGSI BARU: Simpan status like ke Local Storage
 function saveLikeStatus(folder) {
+    // Menggunakan kunci per user untuk data non-universal
     const key = getLocalStorageKey(`${folder}_likedPhotos`);
     localStorage.setItem(key, JSON.stringify(albumData[folder].likedPhotos));
 }
 
-// PERBAIKAN: Fungsi untuk mendapatkan ID lawan bicara (digunakan di Chat)
+function loadUserProfiles() {
+    // 1. Reset ke Default
+    CHAT_USER_PROFILES = JSON.parse(JSON.stringify(DEFAULT_USER_PROFILES));
+    
+    // 2. Muat Kustomisasi Global
+    const storedProfiles = localStorage.getItem(GLOBAL_PROFILE_KEY);
+    if (storedProfiles) {
+        const customProfiles = JSON.parse(storedProfiles);
+        
+        // Gabungkan profil kustom dengan default
+        Object.keys(customProfiles).forEach(userId => {
+             if (CHAT_USER_PROFILES[userId]) {
+                // Pertahankan properti non-kustomizable (isVerified, lastSeen, isOnline)
+                const defaultProfile = DEFAULT_USER_PROFILES[userId];
+                
+                CHAT_USER_PROFILES[userId] = { 
+                    ...defaultProfile, // Mulai dari default
+                    ...customProfiles[userId] // Timpa dengan kustomisasi (nama, bio, avatar, role)
+                };
+             }
+        });
+    }
+    // Catatan: isOnline/lastSeen diperbarui oleh socket 'user_status_update', tidak disimpan di sini.
+}
+
+function saveUserProfiles() {
+    const customProfiles = {};
+
+    for (const userId in CHAT_USER_PROFILES) {
+         const current = CHAT_USER_PROFILES[userId];
+         const defaultP = DEFAULT_USER_PROFILES[userId];
+         
+         // Cek apakah ada perubahan pada field yang dapat diedit pengguna (name, bio, avatar, role)
+         if (!defaultP || 
+             current.name !== defaultP.name || 
+             current.bio !== defaultP.bio ||
+             current.avatar !== defaultP.avatar ||
+             current.role !== defaultP.role 
+             ) 
+         {
+              // Simpan hanya field yang relevan untuk kustomisasi
+              customProfiles[userId] = { 
+                  id: current.id, 
+                  name: current.name, 
+                  isVerified: current.isVerified, 
+                  avatar: current.avatar, 
+                  role: current.role, 
+                  bio: current.bio, 
+              };
+         }
+    }
+    localStorage.setItem(GLOBAL_PROFILE_KEY, JSON.stringify(customProfiles));
+    
+    // Perbarui profil pengguna sendiri setelah menyimpan
+    const myProfile = CHAT_USER_PROFILES[myUserId];
+    if (myProfile) {
+        myUserName = myProfile.name;
+    }
+}
+
 function getOpponentId() {
-    return myUserId === 'zaza' ? 'khirza' : 'zaza';
+    return currentOpponentId; 
+}
+
+function selectOpponent(opponentId) {
+    currentOpponentId = opponentId;
+    localStorage.setItem(getLocalStorageKey('currentOpponentId'), opponentId); 
+    showPage('chat'); 
+    loadChatHistory();
+}
+
+function showChatBack() {
+    // Kembali ke Select Chat Page untuk semua user
+    showPage('selectChat');
 }
 
 
 // **INICIALISASI SAAT STARTUP (SESI PERSISTENCE)**
 window.onload = () => {
-    // Inisialisasi likeBtnElement untuk folder 1 dan 2 setelah DOM dimuat
+    loadUserProfiles(); 
+    
     albumData.folder1.likeBtnElement = document.querySelector('#folder1Page .like-btn');
     albumData.folder2.likeBtnElement = document.querySelector('#folder2Page .like-btn');
     
-    // Tambahkan event listener untuk tombol like folder 1 & 2
     albumData.folder1.likeBtnElement.onclick = () => toggleLike('folder1');
     albumData.folder2.likeBtnElement.onclick = () => toggleLike('folder2');
 
     const storedUser = localStorage.getItem('loggedInUser');
     if (storedUser && loginCredentials[storedUser]) {
         myUserId = storedUser;
+        loadUserProfiles(); // Muat ulang setelah myUserId disetel
         myUserName = CHAT_USER_PROFILES[myUserId].name;
         document.querySelector('.navbar').style.display = 'flex';
         document.getElementById('displayUsername').textContent = myUserName.toUpperCase();
+        
+        currentOpponentId = localStorage.getItem(getLocalStorageKey('currentOpponentId')) || ''; 
+        
         showPage('welcome');
         socket.emit('user_login', myUserId);
     } else {
         showPage('login');
     }
     
-    // Muat semua status like untuk semua folder
     loadLikeStatus('main');
     loadLikeStatus('folder1');
     loadLikeStatus('folder2');
 
-    // Muat history AI Chat
     loadZazaAIChatHistory();
+    // GANTI: Panggil updateChatHeader saat memuat halaman chat/saat ada perubahan user_status_update dari socket
+    // setInterval(updateChatHeader, 5000); 
 };
 
 
-// Login (Diperbarui)
+// Login (Dipotong)
 const loginBtn = document.getElementById('loginBtn');
 const loginError = document.getElementById('loginError');
 const usernameInput = document.getElementById('username');
@@ -981,6 +1309,7 @@ const folderSelectWrapper = document.getElementById('folderSelectWrapper');
 const music = document.getElementById('bgMusic');
 const displayUsername = document.getElementById('displayUsername');
 const startBrowsingBtn = document.getElementById('startBrowsingBtn');
+const createTextStatusBtn = document.getElementById('createTextStatusBtn'); // Baru
 
 togglePass.addEventListener('click', ()=>{
   passwordInput.type = (passwordInput.type==='password')?'text':'password'; 
@@ -996,6 +1325,7 @@ loginBtn.addEventListener('click', ()=>{
     document.querySelector('.navbar').style.display='flex';
     
     myUserId = user; 
+    loadUserProfiles(); 
     myUserName = CHAT_USER_PROFILES[user].name;
     localStorage.setItem('loggedInUser', user); 
     
@@ -1003,42 +1333,92 @@ loginBtn.addEventListener('click', ()=>{
     
     socket.emit('user_login', myUserId);
     
-    // Muat status like untuk user yang baru login
     loadLikeStatus('main');
     loadLikeStatus('folder1');
     loadLikeStatus('folder2');
     
+    // Default opponent saat login (digunakan jika belum pernah memilih)
+    if (myUserId === 'zaza') currentOpponentId = 'khirza';
+    else if (myUserId === 'khirza') currentOpponentId = 'zaza';
+    else currentOpponentId = 'zaza'; // Default untuk Anomali
+
+    localStorage.setItem(getLocalStorageKey('currentOpponentId'), currentOpponentId); 
+        
     showPage('welcome'); 
   } else {
     loginError.style.display='block';
   }
 });
 
-document.getElementById('startBrowsingBtn').addEventListener('click', () => { showPage('home'); });
+document.getElementById('startBrowsingBtn').addEventListener('click', () => { 
+    if (myUserId === 'zaza' || myUserId === 'khirza') {
+        showPage('home'); 
+    } else {
+        alert('Anda tidak memiliki izin untuk mengakses album. Hanya Zaza dan Khirza yang dapat melihat album.');
+        showPage('profile'); 
+    }
+});
 
-// **LOGOUT** (DITAMBAH)
+// **LOGOUT**
 document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('loggedInUser'); 
+    // Hapus juga cache lawan saat logout
+    localStorage.removeItem(getLocalStorageKey('currentOpponentId')); 
     socket.emit('user_logout', myUserId); 
     myUserId = '';
     myUserName = '';
+    currentOpponentId = '';
     document.querySelector('.navbar').style.display = 'none';
     music.pause();
     showPage('login');
 });
 
+// FUNGSI Render Avatar & Profile (Dipotong)
+function renderAvatar(element, profile) {
+    if (profile.avatar && profile.avatar.startsWith('data:image')) {
+        element.style.backgroundImage = `url(${profile.avatar})`;
+        element.style.backgroundSize = 'cover';
+        element.style.backgroundColor = 'transparent';
+        element.textContent = '';
+    } else {
+        element.style.backgroundImage = 'none';
+        element.style.backgroundColor = '#ff99c7';
+        element.textContent = profile.avatar; 
+    }
+    // Pastikan avatar di luar chat selalu bulat
+    element.style.borderRadius = '50%'; 
+}
+
+function showProfilePage() {
+    loadUserProfiles(); 
+    const profileData = CHAT_USER_PROFILES[myUserId];
+    if (!profileData) return;
+    
+    const profileAvatarEl = document.getElementById('profileAvatar');
+    renderAvatar(profileAvatarEl, profileData);
+
+    document.getElementById('profileName').textContent = profileData.name;
+    document.getElementById('profileRole').textContent = profileData.role;
+    document.getElementById('profileStatus').textContent = `"${profileData.bio}"`;
+}
+
+
 // FUNGSI UTAMA UNTUK MENAMPILKAN HALAMAN (DIUBAH)
 function showPage(page){
-  // Hentikan auto-swipe saat berpindah halaman
   clearInterval(autoSwipeInterval);
   
-  // 1. Matikan semua halaman dan hapus kelas aktif
+  const albumPages = ['home', 'mainAlbum', 'folder1', 'folder2'];
+  
+  if (albumPages.includes(page) && myUserId !== 'zaza' && myUserId !== 'khirza') {
+      alert('Anda tidak memiliki izin untuk mengakses album.');
+      return; 
+  }
+  
   for(const key in pages){ 
     pages[key].style.display = 'none';
     pages[key].classList.remove('active-page');
   }
 
-  // 2. Tampilkan halaman yang diminta
   if (page === 'home' || page === 'mainAlbum') {
       pages['home'].style.display = 'flex';
       pages['home'].classList.add('active-page');
@@ -1055,36 +1435,38 @@ function showPage(page){
       pages[page].classList.add('active-page'); 
   }
   
-  // Nonaktifkan menu toggle saat mengganti halaman
   navMenu.classList.remove('active');
   menuToggle.classList.remove('active');
   
-  // Khusus untuk Status, muat list
+  if (page === 'selectChat') {
+      renderContactList();
+  }
+  
   if (page === 'status') {
       renderStatusList();
   }
   
-  // Khusus untuk Chat, muat history
   if (page === 'chat') {
        loadChatHistory();
+       updateChatHeader(); // PENTING: Panggil saat pindah ke halaman chat
+  }
+  
+  if (page === 'profile') {
+      showProfilePage();
   }
 
-  // Putar musik jika bukan halaman non-musik
-  const nonMusicPages = ['login', 'welcome', 'about', 'contact', 'chat', 'status', 'zazaAI']; // TAMBAHAN 5: Halaman Zaza AI non-musik
-  if(!nonMusicPages.includes(page)) playMusicIfAlbum();
+  if(albumPages.includes(page)) playMusicIfAlbum();
   else music.pause();
 }
 
 
-// FUNGSI ALBUM (DIPERBAIKI UNTUK DATA BARU & MENGHAPUS DOTS)
-
+// FUNGSI ALBUM (Dipotong)
 function showPhoto(folder, i){
     const data = albumData[folder];
     const container = data.container;
     const spinner = data.spinner;
     const photos = data.photos;
 
-    // Hapus semua foto dan dot yang ada
     container.querySelectorAll('.photo').forEach(p => p.remove());
     data.indicator.innerHTML = ''; 
     
@@ -1093,9 +1475,7 @@ function showPhoto(folder, i){
         return;
     }
 
-    // Cek apakah foto saat ini disukai
     const isLiked = data.likedPhotos.includes(i);
-
     spinner.style.display = 'block'; 
 
     photos.forEach((photoUrl, index) => { 
@@ -1110,7 +1490,6 @@ function showPhoto(folder, i){
         }
 
         img.onload = () => {
-             // Jika foto yang baru dimuat adalah foto pertama/aktif, sembunyikan spinner
             if (index === i) {
                 spinner.style.display = 'none';
             }
@@ -1118,7 +1497,6 @@ function showPhoto(folder, i){
 
         img.onerror = () => {
             console.error(`Gagal memuat foto: ${photoUrl}`);
-            // Tambahkan fallback jika gambar gagal dimuat
             const fallback = document.createElement('div');
             fallback.className = 'photo active fallback-img';
             fallback.style.cssText = `z-index: ${index === i ? 2 : 0};`;
@@ -1132,7 +1510,6 @@ function showPhoto(folder, i){
         container.appendChild(img);
     });
 
-    // Perbarui status like menggunakan likeBtnElement
     updateLikeButton(data.likeBtnElement, isLiked);
 }
 
@@ -1163,13 +1540,10 @@ function initMainAlbum(){
 
 function initFolderAlbum(folder){
     const data = albumData[folder];
-    // Pastikan container dan indicator dikaitkan dengan ID yang benar
     data.container = document.getElementById(`${folder}Container`);
     data.indicator = document.getElementById(`${folder}PhotoIndicator`);
     data.spinner = document.getElementById(`${folder}Spinner`);
     
-    
-    // Pastikan container dan indicator kosong saat inisialisasi
     data.container.innerHTML = `<div class="loading-spinner" id="${folder}Spinner"></div>`;
     data.indicator.innerHTML = '';
     
@@ -1185,7 +1559,7 @@ function startAutoSwipe(folder){
     clearInterval(autoSwipeInterval);
     autoSwipeInterval = setInterval(() => {
         navPhoto(folder, 1);
-    }, 5000); // Ganti foto setiap 5 detik
+    }, 5000); 
 }
 
 function resetAutoSwipe(folder){
@@ -1203,25 +1577,22 @@ function setupSwipe(element, folder){
         const endX = e.changedTouches[0].clientX;
         const diff = endX - startX;
         
-        if (Math.abs(diff) > 50) { // Geser lebih dari 50px untuk dianggap swipe
-            navPhoto(folder, diff < 0 ? 1 : -1); // Swipe kiri (diff < 0) = next
+        if (Math.abs(diff) > 50) { 
+            navPhoto(folder, diff < 0 ? 1 : -1); 
         }
-        startAutoSwipe(folder); // Restart auto-swipe setelah interaksi
+        startAutoSwipe(folder); 
     });
 }
 
-// **PERBAIKAN FUNGSI: DOUBLE TAP TO LIKE**
 function setupDoubleTap(element, folder) {
     element.addEventListener('touchend', (e) => {
         const now = new Date().getTime();
         const timesince = now - lastTap;
         
-        // Cek jika tap kedua terjadi dalam 300ms
         if ((timesince < 300) && (timesince > 0)) {
             e.preventDefault(); 
             toggleLike(folder); 
             
-            // Tampilkan feedback visual di container
             element.classList.add('double-tap-liked');
             setTimeout(() => {
                 element.classList.remove('double-tap-liked');
@@ -1230,12 +1601,10 @@ function setupDoubleTap(element, folder) {
         lastTap = now;
     });
     
-    // Tambahkan juga untuk desktop (double click)
     element.addEventListener('dblclick', (e) => {
         e.preventDefault();
         toggleLike(folder); 
         
-        // Tampilkan feedback visual di container
         element.classList.add('double-tap-liked');
         setTimeout(() => {
             element.classList.remove('double-tap-liked');
@@ -1244,7 +1613,7 @@ function setupDoubleTap(element, folder) {
 }
 
 
-// Folder Selection Buttons (TIDAK BERUBAH)
+// Folder Selection Buttons (Dipotong)
 document.getElementById('mainAlbumBtn').onclick = ()=>{
     showPage('mainAlbum'); 
     initMainAlbum();
@@ -1260,14 +1629,17 @@ document.getElementById('folder2Btn').onclick = ()=>{
 
 // Navbar buttons (DIUBAH)
 const chatNavBtn = document.getElementById('chatNavBtn');
-chatNavBtn.onclick=()=>showPage('chat'); 
+chatNavBtn.onclick=()=>{
+    showPage('selectChat');
+}; 
 document.getElementById('statusNavBtn').onclick=()=>showPage('status');
 document.getElementById('homeBtn').onclick=()=>showPage('home');
 document.getElementById('aboutBtn').onclick=()=>showPage('about');
 document.getElementById('contactBtn').onclick=()=>showPage('contact');
-document.getElementById('zazaAIBtn').onclick=()=>showPage('zazaAI'); // TAMBAHAN 6: Event listener untuk tombol Zaza AI
+document.getElementById('zazaAIBtn').onclick=()=>showPage('zazaAI');
+document.getElementById('profileNavBtn').onclick=()=>showPage('profile'); 
 
-// Particle (TIDAK BERUBAH)
+// Particle (Dipotong)
 const particleContainer = document.getElementById('particleContainer');
 function createParticle() {
   const p = document.createElement('div');
@@ -1281,29 +1653,27 @@ function createParticle() {
   p.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
   p.style.opacity = Math.random() * 0.5 + 0.1;
   particleContainer.appendChild(p);
-  // Hapus partikel setelah animasi selesai (misalnya 20s)
   setTimeout(() => p.remove(), 20000); 
 }
 for(let i=0;i<50;i++){ createParticle(); }
 
 
-// Photo menu actions (DIPERBAIKI)
+// Photo menu actions (Dipotong)
 function updateLikeButton(button, isLiked){
-    if (!button) return; // Tambahkan pengaman
+    if (!button) return; 
     const icon = button.querySelector('.icon');
     
     if (isLiked) {
         button.classList.add('liked');
-        icon.textContent = 'favorite'; // Ikon hati penuh
+        icon.textContent = 'favorite'; 
         button.title = 'Unlike';
     } else {
         button.classList.remove('liked');
-        icon.textContent = 'favorite_border'; // Ikon hati kosong
+        icon.textContent = 'favorite_border'; 
         button.title = 'Like';
     }
 }
 
-// PERBAIKAN FUNGSI: Toggle Like hanya pada foto yang sedang aktif
 function toggleLike(folder){
     const data = albumData[folder];
     const currentIndex = data.current;
@@ -1311,24 +1681,19 @@ function toggleLike(folder){
     const isCurrentlyLiked = data.likedPhotos.includes(currentIndex);
     
     if (isCurrentlyLiked) {
-        // Unlike: Hapus indeks dari array likedPhotos
         data.likedPhotos = data.likedPhotos.filter(index => index !== currentIndex);
         updateLikeButton(data.likeBtnElement, false);
-        // alert(`Foto ${currentIndex + 1} tidak disukai.`); // Dinonaktifkan agar tidak mengganggu
     } else {
-        // Like: Tambahkan indeks ke array likedPhotos
         data.likedPhotos.push(currentIndex);
         updateLikeButton(data.likeBtnElement, true);
-        // alert(`Foto ${currentIndex + 1} disukai!`); // Dinonaktifkan agar tidak mengganggu
     }
     
-    // Simpan status like per foto ke localStorage
     saveLikeStatus(folder);
 }
 
 function sharePhoto(folder){
     const data = albumData[folder];
-    const photoUrl = data.photos[data.current]; // Ambil URL langsung
+    const photoUrl = data.photos[data.current]; 
     if (navigator.share) {
         navigator.share({
             title: 'Lihat Momen Spesial Ini!',
@@ -1352,14 +1717,12 @@ function downloadPhoto(folder){
     alert('Foto sedang diunduh!');
 }
 
-// Tambahkan event listeners untuk album utama
 document.getElementById('likeBtn').onclick = () => toggleLike('main');
 document.getElementById('shareBtn').onclick = () => sharePhoto('main');
 document.getElementById('downloadBtn').onclick = () => downloadPhoto('main');
 document.getElementById('prevBtn').onclick = () => navPhoto('main', -1);
 document.getElementById('nextBtn').onclick = () => navPhoto('main', 1);
 
-// Musik album (TIDAK BERUBAH)
 function playMusicIfAlbum(){
   music.play().catch(()=>{}); 
 }
@@ -1375,20 +1738,39 @@ const opponentNameEl = document.getElementById('opponentName');
 const opponentAvatarEl = document.getElementById('opponentAvatar');
 const chatFileInput = document.getElementById('chatFileInput');
 const attachMediaBtn = document.getElementById('attachMediaBtn');
+const contactListEl = document.getElementById('contactList'); 
 
 
 function loadChatHistory() {
-    const history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">--  --</div>';
+    const opponentId = getOpponentId();
+    if (!opponentId) {
+        chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Silakan pilih kontak chat --</div>';
+        updateChatHeader();
+        return;
+    }
+    
+    // Gunakan kunci universal
+    const historyKey = getChatHistoryKey(myUserId, opponentId); 
+    const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+    
+    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em; margin-bottom: 15px;">-- Chat dimulai --</div>';
     history.forEach(msg => addMessageToChat(msg, true));
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
-    // Perbarui header saat memuat history
-    updateChatHeader(CHAT_USER_PROFILES);
+    updateChatHeader();
+    
+    // PENTING: Kirim status 'read' untuk semua pesan lawan yang belum dibaca saat chat dimuat
+    history.forEach(msg => {
+        if (msg.senderId === opponentId && msg.status !== 'read') {
+             socket.emit('message_read', { id: msg.id, senderId: msg.senderId, recipientId: myUserId });
+        }
+    });
 }
 
-function saveChatHistory(history) {
-    localStorage.setItem(getLocalStorageKey('chatHistory'), JSON.stringify(history));
+function saveChatHistory(history, opponentId) {
+    // Gunakan kunci universal
+    const historyKey = getChatHistoryKey(myUserId, opponentId);
+    localStorage.setItem(historyKey, JSON.stringify(history));
 }
 
 function deleteChatMessage(id) {
@@ -1396,197 +1778,447 @@ function deleteChatMessage(id) {
         const messageElement = document.getElementById(`msg-${id}`);
         if (messageElement) messageElement.remove();
 
-        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        const opponentId = getOpponentId();
+        // Gunakan kunci universal
+        const historyKey = getChatHistoryKey(myUserId, opponentId);
+        let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
         history = history.filter(msg => msg.id != id);
-        saveChatHistory(history);
+        saveChatHistory(history, opponentId);
     }
 }
 
-function updateChatHeader(usersData) {
-    const opponentId = getOpponentId(); 
-    opponentInfo = usersData[opponentId] || CHAT_USER_PROFILES[opponentId];
+function deleteAllChatHistory() {
+    if (confirm("Anda yakin ingin menghapus SELURUH riwayat chat dengan pengguna ini?")) {
+        const opponentId = getOpponentId();
+        // Gunakan kunci universal
+        const historyKey = getChatHistoryKey(myUserId, opponentId);
+        localStorage.removeItem(historyKey);
+        loadChatHistory(); // Muat ulang chat kosong
+        alert("Riwayat chat berhasil dihapus!");
+    }
+}
+
+// DITAMBAH: Fungsi untuk mendapatkan Last Seen yang diformat
+function getFormattedLastSeen(timestamp) {
+    const opponentProfile = CHAT_USER_PROFILES[currentOpponentId];
+    if (opponentProfile && opponentProfile.isOnline) return 'Online ✨';
+
+    if (!timestamp) return 'Offline';
+    const now = new Date();
+    const lastSeen = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - lastSeen) / 1000);
+
+    if (diffInSeconds < 60) return 'Online'; // Anggap online jika kurang dari 1 menit
+    if (diffInSeconds < 3600) return `Last seen ${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `Last seen ${Math.floor(diffInSeconds / 3600)} hours ago`;
+
+    // Format tanggal untuk lebih dari 1 hari
+    return `Last seen ${lastSeen.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} at ${lastSeen.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+
+function updateChatHeader() {
+    loadUserProfiles(); 
+    const opponentId = getOpponentId();
+    
+    if (!opponentId || !CHAT_USER_PROFILES[opponentId]) {
+        opponentNameEl.textContent = 'Pilih Kontak';
+        opponentAvatarEl.textContent = '?';
+        opponentAvatarEl.style.backgroundColor = '#ccc';
+        chatStatus.textContent = 'Tidak Ada Koneksi';
+        chatStatus.style.color = '#ffc0de';
+        return;
+    }
+    
+    opponentInfo = CHAT_USER_PROFILES[opponentId];
     
     if (opponentInfo) {
         opponentNameEl.innerHTML = opponentInfo.name + (opponentInfo.isVerified ? ' <span class="material-icons" style="font-size: 1em; color: #7aff7a; vertical-align: middle;">verified</span>' : '');
-        opponentAvatarEl.textContent = opponentInfo.avatar;
+        renderAvatar(opponentAvatarEl, opponentInfo); 
+        opponentAvatarEl.style.width = '40px';
+        opponentAvatarEl.style.height = '40px';
+        opponentAvatarEl.style.margin = '0';
+        opponentAvatarEl.classList.remove('custom-avatar'); 
+        
+        // DITAMBAH: Logika status/last seen
+        const isOnline = opponentInfo.isOnline; 
+        const lastSeen = opponentInfo.lastSeen;
+        
+        if (isOnline) {
+            chatStatus.textContent = 'Online ✨';
+            chatStatus.style.color = '#7aff7a';
+        } else {
+            chatStatus.textContent = getFormattedLastSeen(lastSeen);
+            chatStatus.style.color = 'rgba(255,255,255,0.7)';
+        }
     }
 }
 
-// FUNGSI CHAT DENGAN MEDIA (DIUBAH)
+// FUNGSI RENDER KONTAK (PENAMBAHAN)
+function renderContactList() {
+    loadUserProfiles(); // Pastikan profil terbaru dimuat sebelum merender
+    contactListEl.innerHTML = '';
+    
+    // Ambil semua ID kecuali ID sendiri
+    const contactIds = Object.keys(CHAT_USER_PROFILES).filter(id => id !== myUserId);
+    
+    contactIds.forEach(id => {
+        const profile = CHAT_USER_PROFILES[id];
+        const item = document.createElement('div');
+        item.classList.add('chat-contact-item');
+        item.onclick = () => selectOpponent(id);
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.classList.add('contact-avatar');
+        renderAvatar(avatarDiv, profile); 
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `
+            <h4 style="margin: 0; color: white;">${profile.name} ${profile.isVerified ? '<span class="material-icons" style="font-size: 0.8em; color: #7aff7a; vertical-align: middle;">verified</span>' : ''}</h4>
+            <p style="margin: 2px 0 0; font-size: 0.9em; color: rgba(255,255,255,0.7);">${profile.role}</p>
+        `;
+        
+        item.appendChild(avatarDiv);
+        item.appendChild(infoDiv);
+        contactListEl.appendChild(item);
+    });
+}
+
+
+// FUNGSI CHAT DENGAN MEDIA (DIUBAH UNTUK LAYOUT BARU & GAYA WA)
 function addMessageToChat(data, isHistory = false) {
-    const { message, media, timestamp, senderId, status } = data; // Tambah 'media'
+    const { message, media, timestamp, senderId, status, id } = data; // PENTING: Ambil 'id'
     const isMe = senderId === myUserId;
-    const messageId = data.id || Date.now();
+    const messageId = id;
     const timeDisplay = timestamp || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+    // FIX: Hapus pesan sementara yang mungkin sudah ada
+    const existingMsg = document.getElementById(`msg-${messageId}`);
+    if (existingMsg) existingMsg.remove(); 
 
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('chat-bubble');
-    msgDiv.id = `msg-${messageId}`;
+    msgDiv.id = `msg-${messageId}`; // ID permanen
+    msgDiv.classList.add(isMe ? 'is-me' : 'is-opponent');
 
-    // Inline CSS untuk gelembung chat (DITAMBAH margin-bottom)
-    msgDiv.style.cssText = `
-        max-width: 80%;
-        padding: 10px 15px;
-        border-radius: 15px;
-        color: ${isMe ? 'white' : '#333'};
-        word-wrap: break-word;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        font-size: 0.95em;
-        line-height: 1.4;
-        align-self: ${isMe ? 'flex-end' : 'flex-start'};
-        background: ${isMe ? '#ff99c7' : 'rgba(255,255,255,0.85)'};
-        border-bottom-${isMe ? 'right' : 'left'}-radius: 0;
-        margin-bottom: 10px;
-        display: inline-block; /* Agar bisa menampung media dengan baik */
-    `;
 
+    const innerBubble = document.createElement('div');
+    innerBubble.classList.add('chat-bubble-inner');
+    
     let contentHTML = '';
     
     if (media) {
-        // Konten media, pastikan media-message memiliki styling yang benar
-        contentHTML += `<img src="${media}" class="media-message" alt="Media File" style="max-width: 180px; max-height: 180px; display: block; border-radius: 8px;">`;
-        if (message) {
-            contentHTML += `<div style="margin-top: 5px; font-style: italic;">${message}</div>`; // Caption
+        const fileType = media.startsWith('data:audio') ? 'audio' : (media.startsWith('data:image') ? 'image' : 'file');
+        
+        if (fileType === 'image') {
+            contentHTML += `<img src="${media}" class="media-message" alt="Image File" style="max-width: 180px; max-height: 180px; display: block; border-radius: 8px;">`;
+            if (message) { 
+                 contentHTML += `<div style="margin-top: 5px; color: ${isMe ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)'};">${message}</div>`;
+            }
+        } else if (fileType === 'audio') {
+            const fileName = message || "Audio File";
+            contentHTML += `
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: ${isMe ? 'white' : '#ff99c7'};">
+                    <span class="material-icons" style="font-size: 1.5em; line-height: 1;">music_note</span>
+                    <span style="flex-grow: 1;">${fileName}</span>
+                </div>
+                <audio controls src="${media}" style="width: 100%; margin-top: 5px;"></audio>
+            `;
+        } else { // File umum
+            contentHTML += `
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: ${isMe ? 'white' : '#ff99c7'};">
+                    <span class="material-icons" style="font-size: 1.5em; line-height: 1;">attach_file</span>
+                    <span style="flex-grow: 1;">${message || 'File Attachment'}</span>
+                </div>
+            `;
         }
     } else {
         contentHTML += message;
     }
+    
+    // Tambahkan waktu dan status (hanya untuk pesan saya)
+    let statusIcon = '';
+    if (isMe) {
+        let iconName = 'schedule';
+        let iconStatus = 'schedule';
+        
+        if (status === 'read') {
+            iconName = 'done_all';
+            iconStatus = 'read';
+        } else if (status === 'sent') {
+            iconName = 'done_all';
+            iconStatus = 'sent'; 
+        } else {
+             iconName = 'schedule';
+             iconStatus = 'schedule';
+        }
 
-
-    // Konten Pesan + Jam + Status (Centang) + Tombol Hapus (DITAMBAH)
-    const statusIconColor = status === 'read' ? '#00e676' : (status === 'sent' ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.5)');
-    const statusIcon = status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule');
-
-    msgDiv.innerHTML = `
-        ${contentHTML}
-        <span style="display: block; font-size: 0.75em; margin-top: 5px; text-align: right; color: ${isMe ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.6)'};">
+        statusIcon = `<span class="material-icons message-status" data-id="${messageId}" data-status="${iconStatus}" style="font-size: 1em; margin-left: 3px; vertical-align: middle;">${iconName}</span>`;
+    }
+    
+    contentHTML += `
+        <span style="display: block; font-size: 0.75em; margin-top: 5px; text-align: right; white-space: nowrap; color: ${isMe ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.6)'};">
             ${timeDisplay}
-            ${isMe ? `<span class="material-icons message-status" data-id="${messageId}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${statusIconColor};">${statusIcon}</span>` : ''}
+            ${statusIcon}
         </span>
-        ${isMe ? `<button class="delete-chat-btn" onclick="deleteChatMessage('${messageId}')">&times;</button>` : ''} 
     `;
+    
+    innerBubble.innerHTML = contentHTML;
 
+    if (isMe) {
+        // Pesan Saya (Inner bubble di kanan)
+        msgDiv.appendChild(innerBubble);
+        // Tombol hapus
+        msgDiv.innerHTML += `<button class="delete-chat-btn" onclick="deleteChatMessage('${messageId}')">&times;</button>`; 
+        
+    } else {
+        // Pesan Lawan Bicara (Hanya Inner bubble di kiri)
+        msgDiv.appendChild(innerBubble); 
+    }
+    
     chatMessages.appendChild(msgDiv);
     if (!isHistory) chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+
+function viewProfile(userId) {
+    loadUserProfiles(); // Muat profil terbaru dari global storage
+    const profile = CHAT_USER_PROFILES[userId];
+    if (!profile) return;
+    
+    const modal = document.getElementById('viewProfileModal');
+    const avatarEl = document.getElementById('viewProfileAvatar');
+    
+    renderAvatar(avatarEl, profile);
+    avatarEl.style.width = '80px';
+    avatarEl.style.height = '80px';
+    avatarEl.style.margin = '0 auto 15px';
+    avatarEl.classList.remove('custom-avatar'); 
+    
+    document.getElementById('viewProfileName').textContent = profile.name + (profile.isVerified ? ' (Verified)' : '');
+    document.getElementById('viewProfileRole').textContent = profile.role; // Tampilkan Role
+    document.getElementById('viewProfileBio').textContent = `"${profile.bio}"`;
+    
+    modal.style.display = 'flex';
+}
+
+// FIX: Perbaiki updateMessageStatus
 function updateMessageStatus(data) {
     const statusIcon = document.querySelector(`.message-status[data-id="${data.id}"]`);
     if (statusIcon) {
+        statusIcon.setAttribute('data-status', data.status);
         if (data.status === 'read') {
             statusIcon.textContent = 'done_all';
-            statusIcon.style.color = '#00e676';
+            statusIcon.style.color = '#00e676'; // Hijau
         } else if (data.status === 'sent') {
             statusIcon.textContent = 'done_all';
-            statusIcon.style.color = 'rgba(255,255,255,0.8)';
+            statusIcon.style.color = 'rgba(255,255,255,0.8)'; // Putih/Abu-abu
+        } else if (data.status === 'schedule') {
+             statusIcon.textContent = 'schedule';
+             statusIcon.style.color = 'rgba(255,255,255,0.8)'; // Putih/Abu-abu
+        }
+        
+        // PENTING: Perbarui status di localStorage
+        const opponentId = getOpponentId();
+        const historyKey = getChatHistoryKey(myUserId, opponentId);
+        let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+        
+        const msgIndex = history.findIndex(msg => msg.id == data.id);
+        if (msgIndex !== -1) {
+            history[msgIndex].status = data.status;
+            saveChatHistory(history, opponentId);
         }
     }
 }
 
-// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE & AI) ---
-socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
+// --- SOCKET LISTENERS (PERBAIKAN KRITIS UNTUK CHAT) ---
+socket.on('load_users', (usersData) => { 
+    loadUserProfiles(); 
+    // Ganti: Perbarui Last Seen/Online status
+    Object.keys(usersData).forEach(id => {
+        if (CHAT_USER_PROFILES[id]) {
+            CHAT_USER_PROFILES[id].isOnline = usersData[id].isOnline;
+            CHAT_USER_PROFILES[id].lastSeen = usersData[id].lastSeen;
+        }
+    });
+    updateChatHeader(); // PENTING: Panggil setelah update status
+});
 socket.on('load_history', () => { loadChatHistory(); }); 
-socket.on('receive_message', (data) => { 
-    // Perbaikan: Pastikan pesan hanya diproses jika ditujukan atau dikirim oleh user saat ini
-    if (data.recipientId === myUserId || data.senderId === myUserId) { 
-        data.id = data.id || Date.now();
-        addMessageToChat(data); 
 
-        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-        // Cek jika pesan sudah ada (untuk menghindari duplikasi jika pesan dikirim balik oleh server)
-        if (!history.find(msg => msg.id == data.id)) { 
+// KRITIS: Logika penyimpanan riwayat agar universal dan HANYA dirender dari Socket
+socket.on('receive_message', (data) => { 
+    // Hanya proses jika pesan melibatkan saya
+    if (data.recipientId === myUserId || data.senderId === myUserId) { 
+        
+        const activeOpponent = getOpponentId();
+        const isRelatedToActiveChat = (data.recipientId === activeOpponent && data.senderId === myUserId) ||
+                                      (data.senderId === activeOpponent && data.recipientId === myUserId);
+        
+        // Tentukan lawan bicara
+        let targetOpponentId = data.senderId === myUserId ? data.recipientId : data.senderId;
+        
+        // Gunakan kunci universal untuk penyimpanan
+        const historyKey = getChatHistoryKey(myUserId, targetOpponentId);
+        
+        let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+        
+        let msgIndex = history.findIndex(msg => msg.id == data.id);
+        
+        // Jika pesan baru
+        if (msgIndex === -1) { 
             history.push(data);
-            saveChatHistory(history);
+        } else {
+             // Jika pesan sudah ada (misal update dari 'schedule' ke 'sent'), update datanya
+             history[msgIndex] = data;
+        }
+        
+        localStorage.setItem(historyKey, JSON.stringify(history));
+        
+        // Hanya render jika ini adalah chat yang aktif
+        if(isRelatedToActiveChat) {
+             addMessageToChat(data); 
+        }
+        
+        // Jika saya adalah penerima, kirim 'read' status kembali ke pengirim (jika chat aktif)
+        if(data.recipientId === myUserId && isRelatedToActiveChat) {
+             // PENTING: Hanya kirim message_read jika statusnya belum 'read'
+             if (data.status !== 'read') {
+                 socket.emit('message_read', { id: data.id, senderId: data.senderId, recipientId: myUserId });
+             }
         }
     }
 });
 
-socket.on('update_status', (data) => { updateMessageStatus(data); });
-socket.on('user_status_update', (onlineIds) => {
-    const opponentId = getOpponentId(); 
-    
-    // Perbaikan: Pastikan kita memeriksa status online dari lawan bicara (opponentId)
-    if (onlineIds.includes(opponentId)) {
-        chatStatus.textContent = 'Online ✨';
-        chatStatus.style.color = '#7aff7a';
-    } else {
-        chatStatus.textContent = 'Offline 😴';
-        chatStatus.style.color = '#ffc0de';
+// FIX: Perbarui Socket Listener
+socket.on('update_status', (data) => { 
+    // PENTING: Cek apakah ID lawan bicara saat ini sama dengan pengirim status
+    const opponentId = getOpponentId();
+    if (data.senderId === opponentId || data.recipientId === opponentId) {
+        updateMessageStatus(data); 
     }
+    
+    // Perbarui status di localStorage untuk semua user yang terlibat
+    const usersInvolved = [data.senderId, data.recipientId].filter(id => id === myUserId || id === getOpponentId());
+    
+    usersInvolved.forEach(user => {
+         const historyKey = getChatHistoryKey(data.senderId, data.recipientId);
+         let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+         const msgIndex = history.findIndex(msg => msg.id == data.id);
+         
+         if (msgIndex !== -1) {
+              history[msgIndex].status = data.status;
+              saveChatHistory(history, data.senderId === myUserId ? data.recipientId : data.senderId);
+         }
+    });
+
 });
 
-// >>> LISTENER BARU UNTUK ZAZA AI DARI SERVER GROQ <<<
+// **BARU/DIPERBAIKI: SOCKET LISTENER UNTUK STATUS**
+socket.on('receive_status_update', (senderId) => {
+    // Klien lain menerima sinyal ini
+    console.log(`Status baru diterima dari: ${senderId}. Memuat ulang daftar status...`);
+    renderStatusList();
+});
+
+socket.on('user_status_update', (usersData) => {
+    Object.keys(usersData).forEach(id => {
+        if (CHAT_USER_PROFILES[id]) {
+            CHAT_USER_PROFILES[id].isOnline = usersData[id].isOnline;
+            CHAT_USER_PROFILES[id].lastSeen = usersData[id].lastSeen;
+        }
+    });
+    updateChatHeader(); // PENTING: Panggil setiap kali status online/offline berubah
+});
+
 socket.on('receive_ai_message', (data) => {
-    // Hapus placeholder 'Memproses...'
     if (zazaAIMessages.lastChild && zazaAIMessages.lastChild.textContent.includes("Memproses permintaan Anda...")) {
         zazaAIMessages.lastChild.remove(); 
     }
     
-    // Tampilkan respons AI yang sebenarnya dari server
     addMessageToZazaAIChat(data.message, data.sender);
     saveZazaAIChatHistory(data.message, data.sender);
 });
 
 
-// LOGIKA PENGIRIMAN MEDIA CHAT (DITAMBAH & DIPERBAIKI)
+// LOGIKA PENGIRIMAN MEDIA CHAT (DIUBAH - Hapus VN)
 attachMediaBtn.addEventListener('click', () => {
     chatFileInput.click();
 });
 
 chatFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const mediaUrl = event.target.result;
-            const caption = prompt("Tambahkan Caption (Opsional):") || "";
+    if (!file) return;
 
-            const messageData = {
-                senderId: myUserId,
-                recipientId: getOpponentId(), 
-                message: caption,
-                media: mediaUrl, 
-                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                status: 'sent', // Perbaikan: Set ke 'sent'
-                id: Date.now() 
-            };
-
-            socket.emit('send_message', messageData);
-            
-            let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-            history.push(messageData);
-            saveChatHistory(history);
-
-            addMessageToChat(messageData);
-            chatFileInput.value = ''; // Reset input
-        };
-        reader.readAsDataURL(file);
+    const opponentId = getOpponentId();
+    if (!opponentId) {
+        alert("Silakan pilih kontak chat terlebih dahulu!");
+        return;
     }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const mediaUrl = event.target.result;
+        
+        let message = "";
+        
+        // Atur caption/nama file
+        if (file.type.startsWith('image/')) {
+            message = prompt("Tambahkan Caption (Opsional):") || "";
+        } else {
+            // Untuk File/Audio, gunakan nama file sebagai pesan/label
+            message = file.name || (file.type.startsWith('audio/') ? 'Audio File' : 'File Attachment');
+            alert(`Mengirim file: ${message}`);
+        }
+
+        const messageData = {
+            senderId: myUserId,
+            recipientId: opponentId, 
+            message: message,
+            media: mediaUrl, 
+            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            status: 'schedule', // FIX: Status awal adalah 'schedule' (mengirim)
+            id: Date.now() // FIX: ID sementara
+        };
+        
+        // Tampilkan pesan "schedule" sementara sebelum dikirim ke server
+        addMessageToChat(messageData);
+        
+        // Kirim ke Socket.IO (Socket.IO akan membalas dengan ID real dan status 'sent')
+        socket.emit('send_message', messageData);
+        
+        chatFileInput.value = ''; // Reset input
+    };
+    reader.readAsDataURL(file);
 });
 
 
-// --- EVENT HANDLER CHAT INPUT (DIUBAH) ---
+// --- EVENT HANDLER CHAT INPUT (PERBAIKAN KRITIS) ---
 sendChatBtn.addEventListener('click', () => {
     const message = chatInput.value.trim();
+    const opponentId = getOpponentId();
+
+    if (!opponentId) {
+        alert("Silakan pilih kontak chat terlebih dahulu!");
+        return;
+    }
+    
     if (message !== '' && myUserId) {
         const messageData = {
             senderId: myUserId,
-            recipientId: getOpponentId(), 
+            recipientId: opponentId, 
             message: message,
             media: null, 
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            status: 'sent', // Perbaikan: Set ke 'sent'
-            id: Date.now() 
+            status: 'schedule', // FIX: Status awal adalah 'schedule'
+            id: Date.now() // FIX: ID sementara
         };
 
-        socket.emit('send_message', messageData);
-        
-        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-        history.push(messageData);
-        saveChatHistory(history);
-
+        // Tampilkan pesan "schedule" sementara sebelum dikirim ke server
         addMessageToChat(messageData);
-        
+
+        // Kirim ke Socket.IO (Socket.IO akan membalas dengan ID real dan status 'sent')
+        socket.emit('send_message', messageData);
+
         chatInput.value = '';
     }
 });
@@ -1595,32 +2227,63 @@ chatInput.addEventListener('keypress', (e) => {
 });
 
 
-// **FITUR STATUS (STORIES) MEDIA**
+// **FITUR STATUS (STORIES) MEDIA & TEKS (PERBAIKAN KRITIS UNTUK SHARING)**
+
+// **FUNGSI BARU: Memicu pembaruan status ke klien lain melalui Socket**
+function emitStatusUpdate() {
+    socket.emit('status_created', { senderId: myUserId });
+}
+
+// --- STATUS TEKS BARU ---
+createTextStatusBtn.addEventListener('click', () => {
+    const text = prompt("Ketik status kata-kata Anda (Max 100 karakter):");
+    if (text && text.trim().length > 0) {
+        const statusData = {
+            id: Date.now(),
+            senderId: myUserId,
+            senderName: myUserName,
+            message: text.substring(0, 100), 
+            media: null, // Status teks tidak ada media
+            mediaType: 'text', // Tambah tipe media: text
+            timestamp: new Date().toLocaleString('id-ID'),
+            likes: [], 
+            viewers: []
+        };
+        
+        let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+        allStatuses.unshift(statusData); 
+        localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
+        renderStatusList();
+        
+        // PENTING: Beri tahu klien lain!
+        emitStatusUpdate(); 
+    }
+});
+
+// --- STATUS MEDIA (REVISI) ---
 const createMediaStatusBtn = document.getElementById('createMediaStatusBtn');
 const statusFileInput = document.getElementById('statusFileInput');
 const statusListEl = document.getElementById('statusList');
 
-
-// Logika memicu pemilihan file untuk Status (DITAMBAH)
 createMediaStatusBtn.addEventListener('click', () => {
     statusFileInput.click();
 });
 
-// Logika menyimpan Status Media (DITAMBAH)
 statusFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = (event) => {
             const mediaUrl = event.target.result;
-            const caption = prompt("Tambahkan Caption (Opsional):") || "";
+            const caption = prompt(`Tambahkan Caption (Opsional) untuk ${file.type.startsWith('audio') ? 'Audio' : 'Media'}:`) || "";
 
             const statusData = {
                 id: Date.now(),
                 senderId: myUserId,
                 senderName: myUserName,
-                message: caption,
-                media: mediaUrl, // Simpan URL media
+                message: caption.substring(0, 100),
+                media: mediaUrl, 
+                mediaType: file.type.startsWith('audio') ? 'audio' : 'image', // Tambahkan tipe media
                 timestamp: new Date().toLocaleString('id-ID'),
                 likes: [], 
                 viewers: []
@@ -1630,16 +2293,22 @@ statusFileInput.addEventListener('change', (e) => {
             allStatuses.unshift(statusData); 
             localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
             renderStatusList();
-            statusFileInput.value = ''; // Reset input
+            statusFileInput.value = ''; 
+
+            // PENTING: Beri tahu klien lain!
+            emitStatusUpdate(); 
         };
         reader.readAsDataURL(file);
     }
 });
 
 
-// Fungsi untuk menampilkan daftar status (TIDAK BERUBAH)
 function renderStatusList() {
     statusListEl.innerHTML = '';
+    
+    // Status disimpan di localStorage GLOBAL (STATUS_KEY) sehingga semua user di browser ini melihat data yang sama.
+    // Jika teman Anda menggunakan browser/komputer yang berbeda, data status harus disimpan di backend,
+    // tetapi untuk simulasi ini, kita anggap semua status tersimpan di satu kunci global.
     const allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
     
     if (allStatuses.length === 0) {
@@ -1663,7 +2332,7 @@ function renderStatusList() {
 
     sortedGroups.forEach(senderId => {
         const group = groupedStatuses[senderId];
-        const latestStatus = group[0]; 
+        const latestStatus = group.sort((a, b) => b.id - a.id)[0]; 
         const isMyStatus = senderId === myUserId;
         const isViewedByMe = latestStatus.viewers.includes(myUserId);
         
@@ -1671,19 +2340,25 @@ function renderStatusList() {
         item.classList.add('status-item');
         item.setAttribute('data-id', latestStatus.id);
         
-        if (isViewedByMe) {
+        if (latestStatus.viewers.includes(myUserId)) {
             item.classList.add('viewed');
+        } else {
+            item.classList.remove('viewed');
         }
         
-        // Klik pada item akan menampilkan status paling baru di grup tersebut
         item.onclick = () => viewStatus(latestStatus.id); 
         
-        // Tampilkan Teks/Media di daftar Status
         const previewText = latestStatus.message.substring(0, 40) + (latestStatus.message.length > 40 ? '...' : '');
 
-        const preview = latestStatus.media 
-            ? `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">image</span> ${previewText || 'Media Status'}`
-            : previewText;
+        let preview = '';
+        if (latestStatus.mediaType === 'image') {
+            preview = `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">image</span> ${previewText || 'Foto Status'}`;
+        } else if (latestStatus.mediaType === 'audio') {
+            preview = `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">music_note</span> ${previewText || 'Audio Status'}`;
+        } else {
+            preview = `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">notes</span> ${previewText || 'Status Teks'}`;
+        }
+
 
         item.innerHTML = `
             <div style="font-weight:700; color: #ffe3f1;">
@@ -1706,7 +2381,6 @@ function renderStatusList() {
     });
 }
 
-// Fungsi untuk melihat status (dengan Media Viewer)
 function viewStatus(id) {
     let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
     const index = allStatuses.findIndex(s => s.id === id);
@@ -1715,28 +2389,37 @@ function viewStatus(id) {
     let status = allStatuses[index];
     currentStatusId = id;
     
-    // Media Viewer Element
     const viewerMediaEl = document.getElementById('viewerMedia');
+    const viewerAudioEl = document.getElementById('viewerAudio');
+    const deleteStatusBtn = document.getElementById('deleteStatusBtn');
 
-    // Tampilkan Media jika ada
-    if (status.media) {
+    // Reset media
+    viewerMediaEl.style.display = 'none';
+    viewerAudioEl.style.display = 'none';
+    viewerAudioEl.pause();
+    
+    if (status.mediaType === 'image') {
         viewerMediaEl.src = status.media;
         viewerMediaEl.style.display = 'block';
-    } else {
-        viewerMediaEl.style.display = 'none';
+    } else if (status.mediaType === 'audio') {
+        viewerAudioEl.src = status.media;
+        viewerAudioEl.style.display = 'block';
+        viewerAudioEl.play(); 
     }
 
-    // LOGIKA IKON MATA: Tambahkan user ke daftar viewers jika belum dilihat
     if (status.senderId !== myUserId && !status.viewers.includes(myUserId)) {
         status.viewers.push(myUserId);
         allStatuses[index] = status;
         localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
-        renderStatusList(); // Refresh daftar Status agar ikon mata muncul
+        renderStatusList(); 
     }
     
     document.getElementById('viewerSender').textContent = status.senderId === myUserId ? 'Anda' : status.senderName;
     document.getElementById('viewerTime').textContent = `(${status.timestamp})`;
-    document.getElementById('viewerMessage').textContent = status.message;
+    
+    document.getElementById('viewerMessage').textContent = status.message || (status.mediaType === 'audio' ? 'Status Audio' : 'Status Media');
+    document.getElementById('viewerMessage').style.display = status.message || status.media ? 'block' : 'none';
+
     document.getElementById('likeCount').textContent = status.likes.length;
     document.getElementById('viewCount').textContent = status.viewers.length;
 
@@ -1751,18 +2434,38 @@ function viewStatus(id) {
     
     if (status.senderId === myUserId) {
         replyBtn.style.display = 'none';
-        replySection.style.display = 'none';
         likeDiv.style.display = 'none';
+        deleteStatusBtn.style.display = 'inline-block';
+        replySection.style.display = 'none';
     } else {
         replyBtn.style.display = 'inline-block';
         likeDiv.style.display = 'inline-block';
+        deleteStatusBtn.style.display = 'none';
         replySection.style.display = 'none'; 
     }
     
     document.getElementById('statusViewer').style.display = 'flex';
 }
 
-// Handler Like Status
+function deleteStatus(id) {
+    if (confirm("Anda yakin ingin menghapus status ini secara permanen?")) {
+        let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+        const updatedStatuses = allStatuses.filter(s => s.id !== id);
+        
+        localStorage.setItem(STATUS_KEY, JSON.stringify(updatedStatuses));
+        renderStatusList();
+        document.getElementById('statusViewer').style.display = 'none';
+        alert("Status berhasil dihapus!");
+        
+        // PENTING: Beri tahu klien lain bahwa ada perubahan status!
+        emitStatusUpdate(); 
+    }
+}
+
+document.getElementById('deleteStatusBtn').addEventListener('click', () => {
+    if (currentStatusId) deleteStatus(currentStatusId);
+});
+
 document.getElementById('statusLikeBtn').addEventListener('click', () => {
     if (!currentStatusId) return;
 
@@ -1780,13 +2483,14 @@ document.getElementById('statusLikeBtn').addEventListener('click', () => {
         localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
         viewStatus(currentStatusId); 
         renderStatusList(); 
+        
+        // PENTING: Beri tahu klien lain!
+        emitStatusUpdate(); 
     }
 });
 
-// Handler Reply Status (Tampilkan input)
 document.getElementById('statusReplyBtn').addEventListener('click', () => { document.getElementById('replySection').style.display = 'flex'; });
 
-// Handler Kirim Reply
 document.getElementById('sendReplyBtn').addEventListener('click', () => {
     const replyInput = document.getElementById('statusReplyInput');
     const replyText = replyInput.value.trim();
@@ -1799,22 +2503,24 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
     if (statusIndex !== -1) {
         const originalStatus = allStatuses[statusIndex];
         
+        const recipientId = originalStatus.senderId;
+        
         const messageData = {
             senderId: myUserId,
-            recipientId: getOpponentId(), // PERBAIKAN: Tentukan penerima untuk balasan chat
+            recipientId: recipientId, 
             message: `[REPLY STATUS dari ${myUserName} ke ${originalStatus.senderName}: "${originalStatus.message.substring(0, 15)}..."] ${replyText}`,
             media: null,
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            status: 'sent', // Perbaikan: Set ke 'sent'
-            id: Date.now() 
+            status: 'schedule', // FIX: Status awal 'schedule'
+            id: Date.now() // FIX: ID sementara
         };
 
-        // Kirim pesan ke chat (simulasi)
+        // Tampilkan pesan "schedule" sementara
+        addMessageToChat(messageData);
+
+        // Langsung kirim ke Socket.IO.
         socket.emit('send_message', messageData);
-        
-        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
-        history.push(messageData);
-        saveChatHistory(history);
+
         
         alert(`Balasan Anda berhasil dikirim ke ${originalStatus.senderName} melalui Chat!`);
         
@@ -1824,13 +2530,12 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
 });
 
 
-// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (API Live)**
+// **LOGIKA ZAZA AI CHAT (Dipotong)**
 const zazaAIInput = document.getElementById('zazaAIInput');
 const sendZazaAIBtn = document.getElementById('sendZazaAIBtn');
 const zazaAIMessages = document.getElementById('zazaAIMessages');
 const ZAZA_AI_HISTORY_KEY = 'zazaAIHistory';
 
-// Fungsi untuk menambahkan pesan ke chat AI
 function addMessageToZazaAIChat(message, sender, isHistory = false) {
     const msgDiv = document.createElement('div');
     const isUser = sender === 'user';
@@ -1845,17 +2550,14 @@ function addMessageToZazaAIChat(message, sender, isHistory = false) {
     if (!isHistory) zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
 }
 
-// Fungsi untuk menyimpan history chat AI
 function saveZazaAIChatHistory(message, sender) {
     let history = JSON.parse(localStorage.getItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY)) || '[]');
     history.push({ message, sender, timestamp: new Date().toLocaleString('id-ID') });
     localStorage.setItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY), JSON.stringify(history));
 }
 
-// Fungsi untuk memuat history chat AI
 function loadZazaAIChatHistory() {
     let history = JSON.parse(localStorage.getItem(getLocalStorageKey(ZAZA_AI_HISTORY_KEY)) || '[]');
-    // Bersihkan kecuali pesan sapaan pertama
     const initialMessage = zazaAIMessages.querySelector('.ai-bubble-zaza:first-child');
     zazaAIMessages.innerHTML = '';
     if(initialMessage) zazaAIMessages.appendChild(initialMessage);
@@ -1866,25 +2568,117 @@ function loadZazaAIChatHistory() {
     zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
 }
 
-// Handler Kirim Pesan ke Zaza AI (Diubah ke mode API Live via Socket)
 sendZazaAIBtn.addEventListener('click', () => {
     const userMessage = zazaAIInput.value.trim();
     if (userMessage === '') return;
 
-    // 1. Tampilkan pesan user
     addMessageToZazaAIChat(userMessage, 'user');
     saveZazaAIChatHistory(userMessage, 'user');
     zazaAIInput.value = '';
     
-    // 2. Placeholder untuk respons AI (Simulasi Loading)
     addMessageToZazaAIChat("Memproses permintaan Anda...", 'zaza');
 
-    // 3. Kirim permintaan ke server (yang akan diteruskan ke Groq)
     socket.emit('send_ai_message', { prompt: userMessage });
 });
 
 zazaAIInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendZazaAIBtn.click();
+});
+
+
+// **LOGIKA EDIT PROFILE (Dipotong)**
+const editProfileBtn = document.getElementById('editProfileBtn');
+const editProfileModal = document.getElementById('editProfileModal');
+const editNameInput = document.getElementById('editNameInput');
+const editBioInput = document.getElementById('editBioInput');
+const editRoleInput = document.getElementById('editRoleInput'); // Baru
+const editAvatarInput = document.getElementById('editAvatarInput');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+editProfileBtn.addEventListener('click', () => {
+    loadUserProfiles(); // Muat ulang profil terbaru
+    const currentProfile = CHAT_USER_PROFILES[myUserId];
+    if (!currentProfile) return;
+    
+    editNameInput.value = currentProfile.name;
+    editBioInput.value = currentProfile.bio;
+    editAvatarInput.value = ''; 
+    
+    // Logika Role: Hanya Zaza dan Khirza yang dapat mengedit Role
+    if (myUserId === 'zaza' || myUserId === 'khirza') {
+        editRoleInput.style.display = 'block';
+        editRoleInput.value = currentProfile.role;
+    } else {
+        editRoleInput.style.display = 'none';
+        editRoleInput.value = currentProfile.role; 
+    }
+    
+    editProfileModal.style.display = 'flex';
+});
+
+saveProfileBtn.addEventListener('click', () => {
+    const newName = editNameInput.value.trim();
+    const newBio = editBioInput.value.trim();
+    const newRole = editRoleInput.value.trim(); 
+    const currentProfile = CHAT_USER_PROFILES[myUserId];
+    
+    if (newName === '' || newBio === '') {
+        alert('Nama dan Bio tidak boleh kosong!');
+        return;
+    }
+    
+    // Perbarui profil
+    currentProfile.name = newName;
+    currentProfile.bio = newBio;
+    // Perbarui Role jika diizinkan
+    if (myUserId === 'zaza' || myUserId === 'khirza') {
+         currentProfile.role = newRole;
+    }
+    
+    // Logika Avatar Default
+    if (!currentProfile.avatar.startsWith('data:image')) {
+        if (myUserId === 'anomali1') currentProfile.avatar = '1';
+        else if (myUserId === 'anomali2') currentProfile.avatar = '2';
+        else if (myUserId === 'anomali3') currentProfile.avatar = '3';
+        else {
+             const nameParts = newName.split(' ').map(n => n[0]).join('').toUpperCase();
+             currentProfile.avatar = nameParts.substring(0, 2);
+        }
+    }
+    
+    CHAT_USER_PROFILES[myUserId] = currentProfile;
+    
+    saveUserProfiles(); // Simpan ke global localStorage
+    
+    showProfilePage(); 
+    myUserName = newName; 
+    document.getElementById('displayUsername').textContent = myUserName.toUpperCase();
+    
+    editProfileModal.style.display = 'none';
+    alert('Profil berhasil diperbarui dan dapat dilihat oleh pengguna lain!');
+});
+
+editAvatarInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const currentProfile = CHAT_USER_PROFILES[myUserId];
+            
+            currentProfile.avatar = event.target.result; 
+            
+            CHAT_USER_PROFILES[myUserId] = currentProfile;
+            
+            renderAvatar(document.getElementById('profileAvatar'), currentProfile);
+            
+            alert('Avatar berhasil diganti! Tekan "Simpan Perubahan" untuk menyimpan nama, bio & role.');
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('profileAvatar').addEventListener('click', () => {
+    editProfileBtn.click();
 });
 </script>
 </body>
