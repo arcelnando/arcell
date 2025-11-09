@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Album Celz</title>
+<title>Final Album Celz - Supabase Ready</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+/* ... (SEMUA GAYA CSS ANDA SEBELUMNYA) ... */
 /* Reset & Global */
 html, body {
   margin:0; padding:0;
@@ -672,7 +675,7 @@ html, body {
     display: flex; flex-direction: column; gap: 15px;
     text-align: center;
 }
-#viewProfileContent h3 { color: #ffc0de; margin-top: 0; }
+#viewProfileContent h3 { color: #ffc0de; margin-top: 10px; }
 
 
 /* PENAMBAHAN: Select Chat Page */
@@ -1009,8 +1012,16 @@ html, body {
 <audio id="bgMusic" src="https://h.top4top.io/m_35969emdf0.m4a" loop></audio>
 
 <script>
-// --- KONFIGURASI CHAT & LOGIN (DITAMBAH 3 AKUN ANOMALI) ---
-const CHAT_SERVER_URL = ''; 
+// --- KONFIGURASI SUPABASE (FRONTEND CLIENT) ---
+// Gunakan Anon Key untuk READ access dari sisi client
+const SUPABASE_URL = 'https://bcxpccxcjjcezjocvqbu.supabase.co';
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjeHBjY3hjampjZXpqb2N2cWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MDM0NTMsImV4cCI6MjA3ODI3OTQ1M30.ExnimOx8Ol3-SeNivElzdQqMoo7pyPMbje5TZZSG1TQ"; 
+
+// Inisialisasi Supabase Client
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// --- KONFIGURASI CHAT & LOGIN ---
+const CHAT_SERVER_URL = ''; // GANTI DENGAN URL RENDER ANDA!
 const socket = io(CHAT_SERVER_URL);  
 
 const loginCredentials = {
@@ -1030,27 +1041,20 @@ const DEFAULT_USER_PROFILES = {
     'anomali3': { id: 'anomali3', name: 'Anomali 3', isVerified: false, avatar: '3', role: 'Pengguna', bio: 'Saya adalah anomali ketiga.', lastSeen: null, isOnline: false }  
 };
 
-let CHAT_USER_PROFILES = JSON.parse(JSON.stringify(DEFAULT_USER_PROFILES)); // Kloning untuk penggunaan saat ini
+let CHAT_USER_PROFILES = JSON.parse(JSON.stringify(DEFAULT_USER_PROFILES)); 
 
 let myUserId = ''; 
 let myUserName = '';
 let opponentInfo = {}; 
 let currentOpponentId = ''; 
-// MENGGUNAKAN KUNCI GLOBAL UNTUK STATUS AGAR DAPAT DIKIRIM KE SEMUA KLIEN
 const STATUS_KEY = 'globalUserStatuses'; 
 let currentStatusId = null; 
 // --- END KONFIGURASI ---
 
-// Fungsi utilitas untuk mendapatkan kunci localStorage
+// Fungsi utilitas untuk mendapatkan kunci localStorage (Hanya untuk Album Like & Zaza AI History)
 function getLocalStorageKey(key) { return `${myUserId}_${key}`; }
 
-/**
- * Mendapatkan kunci unik untuk riwayat chat antara 2 user.
- */
-function getChatHistoryKey(userId1, userId2) {
-    const sortedIds = [userId1, userId2].sort();
-    return `${sortedIds[0]}_${sortedIds[1]}_chatHistory`;
-}
+// Hapus getChatHistoryKey karena kita pakai Supabase
 
 // Navbar toggle
 const navMenu = document.getElementById('navMenu');
@@ -1076,7 +1080,7 @@ const pages = {
   selectChat: document.getElementById('selectChatPage') 
 };
 
-// Data Album (Dipotong untuk kerapian)
+// Data Album (Dipotong)
 const albumData = {
   main: { 
     photos: [
@@ -1608,7 +1612,7 @@ function setupDoubleTap(element, folder) {
         element.classList.add('double-tap-liked');
         setTimeout(() => {
             element.classList.remove('double-tap-liked');
-        }, 800);
+            }, 800);
     });
 }
 
@@ -1741,7 +1745,11 @@ const attachMediaBtn = document.getElementById('attachMediaBtn');
 const contactListEl = document.getElementById('contactList'); 
 
 
-function loadChatHistory() {
+/**
+ * Memuat riwayat chat dari Supabase.
+ * Menggantikan fungsi lama yang menggunakan localStorage.
+ */
+async function loadChatHistory() {
     const opponentId = getOpponentId();
     if (!opponentId) {
         chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Silakan pilih kontak chat --</div>';
@@ -1749,52 +1757,85 @@ function loadChatHistory() {
         return;
     }
     
-    // Gunakan kunci universal
-    const historyKey = getChatHistoryKey(myUserId, opponentId); 
-    const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
-    
-    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em; margin-bottom: 15px;">-- Chat dimulai --</div>';
-    history.forEach(msg => addMessageToChat(msg, true));
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    
-    updateChatHeader();
-    
-    // PENTING: Kirim status 'read' untuk semua pesan lawan yang belum dibaca saat chat dimuat
-    history.forEach(msg => {
-        if (msg.senderId === opponentId && msg.status !== 'read') {
-             socket.emit('message_read', { id: msg.id, senderId: msg.senderId, recipientId: myUserId });
+    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em; margin-bottom: 15px;">-- Memuat Riwayat Chat dari Supabase... --</div>';
+
+    try {
+        // Ambil semua pesan di mana: (sender = saya AND recipient = lawan) OR (sender = lawan AND recipient = saya)
+        // Kita hanya mengambil kolom yang dibutuhkan di frontend
+        const { data: history, error } = await supabaseClient 
+            .from('messages')
+            .select('id, sender_id, recipient_id, message_text, media_url, status, created_at')
+            // Query OR: (myId to opponent) OR (opponent to myId)
+            .or(`and(sender_id.eq.${myUserId},recipient_id.eq.${opponentId}),and(sender_id.eq.${opponentId},recipient_id.eq.${myUserId})`)
+            .order('created_at', { ascending: true }); 
+            
+        if (error) {
+            console.error("Error loading chat history from Supabase:", error);
+            chatMessages.innerHTML = '<div style="text-align: center; color: #ff6f91; font-size: 0.9em;">Gagal memuat riwayat chat dari Supabase. Pastikan server backend berjalan.</div>';
+            return;
         }
-    });
+
+        chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em; margin-bottom: 15px;">-- Chat dimulai --</div>';
+        
+        // Render history
+        history.forEach(msg => {
+            const formattedMsg = {
+                // Gunakan created_at untuk ID sementara jika ID Supabase tidak dikirim via Socket
+                id: Date.parse(msg.created_at), 
+                senderId: msg.sender_id,
+                recipientId: msg.recipient_id,
+                message: msg.message_text,
+                media: msg.media_url,
+                timestamp: new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                status: msg.status 
+            };
+            addMessageToChat(formattedMsg, true);
+        });
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        updateChatHeader();
+        
+        // PENTING: Kirim status 'read' ke backend untuk semua pesan lawan yang baru dimuat
+        history.forEach(msg => {
+            if (msg.sender_id === opponentId && msg.status !== 'read') {
+                 // ID pesan harus dikirim dari backend, tapi kita bisa pakai timestamp sebagai fallback
+                 socket.emit('message_read', { id: Date.parse(msg.created_at), senderId: msg.sender_id, recipientId: myUserId });
+            }
+        });
+
+    } catch (e) {
+        console.error("Kesalahan umum saat memuat Supabase:", e);
+        chatMessages.innerHTML = '<div style="text-align: center; color: #ff6f91; font-size: 0.9em;">Kesalahan koneksi saat memuat riwayat.</div>';
+    }
 }
 
-function saveChatHistory(history, opponentId) {
-    // Gunakan kunci universal
-    const historyKey = getChatHistoryKey(myUserId, opponentId);
-    localStorage.setItem(historyKey, JSON.stringify(history));
-}
+// Hapus saveChatHistory (karena kini di server.js)
+// Hapus getChatHistoryKey (karena kini di server.js)
 
 function deleteChatMessage(id) {
-    if (confirm("Anda yakin ingin menghapus pesan ini?")) {
+    if (confirm("Anda yakin ingin menghapus pesan ini? (Catatan: Ini tidak menghapus dari Supabase, hanya dari tampilan dan cache lokal)")) {
         const messageElement = document.getElementById(`msg-${id}`);
         if (messageElement) messageElement.remove();
 
         const opponentId = getOpponentId();
-        // Gunakan kunci universal
-        const historyKey = getChatHistoryKey(myUserId, opponentId);
+        // Hapus dari cache lokal (walaupun sudah tidak digunakan untuk load history)
+        const historyKey = getLocalStorageKey(`chatHistory_${myUserId}_${opponentId}`);
         let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
         history = history.filter(msg => msg.id != id);
-        saveChatHistory(history, opponentId);
+        localStorage.setItem(historyKey, JSON.stringify(history));
     }
 }
 
 function deleteAllChatHistory() {
-    if (confirm("Anda yakin ingin menghapus SELURUH riwayat chat dengan pengguna ini?")) {
-        const opponentId = getOpponentId();
-        // Gunakan kunci universal
-        const historyKey = getChatHistoryKey(myUserId, opponentId);
-        localStorage.removeItem(historyKey);
-        loadChatHistory(); // Muat ulang chat kosong
-        alert("Riwayat chat berhasil dihapus!");
+    if (confirm("Anda yakin ingin menghapus SELURUH riwayat chat dengan pengguna ini? (CATATAN: Ini tidak menghapus dari Supabase, hanya dari tampilan)")) {
+        
+        // Catatan: Karena kita membaca dari Supabase, menghapus dari cache lokal tidak akan mencegah pemuatan ulang
+        // Kecuali kita juga mengirim perintah DELETE ke server.
+        
+        // UNTUK SEMENTARA: Cuma hapus tampilan
+        localStorage.removeItem(getLocalStorageKey(`chatHistory_${myUserId}_${getOpponentId()}`));
+        loadChatHistory(); // Muat ulang chat dari Supabase
+        alert("Riwayat chat berhasil dihapus (dari tampilan)!");
     }
 }
 
@@ -2018,15 +2059,15 @@ function updateMessageStatus(data) {
              statusIcon.style.color = 'rgba(255,255,255,0.8)'; // Putih/Abu-abu
         }
         
-        // PENTING: Perbarui status di localStorage
+        // Kunci di localStorage yang terkait dengan riwayat chat (yang tidak lagi dipakai)
         const opponentId = getOpponentId();
-        const historyKey = getChatHistoryKey(myUserId, opponentId);
+        const historyKey = getLocalStorageKey(`chatHistory_${myUserId}_${opponentId}`);
         let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
         
         const msgIndex = history.findIndex(msg => msg.id == data.id);
         if (msgIndex !== -1) {
             history[msgIndex].status = data.status;
-            saveChatHistory(history, opponentId);
+            localStorage.setItem(historyKey, JSON.stringify(history));
         }
     }
 }
@@ -2057,8 +2098,8 @@ socket.on('receive_message', (data) => {
         // Tentukan lawan bicara
         let targetOpponentId = data.senderId === myUserId ? data.recipientId : data.senderId;
         
-        // Gunakan kunci universal untuk penyimpanan
-        const historyKey = getChatHistoryKey(myUserId, targetOpponentId);
+        // Gunakan kunci lokal untuk cache (opsional, karena riwayat dari Supabase)
+        const historyKey = getLocalStorageKey(`chatHistory_${myUserId}_${targetOpponentId}`);
         
         let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
         
@@ -2101,13 +2142,13 @@ socket.on('update_status', (data) => {
     const usersInvolved = [data.senderId, data.recipientId].filter(id => id === myUserId || id === getOpponentId());
     
     usersInvolved.forEach(user => {
-         const historyKey = getChatHistoryKey(data.senderId, data.recipientId);
+         const historyKey = getLocalStorageKey(`chatHistory_${data.senderId}_${data.recipientId}`);
          let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
          const msgIndex = history.findIndex(msg => msg.id == data.id);
          
          if (msgIndex !== -1) {
               history[msgIndex].status = data.status;
-              saveChatHistory(history, data.senderId === myUserId ? data.recipientId : data.senderId);
+              localStorage.setItem(historyKey, JSON.stringify(history));
          }
     });
 
@@ -2306,9 +2347,7 @@ statusFileInput.addEventListener('change', (e) => {
 function renderStatusList() {
     statusListEl.innerHTML = '';
     
-    // Status disimpan di localStorage GLOBAL (STATUS_KEY) sehingga semua user di browser ini melihat data yang sama.
-    // Jika teman Anda menggunakan browser/komputer yang berbeda, data status harus disimpan di backend,
-    // tetapi untuk simulasi ini, kita anggap semua status tersimpan di satu kunci global.
+    // Status disimpan di localStorage GLOBAL (STATUS_KEY)
     const allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
     
     if (allStatuses.length === 0) {
@@ -2457,7 +2496,7 @@ function deleteStatus(id) {
         document.getElementById('statusViewer').style.display = 'none';
         alert("Status berhasil dihapus!");
         
-        // PENTING: Beri tahu klien lain bahwa ada perubahan status!
+        // PENTING: Beri tahu klien lain!
         emitStatusUpdate(); 
     }
 }
