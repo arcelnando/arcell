@@ -1,5 +1,5 @@
 // ======================================================
-// Server Chat Minimalis untuk Album Khirza - V3.4 (GROQ AI)
+// Server Chat Minimalis untuk Album Khirza - V4.0 (SUPABASE + GROQ AI)
 // ======================================================
 
 require('dotenv').config();
@@ -7,10 +7,23 @@ const Groq = require("groq-sdk");
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const path = require('path');
+const path = require('path'); 
 
-// Inisialisasi Groq dengan API Key dari file .env
-// Pastikan variabel lingkungan GROQ_API_KEY sudah terisi di file .env
+// --- SUPABASE CLIENT ---
+const { createClient } = require('@supabase/supabase-js');
+
+// PENTING: Menggunakan variabel lingkungan yang aman (Service Role Key)
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY; 
+
+// Menginisialisasi Supabase dengan Service Key yang aman
+if (!SUPABASE_KEY || !SUPABASE_URL) {
+    console.warn("PERINGATAN: Kunci atau URL Supabase belum disetel di .env. Fitur Chat akan berjalan, tetapi RIWAYAT TIDAK AKAN TERSIMPAN.");
+}
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+// Inisialisasi Groq (dari file .env)
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const app = express();
@@ -19,76 +32,24 @@ const server = http.createServer(app);
 // Konfigurasi CORS
 const io = socketIo(server, {
     cors: {
-        // Mengizinkan semua origin untuk akses dari browser (http://localhost:port_html)
-        // Jika di-deploy ke Render, ini harus disetel ke URL Vercel/frontend Anda
         origin: "*", 
         methods: ["GET", "POST"]
     }
 });
 
-// Data akun statis (HARUS MATCH DENGAN DEFAULT DI HTML)
+// Data akun statis
 const USER_ACCOUNTS = {
-    'zaza': {
-        id: 'zaza',
-        password: 'zaza',
-        name: 'Zaza',
-        isVerified: true,
-        avatar: 'ZA',
-        role: 'Software Engineer', 
-        bio: 'Mengejar mimpi dan cinta.',
-        isOnline: false, // Tambahkan status awal
-        lastSeen: null
-    },
-    'khirza': {
-        id: 'khirza',
-        password: 'cantik',
-        name: 'Khirza',
-        isVerified: false,
-        avatar: 'KH',
-        role: 'Mahasiswa', 
-        bio: 'Selalu semangat dan tersenyum.',
-        isOnline: false,
-        lastSeen: null
-    },
-    'anomali1': {
-        id: 'anomali1',
-        password: 'anomali1',
-        name: 'Anomali 1',
-        isVerified: false,
-        avatar: '1',
-        role: 'Pengguna', 
-        bio: 'Saya adalah anomali pertama.',
-        isOnline: false,
-        lastSeen: null
-    },
-    'anomali2': {
-        id: 'anomali2',
-        password: 'anomali2',
-        name: 'Anomali 2',
-        isVerified: false,
-        avatar: '2',
-        role: 'Pengguna', 
-        bio: 'Saya adalah anomali kedua.',
-        isOnline: false,
-        lastSeen: null
-    },
-    'anomali3': {
-        id: 'anomali3',
-        password: 'anomali3',
-        name: 'Anomali 3',
-        isVerified: false,
-        avatar: '3',
-        role: 'Pengguna', 
-        bio: 'Saya adalah anomali ketiga.',
-        isOnline: false,
-        lastSeen: null
-    }
+    'zaza': { id: 'zaza', password: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA', role: 'Software Engineer', bio: 'Mengejar mimpi dan cinta.', isOnline: false, lastSeen: null },
+    'khirza': { id: 'khirza', password: 'cantik', name: 'Khirza', isVerified: false, avatar: 'KH', role: 'Mahasiswa', bio: 'Selalu semangat dan tersenyum.', isOnline: false, lastSeen: null },
+    'anomali1': { id: 'anomali1', password: 'anomali1', name: 'Anomali 1', isVerified: false, avatar: '1', role: 'Pengguna', bio: 'Saya adalah anomali pertama.', isOnline: false, lastSeen: null },
+    'anomali2': { id: 'anomali2', password: 'anomali2', name: 'Anomali 2', isVerified: false, avatar: '2', role: 'Pengguna', bio: 'Saya adalah anomali kedua.', isOnline: false, lastSeen: null },
+    'anomali3': { id: 'anomali3', password: 'anomali3', name: 'Anomali 3', isVerified: false, avatar: '3', role: 'Pengguna', bio: 'Saya adalah anomali ketiga.', isOnline: false, lastSeen: null }
 };
 
 const onlineUsers = {};
 
 // =======================================================
-// === Fungsi Zaza AI (Model: llama-3.1-8b-instant) ===
+// === Fungsi Zaza AI ===
 // =======================================================
 async function getGroqResponse(prompt) {
     const systemMessage = "Anda adalah Zaza AI, asisten virtual yang ramah dan penuh kasih untuk Album Digital Celz. Jawablah dengan nada manis, singkat, dan relevan dengan album digital, Khirza, atau percintaan. Batasi jawaban maksimal 3 kalimat.";
@@ -96,14 +57,10 @@ async function getGroqResponse(prompt) {
     try {
         const completion = await groq.chat.completions.create({
             model: "llama-3.1-8b-instant",
-            messages: [
-                { role: "system", content: systemMessage },
-                { role: "user", content: prompt }
-            ],
+            messages: [{ role: "system", content: systemMessage }, { role: "user", content: prompt }],
             temperature: 0.8,
             max_tokens: 150,
         });
-
         return completion.choices[0].message.content.trim();
     } catch (error) {
         console.error("Error saat memanggil Groq API:", error);
@@ -117,42 +74,30 @@ async function getGroqResponse(prompt) {
 io.on('connection', (socket) => {
     console.log(`[CONN] Pengguna terhubung: ${socket.id}`);
 
-    // --- UTILITY UNTUK UPDATE STATUS PENGGUNA (FIX LOGIKA LAST SEEN) ---
     const sendUserStatusUpdate = () => {
         const usersData = {};
-        
-        // Kumpulkan data terbaru untuk broadcast
         Object.keys(USER_ACCOUNTS).forEach(userId => {
             usersData[userId] = {
                 isOnline: USER_ACCOUNTS[userId].isOnline,
                 lastSeen: USER_ACCOUNTS[userId].lastSeen
             };
         });
-        // Kirim update status ke semua klien
         io.emit('user_status_update', usersData);
     };
 
     // --- LOGIN USER ---
     socket.on('user_login', (userId) => {
-        // Logika untuk menangani koneksi duplikat (opsional tapi bagus)
         if (onlineUsers[userId] && onlineUsers[userId] !== socket.id) {
             io.to(onlineUsers[userId]).emit('duplicate_login', { message: 'Anda login di tempat lain.' });
         }
-        
         onlineUsers[userId] = socket.id;
         socket.userId = userId;
-        socket.join(userId); // Bergabung ke "room" sendiri
+        socket.join(userId);
 
         USER_ACCOUNTS[userId].isOnline = true;
-        USER_ACCOUNTS[userId].lastSeen = null; // Reset lastSeen saat login
-        
+        USER_ACCOUNTS[userId].lastSeen = null; 
         console.log(`[ONLINE] ${userId} sekarang online.`);
-
-        // Kirim semua detail akun default (termasuk lastSeen/isOnline) ke client
-        // FIX: Kirim seluruh objek USERS_ACCOUNTS agar client dapat memuat semua profile.
         io.emit('load_users', USER_ACCOUNTS); 
-        
-        // Broadcast status online/offline ke semua
         sendUserStatusUpdate();
     });
     
@@ -161,74 +106,110 @@ io.on('connection', (socket) => {
         if (onlineUsers[userId]) {
             delete onlineUsers[userId];
             socket.userId = null;
-            
             USER_ACCOUNTS[userId].isOnline = false;
-            USER_ACCOUNTS[userId].lastSeen = Date.now(); // Set lastSeen
-            
+            USER_ACCOUNTS[userId].lastSeen = Date.now(); 
             console.log(`[OFFLINE] ${userId} logged out.`);
             sendUserStatusUpdate();
         }
     });
 
 
-    // --- CHAT BIASA (FIX: MENGATASI DOUBLE CHAT DAN STATUS) ---
-    socket.on('send_message', (data) => {
+    // --- CHAT BIASA: SIMPAN KE SUPABASE & KIRIM VIA SOCKET ---
+    socket.on('send_message', async (data) => {
         const { senderId, recipientId } = data;
-        
         const senderDetails = USER_ACCOUNTS[senderId] || { name: 'Unknown' };
-
-        // Server yang memberikan ID unik dan status 'sent'
-        const messageId = Date.now() + Math.floor(Math.random() * 1000);
         
+        // 1. Persiapkan Data Pesan
+        const messageId = Date.now() + Math.floor(Math.random() * 1000);
         const messageData = {
             ...data,
             id: messageId,
             senderName: senderDetails.name, 
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            status: 'sent' // Status awal dari server adalah 'sent'
+            status: 'sent' 
         };
 
+        // 2. SIMPAN KE SUPABASE
+        if (SUPABASE_KEY) {
+            try {
+                const { error } = await supabase
+                    .from('messages') 
+                    .insert([
+                        {
+                            sender_id: senderId,
+                            recipient_id: recipientId,
+                            message_text: data.message,
+                            media_url: data.media,
+                            status: 'sent' 
+                        }
+                    ]);
+
+                if (error) {
+                    console.error("Gagal menyimpan ke Supabase:", error.message);
+                    // Kirim pesan kesalahan kembali ke pengirim
+                    io.to(onlineUsers[senderId]).emit('receive_message', {
+                        ...messageData,
+                        message: `[GAGAL DISIMPAN] ${data.message}`,
+                        status: 'error'
+                    });
+                    return;
+                }
+                console.log(`[DB] Pesan disimpan. ID Pesan Lokal: ${messageId}`);
+            } catch (dbError) {
+                console.error("Kesalahan umum koneksi DB:", dbError);
+            }
+        }
+        
+        // 3. Kirim via Socket.IO (Real-time)
         console.log(`[MESSAGE] Dari ${senderId} ke ${recipientId}: ${messageData.message || '[MEDIA]'}`);
 
-        // 1. Kirim pesan kembali ke PENGIRIM (untuk render dengan ID dan status 'sent' yang benar)
-        // Ini menggantikan pesan 'schedule' yang dibuat sementara di frontend.
+        // Kirim pesan kembali ke PENGIRIM (menggantikan pesan 'schedule')
         io.to(onlineUsers[senderId]).emit('receive_message', messageData);
 
-        // 2. Kirim pesan ke PENERIMA
+        // Kirim pesan ke PENERIMA
         const receiverSocketId = onlineUsers[recipientId];
         if (receiverSocketId) {
             io.to(receiverSocketId).emit('receive_message', messageData);
-        } else {
-            // Jika penerima offline, tidak perlu bertindak. Status tetap 'sent'.
         }
     });
 
-    // --- STATUS PESAN 'READ' DARI PENERIMA (FIX: MENGUBAH STATUS DI PENGIRIM) ---
-    socket.on('message_read', ({ id, senderId, recipientId }) => {
+    // --- STATUS PESAN 'READ': UPDATE SUPABASE & KIRIM VIA SOCKET ---
+    socket.on('message_read', async ({ id, senderId, recipientId }) => {
         const senderSocketId = onlineUsers[senderId];
         
+        // 1. Update status di Supabase
+        if (SUPABASE_KEY) {
+            try {
+                // Gunakan update berdasarkan kriteria (sender, recipient, status='sent')
+                const { error } = await supabase
+                    .from('messages')
+                    .update({ status: 'read' })
+                    .match({ sender_id: senderId, recipient_id: recipientId, status: 'sent' }); 
+
+                if (error) {
+                    console.error("Gagal update status read di Supabase:", error.message);
+                } else {
+                     console.log(`[DB] Pesan diupdate menjadi 'read' untuk pengirim ${senderId}.`);
+                }
+            } catch (dbError) {
+                 console.error("Kesalahan umum saat update status read:", dbError);
+            }
+        }
+
+        // 2. Kirim status 'read' via Socket.IO
         if (senderSocketId) {
-             console.log(`[STATUS] Pesan ${id} dibaca oleh ${recipientId}.`);
              const readStatusData = { 
                  id: id, 
                  status: 'read', 
-                 senderId: recipientId, // Penerima adalah yang membaca
-                 recipientId: senderId  // Pengirim adalah yang menerima update status
+                 senderId: recipientId, 
+                 recipientId: senderId  
              };
-             
-             // Kirim status 'read' ke Pengirim
              io.to(senderSocketId).emit('update_status', readStatusData);
-             
-             // Opsional: Kirim status 'read' ke Penerima itu sendiri agar dia tahu pesan tersebut telah diproses.
-             // io.to(onlineUsers[recipientId]).emit('update_status', readStatusData);
         }
     });
     
     // --- STATUS STORIES BARU ---
     socket.on('status_created', (data) => {
-        console.log(`[STATUS] Status baru dibuat oleh: ${data.senderId}. Broadcasting update.`);
-        
-        // Kirim sinyal ke SEMUA klien KECUALI pengirim.
         socket.broadcast.emit('receive_status_update', data.senderId);
     });
 
@@ -237,13 +218,11 @@ io.on('connection', (socket) => {
         const { prompt } = data; 
         try {
             const aiResponseText = await getGroqResponse(prompt);
-
             const responseData = {
                 sender: 'zaza',
                 message: aiResponseText,
                 timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
             };
-            
             socket.emit('receive_ai_message', responseData);
         } catch (error) {
             const errorResponse = {
@@ -259,10 +238,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (socket.userId && onlineUsers[socket.userId] === socket.id) {
             delete onlineUsers[socket.userId];
-            
             USER_ACCOUNTS[socket.userId].isOnline = false;
             USER_ACCOUNTS[socket.userId].lastSeen = Date.now(); 
-            
             console.log(`[OFFLINE] ${socket.userId} terputus.`);
             sendUserStatusUpdate();
         }
@@ -273,17 +250,12 @@ io.on('connection', (socket) => {
 // === Jalankan Server ===
 // =======================================================
 
-// Express akan mencari file statis (HTML, CSS, JS) di root folder
 app.use(express.static(__dirname)); 
 
-// Mengarahkan ke index.html
 app.get('/', (req, res) => {
-    // Jika Anda hosting di Render, tidak perlu index.html karena Vercel sudah menangani frontend.
-    // Tetapi jika menjalankan secara lokal:
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// FIX: Gunakan variabel lingkungan PORT untuk kompatibilitas hosting
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server Chat & Album Berjalan di port ${PORT}`);
