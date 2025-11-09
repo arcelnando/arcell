@@ -932,6 +932,11 @@ function saveLikeStatus(folder) {
     localStorage.setItem(key, JSON.stringify(albumData[folder].likedPhotos));
 }
 
+// PERBAIKAN: Fungsi untuk mendapatkan ID lawan bicara (digunakan di Chat)
+function getOpponentId() {
+    return myUserId === 'zaza' ? 'khirza' : 'zaza';
+}
+
 
 // **INICIALISASI SAAT STARTUP (SESI PERSISTENCE)**
 window.onload = () => {
@@ -1057,6 +1062,11 @@ function showPage(page){
   // Khusus untuk Status, muat list
   if (page === 'status') {
       renderStatusList();
+  }
+  
+  // Khusus untuk Chat, muat history
+  if (page === 'chat') {
+       loadChatHistory();
   }
 
   // Putar musik jika bukan halaman non-musik
@@ -1366,15 +1376,15 @@ const opponentAvatarEl = document.getElementById('opponentAvatar');
 const chatFileInput = document.getElementById('chatFileInput');
 const attachMediaBtn = document.getElementById('attachMediaBtn');
 
-function getOpponentId() {
-    return myUserId === 'zaza' ? 'khirza' : 'zaza';
-}
 
 function loadChatHistory() {
     const history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
     chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">--  --</div>';
     history.forEach(msg => addMessageToChat(msg, true));
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Perbarui header saat memuat history
+    updateChatHeader(CHAT_USER_PROFILES);
 }
 
 function saveChatHistory(history) {
@@ -1393,7 +1403,7 @@ function deleteChatMessage(id) {
 }
 
 function updateChatHeader(usersData) {
-    const opponentId = getOpponentId(); // <-- FIX: Menggunakan fungsi yang benar
+    const opponentId = getOpponentId(); 
     opponentInfo = usersData[opponentId] || CHAT_USER_PROFILES[opponentId];
     
     if (opponentInfo) {
@@ -1444,11 +1454,14 @@ function addMessageToChat(data, isHistory = false) {
 
 
     // Konten Pesan + Jam + Status (Centang) + Tombol Hapus (DITAMBAH)
+    const statusIconColor = status === 'read' ? '#00e676' : (status === 'sent' ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.5)');
+    const statusIcon = status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule');
+
     msgDiv.innerHTML = `
         ${contentHTML}
         <span style="display: block; font-size: 0.75em; margin-top: 5px; text-align: right; color: ${isMe ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.6)'};">
             ${timeDisplay}
-            ${isMe ? `<span class="material-icons message-status" data-id="${messageId}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${status === 'read' ? '#00e676' : 'rgba(255,255,255,0.8)'};">${status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule')}</span>` : ''}
+            ${isMe ? `<span class="material-icons message-status" data-id="${messageId}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${statusIconColor};">${statusIcon}</span>` : ''}
         </span>
         ${isMe ? `<button class="delete-chat-btn" onclick="deleteChatMessage('${messageId}')">&times;</button>` : ''} 
     `;
@@ -1470,7 +1483,7 @@ function updateMessageStatus(data) {
     }
 }
 
-// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE) ---
+// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE & AI) ---
 socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
 socket.on('load_history', () => { loadChatHistory(); }); 
 socket.on('receive_message', (data) => { 
@@ -1490,7 +1503,7 @@ socket.on('receive_message', (data) => {
 
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
-    const opponentId = getOpponentId(); // <-- FIX: Menggunakan fungsi yang benar
+    const opponentId = getOpponentId(); 
     
     // Perbaikan: Pastikan kita memeriksa status online dari lawan bicara (opponentId)
     if (onlineIds.includes(opponentId)) {
@@ -1500,6 +1513,18 @@ socket.on('user_status_update', (onlineIds) => {
         chatStatus.textContent = 'Offline 😴';
         chatStatus.style.color = '#ffc0de';
     }
+});
+
+// >>> LISTENER BARU UNTUK ZAZA AI DARI SERVER GROQ <<<
+socket.on('receive_ai_message', (data) => {
+    // Hapus placeholder 'Memproses...'
+    if (zazaAIMessages.lastChild && zazaAIMessages.lastChild.textContent.includes("Memproses permintaan Anda...")) {
+        zazaAIMessages.lastChild.remove(); 
+    }
+    
+    // Tampilkan respons AI yang sebenarnya dari server
+    addMessageToZazaAIChat(data.message, data.sender);
+    saveZazaAIChatHistory(data.message, data.sender);
 });
 
 
@@ -1518,11 +1543,11 @@ chatFileInput.addEventListener('change', (e) => {
 
             const messageData = {
                 senderId: myUserId,
-                recipientId: getOpponentId(), // <-- PERBAIKAN UTAMA: Tentukan penerima
+                recipientId: getOpponentId(), 
                 message: caption,
-                media: mediaUrl, // Kirim media
+                media: mediaUrl, 
                 timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-                status: 'pending', 
+                status: 'sent', // Perbaikan: Set ke 'sent'
                 id: Date.now() 
             };
 
@@ -1546,11 +1571,11 @@ sendChatBtn.addEventListener('click', () => {
     if (message !== '' && myUserId) {
         const messageData = {
             senderId: myUserId,
-            recipientId: getOpponentId(), // <-- PERBAIKAN UTAMA: Tentukan penerima
+            recipientId: getOpponentId(), 
             message: message,
-            media: null, // Pastikan media null jika hanya teks
+            media: null, 
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            status: 'pending', 
+            status: 'sent', // Perbaikan: Set ke 'sent'
             id: Date.now() 
         };
 
@@ -1776,11 +1801,11 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
         
         const messageData = {
             senderId: myUserId,
-            recipientId: getOpponentId(), // <-- FIX: Tentukan penerima untuk balasan chat
+            recipientId: getOpponentId(), // PERBAIKAN: Tentukan penerima untuk balasan chat
             message: `[REPLY STATUS dari ${myUserName} ke ${originalStatus.senderName}: "${originalStatus.message.substring(0, 15)}..."] ${replyText}`,
             media: null,
             timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            status: 'pending', 
+            status: 'sent', // Perbaikan: Set ke 'sent'
             id: Date.now() 
         };
 
@@ -1799,7 +1824,7 @@ document.getElementById('sendReplyBtn').addEventListener('click', () => {
 });
 
 
-// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (Simulasi)**
+// **TAMBAHAN 7: LOGIKA ZAZA AI CHAT (API Live)**
 const zazaAIInput = document.getElementById('zazaAIInput');
 const sendZazaAIBtn = document.getElementById('sendZazaAIBtn');
 const zazaAIMessages = document.getElementById('zazaAIMessages');
@@ -1841,7 +1866,7 @@ function loadZazaAIChatHistory() {
     zazaAIMessages.scrollTop = zazaAIMessages.scrollHeight;
 }
 
-// Handler Kirim Pesan ke Zaza AI
+// Handler Kirim Pesan ke Zaza AI (Diubah ke mode API Live via Socket)
 sendZazaAIBtn.addEventListener('click', () => {
     const userMessage = zazaAIInput.value.trim();
     if (userMessage === '') return;
@@ -1850,15 +1875,12 @@ sendZazaAIBtn.addEventListener('click', () => {
     addMessageToZazaAIChat(userMessage, 'user');
     saveZazaAIChatHistory(userMessage, 'user');
     zazaAIInput.value = '';
+    
+    // 2. Placeholder untuk respons AI (Simulasi Loading)
+    addMessageToZazaAIChat("Memproses permintaan Anda...", 'zaza');
 
-    // 2. Buat respons simulasi AI
-    const aiResponse = generateZazaAIResponse(userMessage);
-
-    // 3. Tampilkan respons AI setelah delay (simulasi typing)
-    setTimeout(() => {
-        addMessageToZazaAIChat(aiResponse, 'zaza');
-        saveZazaAIChatHistory(aiResponse, 'zaza');
-    }, 1500); // Delay 1.5 detik
+    // 3. Kirim permintaan ke server (yang akan diteruskan ke Groq)
+    socket.emit('send_ai_message', { prompt: userMessage });
 });
 
 zazaAIInput.addEventListener('keypress', (e) => {
