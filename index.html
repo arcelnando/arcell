@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Album Digital Khirza - Premium Glow V3.2 FINAL (FIX)</title>
+<title>Final Album & Chat App</title>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
@@ -14,10 +14,10 @@ html, body {
   margin:0; padding:0;
   font-family:'Poppins',sans-serif;
   height:100%; width:100%;
-  overflow:hidden; /* Pastikan tidak ada scrollbar utama */
+  overflow:hidden;
   background:linear-gradient(135deg,#ffd6e8,#ffb3d1,#ff99c7);
   display:flex; justify-content:center; align-items:center;
-  color:#333; /* Warna teks default */
+  color:#333;
   line-height:1.6;
 }
 
@@ -34,8 +34,8 @@ html, body {
   transform:rotate(45deg); border-radius:50%;
   animation-name:float; animation-timing-function:linear;
   animation-iteration-count:infinite;
-  opacity:0; /* Mulai tersembunyi */
-  animation-fill-mode:forwards; /* Pertahankan gaya akhir animasi */
+  opacity:0;
+  animation-fill-mode:forwards;
 }
 @keyframes float{
   0%{transform:translate(0,0) rotate(45deg) scale(0.5);opacity:0;}
@@ -56,12 +56,12 @@ html, body {
   display:none;
 }
 .navbar ul{
-  list-style:none; display:flex; gap:35px; margin:0; padding:0;
+  list-style:none; display:flex; gap:20px; margin:0; padding:0; align-items:center;
 }
 .navbar button{
   background:none; border:none; color:white; font-size:1em;
   cursor:pointer; letter-spacing:1px; position:relative; transition:color 0.3s;
-  font-weight:600;
+  font-weight:600; padding: 5px 10px;
 }
 .navbar button::after{
   content:''; position:absolute; left:0; bottom:-5px; width:0%; height:2px;
@@ -75,7 +75,7 @@ html, body {
   .navbar ul{ flex-direction:column; background:rgba(255,255,255,0.15);
     position:fixed; top:55px; right:-100%; width:60%; height:100vh;
     text-align:center; transition:right 0.4s ease; padding-top:60px;
-    box-shadow:-5px 0 15px rgba(0,0,0,0.1);
+    box-shadow:-5px 0 15px rgba(0,0,0,0.1); gap: 25px;
   }
   .navbar ul.active{ right:0; }
   .menu-toggle{ display:flex; }
@@ -96,7 +96,7 @@ html, body {
 /* Album */
 .album-wrapper{ position:relative; text-align:center; width:90%; max-width:700px; z-index:2; opacity:0; transition:opacity 1.2s ease; }
 .album-wrapper.show{ opacity:1; }
-.folder-album-wrapper{ opacity:1; } /* Hilangkan efek fadeIn khusus album utama */
+.folder-album-wrapper{ opacity:1; } 
 .romantic-text{ font-size:2em; margin-bottom:20px; text-shadow:0 0 20px rgba(255,255,255,0.6); color:#fff; font-weight:700; }
 .album-container{
   position:relative; width:100%; height:650px;
@@ -106,7 +106,7 @@ html, body {
   backdrop-filter:blur(12px);
   box-shadow:0 15px 35px rgba(0,0,0,0.3);
   touch-action:pan-x;
-  display:flex; justify-content:center; align-items:center; /* Untuk centering loading spinner */
+  display:flex; justify-content:center; align-items:center; 
 }
 .photo{
   width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;
@@ -255,7 +255,7 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1; /* Di bawah foto, tapi di atas container */
+  z-index: 1; 
 }
 @keyframes spin {
   0% { transform: translate(-50%, -50%) rotate(0deg); }
@@ -273,8 +273,6 @@ html, body {
     text-align: center;
     border-radius: 20px;
     border: 2px dashed #ccc;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
 
@@ -307,7 +305,7 @@ html, body {
   #welcomeMessage p{ font-size:1em; }
 }
 
-/* CHAT STYLING */
+/* PENAMBAHAN 4: CHAT STYLING (Di Akhir CSS) */
 #chatPage .info-box {
     max-width: 600px;
     height: 80vh; 
@@ -334,6 +332,7 @@ html, body {
 }
 .chat-bubble {
     transition: all 0.3s ease;
+    position: relative;
 }
 .message-status {
     font-size: 1em !important; 
@@ -341,14 +340,123 @@ html, body {
     vertical-align: middle;
 }
 
-/* Gambar dalam Chat */
-.chat-image-preview {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
+/* --- Penambahan untuk Logout & Status --- */
+
+/* Navbar - Tambahan untuk tombol Logout */
+.navbar button#logoutBtn{
+  background:#ff6f91; color:white; border-radius:15px; padding:8px 15px;
+  box-shadow:0 3px 10px rgba(255,111,145,0.5);
+  transition: transform 0.3s;
+}
+.navbar button#logoutBtn:hover{
+  background:#ff8da8; transform:scale(1.05); color:white;
+}
+.navbar button#logoutBtn::after{
+  display:none;
+}
+/* Chat Delete Button */
+.delete-chat-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff6f91;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
     cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    line-height: 20px;
+    text-align: center;
+    z-index: 5;
+}
+.chat-bubble:hover .delete-chat-btn {
+    opacity: 1;
+}
+
+/* Status Page Styling */
+#statusPage .info-box {
+    max-width: 500px;
+    height: auto;
+    min-height: 400px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+#statusList {
+    margin-top: 20px;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+}
+.status-item {
+    padding: 15px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: background 0.3s, border-left 0.3s;
+    position: relative;
+    border-left: 5px solid #ff99c7; /* Belum dilihat */
+}
+.status-item.viewed {
+    border-left: 5px solid rgba(255,255,255,0.3); /* Sudah dilihat */
+    background: rgba(255,255,255,0.05);
+}
+.status-item:hover {
+    background: rgba(255,255,255,0.2);
+}
+.status-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 5px;
+}
+.status-meta .viewed-icon {
+    display: flex; align-items: center; gap: 5px; color: #7aff7a; font-weight: 600;
+}
+/* Status Viewer */
+#statusViewer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 2000;
+    display: none; justify-content: center; align-items: center;
+    flex-direction: column;
+}
+#viewerContent {
+    background: #111; padding: 20px; border-radius: 15px; max-width: 90%; width: 400px;
+    color: white; animation: fadeInScale 0.5s;
+}
+#statusReplyInput {
+    padding: 10px; border-radius: 10px; border: none; width: 80%; margin-right: 10px;
+    background: rgba(255,255,255,0.9); color: #333;
+}
+#statusLikeBtn, #statusReplyBtn {
+    padding: 10px 15px; border-radius: 10px; border: none; background: #ff99c7; color: white; margin-top: 10px; cursor: pointer; transition: 0.3s;
+}
+#statusLikeBtn:hover, #statusReplyBtn:hover { background: #ffb3d1; }
+
+/* Styling Media Chat */
+.media-message {
+    max-width: 200px; 
+    max-height: 200px;
+    border-radius: 10px;
+    object-fit: contain;
     margin-top: 5px;
     display: block;
+}
+
+/* Styling Media Status */
+#viewerMedia {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
 </style>
 </head>
@@ -359,8 +467,12 @@ html, body {
 <nav class="navbar">
   <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
   <ul id="navMenu">
-    <li><button id="homeBtn"><span class="material-icons">home</span> Home</button></li> <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> <li><button id="aboutBtn"><span class="material-icons">info</span> About</button></li> <li><button id="contactBtn"><span class="material-icons">email</span> Contact</button></li> 
-    <li><button id="logoutNavBtn" style="color: #ffb3b3;"><span class="material-icons">logout</span> Logout</button></li>
+    <li><button id="homeBtn"><span class="material-icons">home</span> Home</button></li> 
+    <li><button id="chatNavBtn"><span class="material-icons">message</span> Chat</button></li> 
+    <li><button id="statusNavBtn"><span class="material-icons">auto_stories</span> Status</button></li> 
+    <li><button id="aboutBtn"><span class="material-icons">info</span> About</button></li> 
+    <li><button id="contactBtn"><span class="material-icons">email</span> Contact</button></li> 
+    <li><button id="logoutBtn"><span class="material-icons">logout</span> Logout</button></li>
   </ul>
 </nav>
 
@@ -378,7 +490,6 @@ html, body {
     <h2>Selamat Datang! ✨</h2>
     <p>Halo <span id="displayUsername"></span>, senang Anda kembali! Jelajahi momen spesial dalam album digital ini.</p>
     <button id="startBrowsingBtn">Mulai Jelajahi Album</button>
-    <button id="logoutWelcomeBtn" style="background:#ff6666; margin-top:10px;">Logout</button>
   </div>
 </div>
 
@@ -386,27 +497,27 @@ html, body {
   <div class="album-wrapper" id="folderSelectWrapper" style="display:flex; flex-direction:column; gap:20px; max-width:400px; padding:20px; opacity:1;">
     <div class="romantic-text" style="margin-bottom:0;">𝗣𝗜𝗟𝗜𝗛 𝗙𝗢𝗟𝗗𝗘𝗥 𝗔𝗟𝗕𝗨𝗠</div>
     <button id="mainAlbumBtn" class="folder-btn">
-        <span class="material-icons">favorite</span> ALBUM UTAMA
+        <span class="icon"></span> ALBUM UTAMA
     </button>
     <button id="folder1Btn" class="folder-btn">
-        <span class="material-icons">photo_album</span> PAP RANDOM 1
+        <span class="icon"></span> PAP RANDOM 1
     </button>
     <button id="folder2Btn" class="folder-btn">
-        <span class="material-icons">photo_album</span> PAP RANDOM 2 
+        <span class="icon"></span> PAP RANDOM 2 
     </button>
   </div>
   
   <div class="album-wrapper" id="albumWrapper" style="display:none;">
-    <button class="back-btn" onclick="showPage('home')"><span class="material-icons">arrow_back</span> KEMBALI</button>
-    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝗨𝗧𝗡𝗬𝗔</div>
+    <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
+    <div class="romantic-text">𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢 𝐒𝐄𝗟𝗔𝗡𝗝𝐔𝗧𝗡𝗬𝐀</div>
     <div class="album-container" id="albumContainer">
       <div class="loading-spinner" id="mainSpinner"></div>
     </div>
     <div class="photo-indicator" id="mainPhotoIndicator"></div>
     <div class="photo-menu" id="photoMenu">
-      <button id="shareBtn"><span class="material-icons">share</span> Share</button>
-      <button id="likeBtn"><span class="material-icons">favorite_border</span> Like</button>
-      <button id="downloadBtn"><span class="material-icons">download</span> Download</button>
+      <button id="shareBtn"><span class="icon"></span> Share</button>
+      <button id="likeBtn"><span class="icon"></span> Like</button>
+      <button id="downloadBtn"><span class="icon"></span> Download</button>
     </div>
     <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
     <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
@@ -414,17 +525,17 @@ html, body {
 </div>
 
 <div class="page" id="folder1Page">
-  <button class="back-btn" onclick="showPage('home')"><span class="material-icons">arrow_back</span> KEMBALI</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder1">
-    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝗧 𝐅𝗢𝗧𝗢</div>
+    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄ﺭ 𝟏 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
     <div class="album-container folder-album-container" id="folder1Container">
       <div class="loading-spinner" id="folder1Spinner"></div>
     </div>
-    <div class="photo-indicator folder-photo-indicator" id="folder1Indicator"></div>
+    <div class="photo-indicator folder-photo-indicator" id="folder1PhotoIndicator"></div>
     <div class="photo-menu">
-      <button onclick="sharePhoto('folder1')"><span class="material-icons">share</span> Share</button>
-      <button id="folder1LikeBtn" onclick="toggleLike('folder1')"><span class="material-icons">favorite_border</span> Like</button>
-      <button onclick="downloadPhoto('folder1')"><span class="material-icons">download</span> Download</button>
+      <button onclick="sharePhoto('folder1')"><span class="icon"></span> Share</button>
+      <button class="like-btn" data-folder="folder1"><span class="icon"></span> Like</button>
+      <button onclick="downloadPhoto('folder1')"><span class="icon"></span> Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder1', -1)">&#10094;</button>
     <button class="nav-btn next-btn" onclick="navPhoto('folder1', 1)">&#10095;</button>
@@ -432,17 +543,17 @@ html, body {
 </div>
 
 <div class="page" id="folder2Page">
-  <button class="back-btn" onclick="showPage('home')"><span class="material-icons">arrow_back</span> KEMBALI</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="album-wrapper folder-album-wrapper" data-folder="folder2">
-    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟐 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝐀𝗧 𝐅𝗢𝗧𝗢</div>
+    <div class="romantic-text">𝐅𝐎𝐋𝐃𝐄𝐑 𝟐 - 𝐒𝐖𝐈𝐏𝐄 𝐔𝗡𝗧𝗨𝗞 𝗠𝗘𝗟𝗜𝗛𝗔𝗧 𝐅𝗢𝗧𝗢</div>
     <div class="album-container folder-album-container" id="folder2Container">
       <div class="loading-spinner" id="folder2Spinner"></div>
     </div>
-    <div class="photo-indicator folder-photo-indicator" id="folder2Indicator"></div>
+    <div class="photo-indicator folder-photo-indicator" id="folder2PhotoIndicator"></div>
     <div class="photo-menu">
-      <button onclick="sharePhoto('folder2')"><span class="material-icons">share</span> Share</button>
-      <button id="folder2LikeBtn" onclick="toggleLike('folder2')"><span class="material-icons">favorite_border</span> Like</button>
-      <button onclick="downloadPhoto('folder2')"><span class="material-icons">download</span> Download</button>
+      <button onclick="sharePhoto('folder2')"><span class="icon"></span> Share</button>
+      <button class="like-btn" data-folder="folder2"><span class="icon"></span> Like</button>
+      <button onclick="downloadPhoto('folder2')"><span class="icon"></span> Download</button>
     </div>
     <button class="nav-btn prev-btn" onclick="navPhoto('folder2', -1)">&#10094;</button>
     <button class="nav-btn next-btn" onclick="navPhoto('folder2', 1)">&#10095;</button>
@@ -450,17 +561,17 @@ html, body {
 </div>
 
 <div class="page" id="aboutPage">
-  <button class="back-btn" onclick="showPage('home')"><span class="material-icons">arrow_back</span> KEMBALI</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="info-box">
     <h2>About</h2>
     <p>Developer: <strong>Nando Developers</strong></p>
-    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝗜𝗚𝗜𝗧𝐀𝐋 𝐁𝐘 𝐂𝐄𝗟𝗭</p>
-    <p>Versi: 3.2 FIX
+    <p>𝐀𝐋𝐁𝗨𝗠 𝐃𝐈𝗚𝗜𝗧𝗔𝗟 𝐁𝐘 𝐂𝗘𝗟𝗭</p>
+    <p>Versi: 3.2 Final
   </div>
 </div>
 
 <div class="page" id="contactPage">
-  <button class="back-btn" onclick="showPage('home')"><span class="material-icons">arrow_back</span> KEMBALI</button>
+  <button class="back-btn" onclick="showPage('home')">&#10094; KEMBALI</button>
   <div class="info-box">
     <h2>Contact</h2>
     <p>Email: <a href="mailto:arcelbussines@email.com">arcelbussines@email.com</a></p>
@@ -488,17 +599,62 @@ html, body {
         </div>
 
         <div style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.2); display: flex; gap: 10px; align-items: center;">
-            <input type="file" id="mediaInput" accept="image/*" style="display: none;">
             
-            <button id="mediaBtn" style="padding: 10px 15px; border-radius: 50%; width: 40px; height: 40px; background: #ffe3f1; color: #ff99c7; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
+            <button id="attachMediaBtn" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; background: #99c7ff; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
                 <span class="material-icons" style="font-size: 1.2em;">attach_file</span>
             </button>
-
+            <input type="file" id="chatFileInput" accept="image/*" style="display:none;">
             <input type="text" id="chatInput" placeholder="Ketik pesan..." style="flex-grow: 1; padding: 12px 18px; border-radius: 20px; border: none; background: rgba(255,255,255,0.5); color: #333; outline: none;">
+            
             <button id="sendChatBtn" style="padding: 10px 15px; border-radius: 50%; width: 40px; height: 40px; background: #ff99c7; color: white; border: none; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center;">
                 <span class="material-icons" style="font-size: 1.2em;">send</span>
             </button>
         </div>
+    </div>
+</div>
+
+<div class="page" id="statusPage">
+    <button class="back-btn" onclick="showPage('home')">
+        <span class="material-icons">arrow_back</span> KEMBALI
+    </button>
+    <div class="info-box">
+        <h2>Stories (Status) ✨</h2>
+        
+        <button id="createMediaStatusBtn" class="folder-btn" style="width:100%; margin-top:10px; background:#4CAF50;">
+            <span class="material-icons">add_box</span> Buat Status Media Baru
+        </button>
+        <input type="file" id="statusFileInput" accept="image/*" style="display:none;">
+        <div id="statusList">
+            <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9em;">Memuat status...</div>
+        </div>
+    </div>
+</div>
+
+<div id="statusViewer">
+    <div id="viewerContent">
+        <h3 id="viewerHeader" style="color:#ffc0de;">Status dari <span id="viewerSender"></span> <span id="viewerTime" style="font-size: 0.6em; color: rgba(255,255,255,0.5);"></span></h3>
+        
+        <img id="viewerMedia" src="" alt="Status Media" style="display:none;">
+        <p id="viewerMessage" style="font-size:1.1em; margin: 15px 0;"></p>
+        
+        <div id="viewerMeta">
+            <p id="viewerLikes"><span class="material-icons" style="font-size:0.9em; vertical-align:middle;">favorite</span> <span id="likeCount">0</span> Suka</p>
+            <p id="viewerViews"><span class="material-icons" style="font-size:0.9em; vertical-align:middle;">visibility</span> <span id="viewCount">0</span> Dilihat</p>
+        </div>
+        
+        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+             <button id="statusLikeBtn"><span class="material-icons" style="font-size: 1.1em; vertical-align:middle;">favorite</span> Like</button>
+             <button id="statusReplyBtn"><span class="material-icons" style="font-size: 1.1em; vertical-align:middle;">reply</span> Reply</button>
+        </div>
+
+        <div id="replySection" style="margin-top: 20px; display: none; align-items: center; gap: 10px;">
+            <input type="text" id="statusReplyInput" placeholder="Kirim balasan...">
+            <button id="sendReplyBtn" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; background: #00bcd4; color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;">
+                <span class="material-icons" style="font-size: 1.2em;">send</span>
+            </button>
+        </div>
+
+        <button onclick="document.getElementById('statusViewer').style.display='none';" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:2em; cursor:pointer;">&times;</button>
     </div>
 </div>
 
@@ -509,20 +665,22 @@ html, body {
 const CHAT_SERVER_URL = 'http://localhost:3000'; 
 const socket = io(CHAT_SERVER_URL); 
 
-// 2 AKUN LOGIN STATIS
+// 2 AKUN LOGIN STATIS (HARUS SESUAI DENGAN SERVER.JS)
 const loginCredentials = {
   'zaza': 'zaza',      
   'khirza': 'cantik'   
 };
 const CHAT_USER_PROFILES = {
-    'zaza': { name: 'Zaza', isVerified: true, avatar: 'ZA' },
-    'khirza': { name: 'Khirza', isVerified: false, avatar: 'KH' }
+    'zaza': { id: 'zaza', name: 'Zaza', isVerified: true, avatar: 'ZA' },
+    'khirza': { id: 'khirza', name: 'Khirza', isVerified: false, avatar: 'KH' }
 };
 
 let myUserId = ''; 
 let myUserName = '';
 let opponentInfo = {}; 
-// --- END KONFIGURASI BARU ---
+const STATUS_KEY = 'globalUserStatuses'; 
+let currentStatusId = null; 
+// --- END KONFIGURASI ---
 
 // Navbar toggle
 const navMenu = document.getElementById('navMenu');
@@ -532,7 +690,7 @@ menuToggle.addEventListener('click',()=> {
   menuToggle.classList.toggle('active');
 });
 
-// Pages
+// Pages (Diperbarui dengan 'status')
 const pages = { 
   login: document.getElementById('loginPage'), 
   welcome: document.getElementById('welcomePage'),
@@ -541,12 +699,11 @@ const pages = {
   folder2: document.getElementById('folder2Page'),
   about: document.getElementById('aboutPage'), 
   contact: document.getElementById('contactPage'),
-  chat: document.getElementById('chatPage')
+  chat: document.getElementById('chatPage'),
+  status: document.getElementById('statusPage') 
 };
 
-// =========================================================================================
-// DATA ALBUM FINAL
-// =========================================================================================
+// **DATA ALBUM DIUBAH DENGAN LINK BARU DAN STRUKTUR DISSESUAIKAN**
 const albumData = {
   main: { 
     photos: [
@@ -562,7 +719,7 @@ const albumData = {
       "https://images2.imgbox.com/17/ad/VpSegle2_o.jpg",
       "https://images2.imgbox.com/bf/38/j28lslL7_o.jpg",
       "https://images2.imgbox.com/2d/5d/THVip0wB_o.jpg",
-      "https://images2.imgbox.box.com/d1/42/8VgLCjZp_o.jpg", // Link yang rusak di sini (perlu diubah jika gambar hilang)
+      "https://images2.imgbox.com/d1/42/8VgLCjZp_o.jpg",
       "https://images2.imgbox.com/15/a4/Aj6Q76RP_o.jpg",
       "https://images2.imgbox.com/31/7d/DaZ3wHmd_o.jpg",
       "https://images2.imgbox.com/ac/73/goBnuRIx_o.jpg",
@@ -577,7 +734,7 @@ const albumData = {
     container: document.getElementById('albumContainer'), 
     indicator: document.getElementById('mainPhotoIndicator'), 
     spinner: document.getElementById('mainSpinner'),
-    likeBtnElement: document.getElementById('likeBtn') 
+    likeBtnElement: document.getElementById('likeBtn') // Diisi di sini
   },
   folder1: { 
     photos: [ 
@@ -593,10 +750,10 @@ const albumData = {
       "https://files.catbox.moe/ieldvp.jpg"
     ], 
     current: 0, liked: false, 
-    container: document.getElementById('folder1Container'), 
-    indicator: document.getElementById('folder1Indicator'), 
-    spinner: document.getElementById('folder1Spinner'),
-    likeBtnElement: document.getElementById('folder1LikeBtn')
+    container: null, 
+    indicator: null, 
+    spinner: null,
+    likeBtnElement: null
   },
   folder2: { 
     photos: [ 
@@ -608,17 +765,44 @@ const albumData = {
       "https://files.catbox.moe/rdgmp9.jpg"
     ], 
     current: 0, liked: false, 
-    container: document.getElementById('folder2Container'), 
-    indicator: document.getElementById('folder2Indicator'), 
-    spinner: document.getElementById('folder2Spinner'),
-    likeBtnElement: document.getElementById('folder2LikeBtn')
+    container: null, 
+    indicator: null, 
+    spinner: null,
+    likeBtnElement: null
   }
 };
 
 let autoSwipeInterval;
-let loggedInUsername = ''; 
+let lastTap = 0; // Untuk double tap
 
-// Login 
+// **FUNGSI UTAMA LOCAL STORAGE**
+function getLocalStorageKey(key) { return `${myUserId}_${key}`; }
+
+// **INICIALISASI SAAT STARTUP (SESI PERSISTENCE)**
+window.onload = () => {
+    // Inisialisasi likeBtnElement untuk folder 1 dan 2 setelah DOM dimuat
+    albumData.folder1.likeBtnElement = document.querySelector('#folder1Page .like-btn');
+    albumData.folder2.likeBtnElement = document.querySelector('#folder2Page .like-btn');
+    
+    // Tambahkan event listener untuk tombol like folder 1 & 2
+    albumData.folder1.likeBtnElement.onclick = () => toggleLike('folder1');
+    albumData.folder2.likeBtnElement.onclick = () => toggleLike('folder2');
+
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser && loginCredentials[storedUser]) {
+        myUserId = storedUser;
+        myUserName = CHAT_USER_PROFILES[myUserId].name;
+        document.querySelector('.navbar').style.display = 'flex';
+        document.getElementById('displayUsername').textContent = myUserName.toUpperCase();
+        showPage('welcome');
+        socket.emit('user_login', myUserId);
+    } else {
+        showPage('login');
+    }
+};
+
+
+// Login (Diperbarui)
 const loginBtn = document.getElementById('loginBtn');
 const loginError = document.getElementById('loginError');
 const usernameInput = document.getElementById('username');
@@ -645,59 +829,43 @@ loginBtn.addEventListener('click', ()=>{
     
     myUserId = user; 
     myUserName = CHAT_USER_PROFILES[user].name;
+    localStorage.setItem('loggedInUser', user); 
     
     displayUsername.textContent = myUserName.toUpperCase(); 
     
     socket.emit('user_login', myUserId);
     
     showPage('welcome'); 
-    clearInterval(autoSwipeInterval); 
   } else {
     loginError.style.display='block';
   }
 });
 
-startBrowsingBtn.addEventListener('click', () => {
-  showPage('home'); 
-});
+document.getElementById('startBrowsingBtn').addEventListener('click', () => { showPage('home'); });
 
-// FUNGSI LOGOUT BARU
-function logoutUser() {
+// **LOGOUT** (DITAMBAH)
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('loggedInUser'); 
+    socket.emit('user_logout', myUserId); 
     myUserId = '';
     myUserName = '';
-    
-    // Matikan musik
-    music.pause();
-    music.currentTime = 0;
-    
-    // Sembunyikan navbar
     document.querySelector('.navbar').style.display = 'none';
-    
-    // Kosongkan input login
-    usernameInput.value = '';
-    passwordInput.value = '';
-    
-    // Hentikan interval auto swipe
-    clearInterval(autoSwipeInterval);
-    
-    // Kirim notifikasi logout ke server chat (opsional, tergantung implementasi server)
-    // socket.emit('user_logout', myUserId); 
-    
-    // Tampilkan halaman login
+    music.pause();
     showPage('login');
-}
+});
 
-document.getElementById('logoutWelcomeBtn').addEventListener('click', logoutUser);
-document.getElementById('logoutNavBtn').addEventListener('click', logoutUser); // Tombol logout di Navbar
-
-
-// FUNGSI UTAMA UNTUK MENAMPILKAN HALAMAN
+// FUNGSI UTAMA UNTUK MENAMPILKAN HALAMAN (DIUBAH)
 function showPage(page){
+  // Hentikan auto-swipe saat berpindah halaman
+  clearInterval(autoSwipeInterval);
+  
+  // 1. Matikan semua halaman dan hapus kelas aktif
   for(const key in pages){ 
     pages[key].style.display = 'none';
     pages[key].classList.remove('active-page');
   }
 
+  // 2. Tampilkan halaman yang diminta
   if (page === 'home' || page === 'mainAlbum') {
       pages['home'].style.display = 'flex';
       pages['home'].classList.add('active-page');
@@ -705,7 +873,6 @@ function showPage(page){
       if (page === 'home') {
            folderSelectWrapper.style.display = 'flex'; 
            albumWrapper.style.display = 'none';
-           clearInterval(autoSwipeInterval); 
       } else { 
            folderSelectWrapper.style.display = 'none';
            albumWrapper.style.display = 'block'; 
@@ -715,285 +882,195 @@ function showPage(page){
       pages[page].classList.add('active-page'); 
   }
   
+  // Nonaktifkan menu toggle saat mengganti halaman
   navMenu.classList.remove('active');
   menuToggle.classList.remove('active');
+  
+  // Khusus untuk Status, muat list
+  if (page === 'status') {
+      renderStatusList();
+  }
 
-  if(page !== 'login' && page !== 'welcome' && page !== 'about' && page !== 'contact' && page !== 'chat') playMusicIfAlbum();
+  // Putar musik jika bukan halaman non-musik
+  const nonMusicPages = ['login', 'welcome', 'about', 'contact', 'chat', 'status'];
+  if(!nonMusicPages.includes(page)) playMusicIfAlbum();
+  else music.pause();
 }
 
 
-// =========================================================================================
-// IMPLEMENTASI FUNGSI ALBUM
-// =========================================================================================
+// FUNGSI ALBUM (DIPERBAIKI UNTUK DATA BARU)
 
-/**
- * Menampilkan foto pada indeks tertentu.
- */
-function showPhoto(folder, i) {
+function showPhoto(folder, i){
     const data = albumData[folder];
-    if (!data || i < 0 || i >= data.photos.length) return;
+    const container = data.container;
+    const spinner = data.spinner;
+    const photos = data.photos;
 
-    data.current = i; 
-
-    // Hapus foto yang ada
-    data.container.querySelectorAll('.photo').forEach(img => img.remove());
+    // Hapus semua foto dan dot yang ada
+    container.querySelectorAll('.photo').forEach(p => p.remove());
+    data.indicator.innerHTML = '';
     
-    const photoUrl = data.photos[i];
-    const newPhoto = document.createElement('img');
-    newPhoto.src = photoUrl;
-    newPhoto.alt = `Photo ${i + 1}`;
-    newPhoto.classList.add('photo');
-    
-    // Tampilkan spinner saat memuat
-    data.spinner.style.display = 'block';
-
-    newPhoto.onload = () => {
-        data.spinner.style.display = 'none';
-        // Tambahkan foto ke kontainer dan tampilkan
-        data.container.appendChild(newPhoto); 
-        setTimeout(() => {
-            newPhoto.classList.add('active'); 
-        }, 50);
-        
-        // Perbarui indikator dan like setelah foto dimuat
-        updatePhotoIndicator(folder);
-        updateLikeButton(data.likeBtnElement, data.liked);
-        resetAutoSwipe(folder);
-
-    };
-    newPhoto.onerror = () => {
-        data.spinner.style.display = 'none';
-        
-        // Buat elemen div untuk fallback
-        const fallbackDiv = document.createElement('div');
-        fallbackDiv.classList.add('fallback-img', 'photo', 'active');
-        fallbackDiv.style.cssText = `
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-        `;
-        fallbackDiv.innerHTML = `
-            ❌ Foto ke-${i + 1} Gagal Dimuat. <br>
-            <span style="font-size:0.8em; margin-top:5px; display:block;">Cek koneksi atau link.</span>
-        `;
-        
-        data.container.appendChild(fallbackDiv);
-
-        updatePhotoIndicator(folder);
-        updateLikeButton(data.likeBtnElement, data.liked);
-        resetAutoSwipe(folder);
-
-        return; // Hentikan fungsi karena terjadi error
-    };
-    
-    // Tambahkan foto ke kontainer sebelum dimuat (untuk memicu loading)
-    if (!newPhoto.complete) { // Cek jika belum selesai dimuat
-         data.container.appendChild(newPhoto); 
-    }
-}
-
-
-/**
- * Navigasi ke foto sebelumnya atau berikutnya.
- */
-function navPhoto(folder, direction) {
-    const data = albumData[folder];
-    if (!data || data.photos.length === 0) return;
-
-    let newIndex = data.current + direction;
-    if (newIndex < 0) {
-        newIndex = data.photos.length - 1; 
-    } else if (newIndex >= data.photos.length) {
-        newIndex = 0; 
+    if (photos.length === 0) {
+        container.innerHTML = '<div class="fallback-img">Tidak ada foto di folder ini.</div>';
+        return;
     }
 
-    showPhoto(folder, newIndex);
-}
+    // Ambil status like dari localStorage
+    data.liked = localStorage.getItem(getLocalStorageKey(`${folder}_liked`)) === 'true';
 
-/**
- * Memperbarui indikator (dots) di bawah foto.
- */
-function updatePhotoIndicator(folder) {
-    const data = albumData[folder];
-    if (!data || !data.indicator) return;
+    spinner.style.display = 'block'; 
 
-    data.indicator.innerHTML = ''; 
-
-    data.photos.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (index === data.current) {
-            dot.classList.add('active');
+    photos.forEach((photoUrl, index) => { // photoUrl adalah string
+        const img = document.createElement('img');
+        img.className = 'photo';
+        img.src = photoUrl;
+        img.alt = `Photo ${index + 1}`;
+        
+        if (index === i) {
+            img.classList.add('active');
+            data.current = i; 
         }
-        dot.addEventListener('click', () => showPhoto(folder, index));
+
+        img.onload = () => {
+             // Jika foto yang baru dimuat adalah foto pertama/aktif, sembunyikan spinner
+            if (index === i) {
+                spinner.style.display = 'none';
+            }
+        };
+
+        img.onerror = () => {
+            console.error(`Gagal memuat foto: ${photoUrl}`);
+            // Tambahkan fallback jika gambar gagal dimuat
+            const fallback = document.createElement('div');
+            fallback.className = 'photo active fallback-img';
+            fallback.style.cssText = `z-index: ${index === i ? 2 : 0};`;
+            fallback.textContent = `Foto ${index + 1} Gagal Dimuat`;
+            container.appendChild(fallback);
+             if (index === i) {
+                spinner.style.display = 'none';
+            }
+        };
+        
+        container.appendChild(img);
+        
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (index === i) dot.classList.add('active');
+        dot.onclick = () => {
+            resetAutoSwipe(folder);
+            showPhoto(folder, index);
+            startAutoSwipe(folder);
+        };
         data.indicator.appendChild(dot);
     });
+
+    // Perbarui status like menggunakan likeBtnElement
+    updateLikeButton(data.likeBtnElement, data.liked);
 }
 
-/**
- * Memulai penggeseran otomatis (Auto-Swipe).
- */
-function startAutoSwipe(folder) {
-    clearInterval(autoSwipeInterval);
-    autoSwipeInterval = setInterval(() => {
-        // Cek apakah halaman album yang bersangkutan sedang aktif
-        const currentPage = Object.keys(pages).find(key => pages[key].classList.contains('active-page'));
-        if (currentPage === folder || (currentPage === 'home' && folder === 'main')) {
-             navPhoto(folder, 1);
-        }
-    }, 5000); // Ganti foto setiap 5 detik
-}
-
-/**
- * Mereset/Memulai ulang penggeseran otomatis.
- */
-function resetAutoSwipe(folder) {
-    clearInterval(autoSwipeInterval);
+function navPhoto(folder, direction){
+    const data = albumData[folder];
+    let newIndex = data.current + direction;
+    
+    if (newIndex < 0) newIndex = data.photos.length - 1;
+    if (newIndex >= data.photos.length) newIndex = 0;
+    
+    resetAutoSwipe(folder);
+    showPhoto(folder, newIndex);
     startAutoSwipe(folder);
 }
 
-/**
- * Mengatur fungsi gesek (swipe) pada kontainer album.
- */
-function setupSwipe(element, folder) {
-    let startX;
-    let threshold = 50; 
 
-    element.removeEventListener('touchstart', element._touchstartListener);
-    element.removeEventListener('touchmove', element._touchmoveListener);
-    element.removeEventListener('touchend', element._touchendListener);
+function initMainAlbum(){
+    const data = albumData['main'];
+    // Ambil status like dari localStorage saat inisialisasi
+    data.liked = localStorage.getItem(getLocalStorageKey('main_liked')) === 'true';
     
-    element._touchstartListener = (e) => {
-        startX = e.touches[0].clientX;
-    };
-    
-    element._touchmoveListener = (e) => {
-        if (Math.abs(e.touches[0].clientX - startX) > 10) {
-            e.preventDefault(); 
-        }
-    };
-    
-    element._touchendListener = (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const diffX = endX - startX;
-
-        if (diffX > threshold) {
-            navPhoto(folder, -1); // Swipe ke KANAN = PREV
-        } else if (diffX < -threshold) {
-            navPhoto(folder, 1); // Swipe ke KIRI = NEXT
-        }
-        resetAutoSwipe(folder); 
-    };
-
-    element.addEventListener('touchstart', element._touchstartListener);
-    element.addEventListener('touchmove', element._touchmoveListener);
-    element.addEventListener('touchend', element._touchendListener);
-}
-
-/**
- * Menginisialisasi Album Utama.
- */
-function initMainAlbum() {
-    const data = albumData.main;
-    // Pastikan kontainer album bersih
+    // Pastikan container dan indicator kosong saat inisialisasi
     data.container.innerHTML = `<div class="loading-spinner" id="mainSpinner"></div>`;
-    data.spinner = document.getElementById('mainSpinner'); 
-
-    if (data.photos.length > 0) {
-        showPhoto('main', data.current); // FIX: Memanggil showPhoto dengan argumen 'main'
-        setupSwipe(data.container, 'main');
-    } else {
-        data.spinner.style.display = 'none';
-        data.container.innerHTML = `<div class="fallback-img" style="font-size: 1.5em; height: 100%;">Album Utama Kosong</div>`;
-        data.indicator.innerHTML = '';
-        clearInterval(autoSwipeInterval);
-    }
+    data.indicator.innerHTML = '';
+    showPhoto('main', data.current);
+    setupSwipe(data.container, 'main');
+    setupDoubleTap(data.container, 'main'); // **TIDAK ADA PERUBAHAN DI SINI**
+    startAutoSwipe('main');
+    document.getElementById('albumWrapper').classList.add('show');
 }
 
-/**
- * Menginisialisasi Folder Album.
- */
-function initFolderAlbum(folder) {
+function initFolderAlbum(folder){
     const data = albumData[folder];
-    
-    // Safety check untuk memastikan elemen HTML terhubung
+    // Pastikan container dan indicator dikaitkan dengan ID yang benar
     data.container = document.getElementById(`${folder}Container`);
-    data.indicator = document.getElementById(`${folder}Indicator`);
+    data.indicator = document.getElementById(`${folder}PhotoIndicator`);
     data.spinner = document.getElementById(`${folder}Spinner`);
-    data.likeBtnElement = document.getElementById(`${folder}LikeBtn`);
     
-    if (!data || data.photos.length === 0) {
-        data.container.innerHTML = `<div class="fallback-img" style="font-size: 1.5em; height: 100%;">Folder ${folder.slice(-1)} Kosong</div>`;
-        data.indicator.innerHTML = '';
-        clearInterval(autoSwipeInterval);
-        return;
-    }
+    // Ambil status like dari localStorage saat inisialisasi
+    data.liked = localStorage.getItem(getLocalStorageKey(`${folder}_liked`)) === 'true';
     
+    // Pastikan container dan indicator kosong saat inisialisasi
     data.container.innerHTML = `<div class="loading-spinner" id="${folder}Spinner"></div>`;
-
-    data.current = 0; 
-    data.liked = false; 
-    showPhoto(folder, 0);
+    data.indicator.innerHTML = '';
+    
+    showPhoto(folder, data.current);
     setupSwipe(data.container, folder);
+    setupDoubleTap(data.container, folder); // **TIDAK ADA PERUBAHAN DI SINI**
+    startAutoSwipe(folder);
+    document.querySelector(`#${folder}Page .album-wrapper`).classList.add('show');
 }
 
-/**
- * Memperbarui ikon tombol like.
- */
-function updateLikeButton(button, isLiked) {
-    if (button) {
-        button.innerHTML = isLiked 
-            ? '<span class="material-icons" style="color:#ffc0de;">favorite</span> Liked' 
-            : '<span class="material-icons">favorite_border</span> Like';
-    }
+
+function startAutoSwipe(folder){
+    clearInterval(autoSwipeInterval);
+    autoSwipeInterval = setInterval(() => {
+        navPhoto(folder, 1);
+    }, 5000); // Ganti foto setiap 5 detik
 }
 
-/**
- * Mengubah status like.
- */
-function toggleLike(folder) {
-    const data = albumData[folder];
-    if (!data || !data.likeBtnElement) return;
-
-    data.liked = !data.liked;
-    updateLikeButton(data.likeBtnElement, data.liked);
-    // alert(`Photo di ${folder} ${data.liked ? 'disukai' : 'batal disukai'}!`); // Opsional
+function resetAutoSwipe(folder){
+    clearInterval(autoSwipeInterval);
 }
 
-/**
- * Simulasi fungsi share.
- */
-function sharePhoto(folder) {
-    const data = albumData[folder];
-    if (!data || data.photos.length === 0) return;
-    const currentPhotoUrl = data.photos[data.current];
-    alert(`Berbagi tautan foto ini: ${currentPhotoUrl}`);
+function setupSwipe(element, folder){
+    let startX;
+    element.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        resetAutoSwipe(folder);
+    });
+
+    element.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const diff = endX - startX;
+        
+        if (Math.abs(diff) > 50) { // Geser lebih dari 50px untuk dianggap swipe
+            navPhoto(folder, diff < 0 ? 1 : -1); // Swipe kiri (diff < 0) = next
+        }
+        startAutoSwipe(folder); // Restart auto-swipe setelah interaksi
+    });
 }
 
-/**
- * Simulasi fungsi download.
- */
-function downloadPhoto(folder) {
-    const data = albumData[folder];
-    if (!data || data.photos.length === 0) return;
-    const currentPhotoUrl = data.photos[data.current];
+// **FUNGSI BARU: DOUBLE TAP TO LIKE**
+function setupDoubleTap(element, folder) {
+    element.addEventListener('touchend', (e) => {
+        const now = new Date().getTime();
+        const timesince = now - lastTap;
+        
+        // Cek jika tap kedua terjadi dalam 300ms
+        if ((timesince < 300) && (timesince > 0)) {
+            e.preventDefault(); 
+            // Panggil fungsi like
+            toggleLike(folder); 
+        }
+        lastTap = now;
+    });
     
-    const link = document.createElement('a');
-    link.href = currentPhotoUrl;
-    link.download = `Khirza_Album_${folder}_${data.current + 1}.jpg`; 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    alert(`Mendownload foto: Photo ${data.current + 1} dari ${folder}`);
+    // Tambahkan juga untuk desktop (double click)
+    element.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        toggleLike(folder); 
+    });
 }
 
-// Event Listeners Album Utama
-document.getElementById('shareBtn').onclick = () => sharePhoto('main');
-document.getElementById('likeBtn').onclick = () => toggleLike('main');
-document.getElementById('downloadBtn').onclick = () => downloadPhoto('main');
-document.getElementById('prevBtn').onclick = () => navPhoto('main', -1);
-document.getElementById('nextBtn').onclick = () => navPhoto('main', 1);
 
-// Folder Selection Buttons
+// Folder Selection Buttons (TIDAK BERUBAH)
 document.getElementById('mainAlbumBtn').onclick = ()=>{
     showPage('mainAlbum'); 
     initMainAlbum();
@@ -1007,62 +1084,125 @@ document.getElementById('folder2Btn').onclick = ()=>{
     initFolderAlbum('folder2');
 };
 
-// Navbar buttons
+// Navbar buttons (DIUBAH)
 const chatNavBtn = document.getElementById('chatNavBtn');
-chatNavBtn.onclick=()=>showPage('chat');
+chatNavBtn.onclick=()=>showPage('chat'); 
+document.getElementById('statusNavBtn').onclick=()=>showPage('status');
 document.getElementById('homeBtn').onclick=()=>showPage('home');
 document.getElementById('aboutBtn').onclick=()=>showPage('about');
 document.getElementById('contactBtn').onclick=()=>showPage('contact');
 
-// Particle 
+// Particle (TIDAK BERUBAH)
 const particleContainer = document.getElementById('particleContainer');
 function createParticle() {
-  const particle = document.createElement('div');
-  particle.classList.add('particle');
-  const size = Math.random() * 5 + 3;
-  particle.style.width = particle.style.height = `${size}px`;
-  
-  const x = Math.random() * 100;
-  const y = Math.random() * 100;
-  particle.style.left = `${x}vw`;
-  particle.style.top = `${y}vh`;
-  
-  const duration = Math.random() * 10 + 5;
-  const delay = Math.random() * 10;
-  
-  const endX = (Math.random() - 0.5) * 200 + 'px';
-  const endY = (Math.random() - 0.5) * 200 + 'px';
-  
-  particle.style.setProperty('--x', endX);
-  particle.style.setProperty('--y', endY);
-  particle.style.animationDuration = `${duration}s`;
-  particle.style.animationDelay = `${delay}s`;
-
-  particleContainer.appendChild(particle);
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const size = Math.random() * 5 + 5;
+  p.style.width = p.style.height = `${size}px`;
+  p.style.left = `${Math.random() * 100}vw`;
+  p.style.top = `${Math.random() * 100}vh`;
+  p.style.animationDuration = `${Math.random() * 10 + 10}s`;
+  p.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+  p.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+  p.style.opacity = Math.random() * 0.5 + 0.1;
+  particleContainer.appendChild(p);
+  // Hapus partikel setelah animasi selesai (misalnya 20s)
+  setTimeout(() => p.remove(), 20000); 
 }
 for(let i=0;i<50;i++){ createParticle(); }
 
 
-// Musik album
+// Photo menu actions (DIPERBAIKI)
+function updateLikeButton(button, isLiked){
+    if (!button) return; // Tambahkan pengaman
+    const icon = button.querySelector('.icon');
+    icon.textContent = isLiked ? '❤️' : '🤍';
+    button.title = isLiked ? 'Unlike' : 'Like';
+    button.style.color = isLiked ? '#ff528a' : 'white';
+}
+
+function toggleLike(folder){
+    const data = albumData[folder];
+    data.liked = !data.liked;
+    
+    // Gunakan likeBtnElement yang sudah dikaitkan
+    updateLikeButton(data.likeBtnElement, data.liked);
+    
+    alert(`Foto ${data.liked ? 'disukai' : 'tidak disukai'}!`);
+    // Simpan status like ke localStorage
+    localStorage.setItem(getLocalStorageKey(`${folder}_liked`), data.liked);
+}
+
+function sharePhoto(folder){
+    const data = albumData[folder];
+    const photoUrl = data.photos[data.current]; // Ambil URL langsung
+    if (navigator.share) {
+        navigator.share({
+            title: 'Lihat Momen Spesial Ini!',
+            text: `Cek foto ini di album digital! Photo ${data.current + 1} dari Folder ${folder}.`,
+            url: photoUrl,
+        }).catch(error => console.error('Error sharing:', error));
+    } else {
+        alert('Fitur share tidak didukung di browser ini. Link foto: ' + photoUrl);
+    }
+}
+
+function downloadPhoto(folder){
+    const data = albumData[folder];
+    const photoUrl = data.photos[data.current];
+    const link = document.createElement('a');
+    link.href = photoUrl;
+    link.download = `Photo-${folder}-${data.current + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    alert('Foto sedang diunduh!');
+}
+
+// Tambahkan event listeners untuk album utama
+document.getElementById('likeBtn').onclick = () => toggleLike('main');
+document.getElementById('shareBtn').onclick = () => sharePhoto('main');
+document.getElementById('downloadBtn').onclick = () => downloadPhoto('main');
+document.getElementById('prevBtn').onclick = () => navPhoto('main', -1);
+document.getElementById('nextBtn').onclick = () => navPhoto('main', 1);
+
+// Musik album (TIDAK BERUBAH)
 function playMusicIfAlbum(){
   music.play().catch(()=>{}); 
 }
 document.body.addEventListener('click', ()=>{ music.play(); }, {once:true});
 
 
-// --- FUNGSI CHAT ---
+// **CHAT PERSISTENCE & DELETE & MEDIA**
 const chatInput = document.getElementById('chatInput');
 const sendChatBtn = document.getElementById('sendChatBtn');
 const chatMessages = document.getElementById('chatMessages');
 const chatStatus = document.getElementById('chatStatus');
 const opponentNameEl = document.getElementById('opponentName');
 const opponentAvatarEl = document.getElementById('opponentAvatar');
-const mediaInput = document.getElementById('mediaInput'); // NEW
-const mediaBtn = document.getElementById('mediaBtn');     // NEW
+const chatFileInput = document.getElementById('chatFileInput');
+const attachMediaBtn = document.getElementById('attachMediaBtn');
 
-// Fungsi untuk membuka gambar di tab baru
-function openImage(url) {
-    window.open(url, '_blank');
+function loadChatHistory() {
+    const history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Chat hanya berfungsi jika server backend berjalan di localhost:3000 --</div>';
+    history.forEach(msg => addMessageToChat(msg, true));
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function saveChatHistory(history) {
+    localStorage.setItem(getLocalStorageKey('chatHistory'), JSON.stringify(history));
+}
+
+function deleteChatMessage(id) {
+    if (confirm("Anda yakin ingin menghapus pesan ini?")) {
+        const messageElement = document.getElementById(`msg-${id}`);
+        if (messageElement) messageElement.remove();
+
+        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        history = history.filter(msg => msg.id != id);
+        saveChatHistory(history);
+    }
 }
 
 function updateChatHeader(usersData) {
@@ -1075,20 +1215,18 @@ function updateChatHeader(usersData) {
     }
 }
 
+// FUNGSI CHAT DENGAN MEDIA (DIUBAH)
 function addMessageToChat(data, isHistory = false) {
-    const { message, timestamp, senderId, status } = data;
+    const { message, media, timestamp, senderId, status } = data; // Tambah 'media'
     const isMe = senderId === myUserId;
+    const messageId = data.id || Date.now();
     const timeDisplay = timestamp || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    
-    // Cek apakah pesan adalah format gambar (NEW)
-    const imageMatch = message.match(/^\[GAMBAR: (.*?)\]$/);
-    let messageContent = message;
 
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('chat-bubble');
-    msgDiv.id = `msg-${data.id || Date.now()}`;
+    msgDiv.id = `msg-${messageId}`;
 
-    // Inline CSS untuk gelembung chat
+    // Inline CSS untuk gelembung chat (DITAMBAH margin-bottom)
     msgDiv.style.cssText = `
         max-width: 80%;
         padding: 10px 15px;
@@ -1101,26 +1239,31 @@ function addMessageToChat(data, isHistory = false) {
         align-self: ${isMe ? 'flex-end' : 'flex-start'};
         background: ${isMe ? '#ff99c7' : 'rgba(255,255,255,0.85)'};
         border-bottom-${isMe ? 'right' : 'left'}-radius: 0;
+        margin-bottom: 10px;
+        display: inline-block; /* Agar bisa menampung media dengan baik */
     `;
+
+    let contentHTML = '';
     
-    if (imageMatch) {
-        const imageUrl = imageMatch[1];
-        // Konten Pesan adalah Gambar
-        messageContent = `
-            <span style="font-style: italic; color: ${isMe ? 'white' : '#777'}; display: block;">
-                ${isMe ? 'Anda mengirim gambar' : 'Gambar'}
-            </span>
-            <img src="${imageUrl}" class="chat-image-preview" onclick="openImage('${imageUrl}')" alt="Gambar Terkirim">
-        `;
+    if (media) {
+        // Konten media, pastikan media-message memiliki styling yang benar
+        contentHTML += `<img src="${media}" class="media-message" alt="Media File" style="max-width: 180px; max-height: 180px; display: block; border-radius: 8px;">`;
+        if (message) {
+            contentHTML += `<div style="margin-top: 5px; font-style: italic;">${message}</div>`; // Caption
+        }
+    } else {
+        contentHTML += message;
     }
 
-    // Konten Pesan + Jam + Status (Centang)
+
+    // Konten Pesan + Jam + Status (Centang) + Tombol Hapus (DITAMBAH)
     msgDiv.innerHTML = `
-        ${messageContent}
+        ${contentHTML}
         <span style="display: block; font-size: 0.75em; margin-top: 5px; text-align: right; color: ${isMe ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.6)'};">
             ${timeDisplay}
-            ${isMe ? `<span class="material-icons message-status" data-id="${data.id || Date.now()}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${status === 'read' ? '#00e676' : 'rgba(255,255,255,0.8)'};">${status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule')}</span>` : ''}
+            ${isMe ? `<span class="material-icons message-status" data-id="${messageId}" style="font-size: 1em; margin-left: 3px; vertical-align: middle; color: ${status === 'read' ? '#00e676' : 'rgba(255,255,255,0.8)'};">${status === 'read' ? 'done_all' : (status === 'sent' ? 'done_all' : 'schedule')}</span>` : ''}
         </span>
+        ${isMe ? `<button class="delete-chat-btn" onclick="deleteChatMessage('${messageId}')">&times;</button>` : ''} 
     `;
 
     chatMessages.appendChild(msgDiv);
@@ -1140,14 +1283,18 @@ function updateMessageStatus(data) {
     }
 }
 
-// --- SOCKET LISTENERS ---
+// --- SOCKET LISTENERS (DIUBAH UNTUK PERSISTENCE) ---
 socket.on('load_users', (usersData) => { updateChatHeader(usersData); });
-socket.on('load_history', (history) => {
-    chatMessages.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8em;">-- Chat hanya berfungsi jika server backend berjalan di localhost:3000 --</div>';
-    history.forEach(msg => addMessageToChat(msg, true));
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+socket.on('load_history', () => { loadChatHistory(); }); 
+socket.on('receive_message', (data) => { 
+    data.id = data.id || Date.now();
+    addMessageToChat(data); 
+
+    let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+    history.push(data);
+    saveChatHistory(history);
 });
-socket.on('receive_message', (data) => { addMessageToChat(data); });
+
 socket.on('update_status', (data) => { updateMessageStatus(data); });
 socket.on('user_status_update', (onlineIds) => {
     const opponentId = myUserId === 'zaza' ? 'khirza' : 'zaza';
@@ -1161,14 +1308,64 @@ socket.on('user_status_update', (onlineIds) => {
     }
 });
 
-// --- EVENT HANDLER CHAT INPUT ---
+
+// LOGIKA PENGIRIMAN MEDIA CHAT (DITAMBAH)
+attachMediaBtn.addEventListener('click', () => {
+    chatFileInput.click();
+});
+
+chatFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const mediaUrl = event.target.result;
+            const caption = prompt("Tambahkan Caption (Opsional):") || "";
+
+            const messageData = {
+                senderId: myUserId,
+                message: caption,
+                media: mediaUrl, // Kirim media
+                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                status: 'pending', 
+                id: Date.now() 
+            };
+
+            socket.emit('send_message', messageData);
+            
+            let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+            history.push(messageData);
+            saveChatHistory(history);
+
+            addMessageToChat(messageData);
+            chatFileInput.value = ''; // Reset input
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
+// --- EVENT HANDLER CHAT INPUT (DIUBAH) ---
 sendChatBtn.addEventListener('click', () => {
     const message = chatInput.value.trim();
     if (message !== '' && myUserId) {
-        socket.emit('send_message', {
+        const messageData = {
             senderId: myUserId,
             message: message,
-        });
+            media: null, // Pastikan media null jika hanya teks
+            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            status: 'pending', 
+            id: Date.now() 
+        };
+
+        socket.emit('send_message', messageData);
+        
+        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        history.push(messageData);
+        saveChatHistory(history);
+
+        addMessageToChat(messageData);
+        
         chatInput.value = '';
     }
 });
@@ -1176,33 +1373,234 @@ chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendChatBtn.click();
 });
 
-// --- FUNGSI KIRIM MEDIA BARU ---
-mediaBtn.addEventListener('click', () => {
-    mediaInput.click(); // Memicu klik pada input file tersembunyi
+
+// **FITUR STATUS (STORIES) MEDIA**
+const createMediaStatusBtn = document.getElementById('createMediaStatusBtn');
+const statusFileInput = document.getElementById('statusFileInput');
+const statusListEl = document.getElementById('statusList');
+
+
+// Logika memicu pemilihan file untuk Status (DITAMBAH)
+createMediaStatusBtn.addEventListener('click', () => {
+    statusFileInput.click();
 });
 
-mediaInput.addEventListener('change', (e) => {
+// Logika menyimpan Status Media (DITAMBAH)
+statusFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file && myUserId) {
-        // Karena ini adalah simulasi, kita akan membuat URL objek lokal
-        const imageUrl = URL.createObjectURL(file);
-        
-        // Kirim pesan dengan format khusus untuk gambar
-        const imageMessage = `[GAMBAR: ${imageUrl}]`;
-        
-        socket.emit('send_message', {
-            senderId: myUserId,
-            message: imageMessage,
-        });
-        
-        // Reset input file agar event change dapat dipicu lagi
-        mediaInput.value = null; 
-        alert("Gambar berhasil dikirim (simulasi). Di dunia nyata, ini akan diunggah ke server.");
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const mediaUrl = event.target.result;
+            const caption = prompt("Tambahkan Caption (Opsional):") || "";
+
+            const statusData = {
+                id: Date.now(),
+                senderId: myUserId,
+                senderName: myUserName,
+                message: caption,
+                media: mediaUrl, // Simpan URL media
+                timestamp: new Date().toLocaleString('id-ID'),
+                likes: [], 
+                viewers: []
+            };
+            
+            let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+            allStatuses.unshift(statusData); 
+            localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
+            renderStatusList();
+            statusFileInput.value = ''; // Reset input
+        };
+        reader.readAsDataURL(file);
     }
 });
 
-// Jalankan inisialisasi awal untuk album utama, meskipun tidak aktif, untuk memastikan elemen dimuat
-initMainAlbum();
+
+// Fungsi untuk menampilkan daftar status (TIDAK BERUBAH)
+function renderStatusList() {
+    statusListEl.innerHTML = '';
+    const allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+    
+    if (allStatuses.length === 0) {
+        statusListEl.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9em;">Belum ada status.</div>';
+        return;
+    }
+    
+    const groupedStatuses = {};
+    allStatuses.forEach(status => {
+        if (!groupedStatuses[status.senderId]) {
+            groupedStatuses[status.senderId] = [];
+        }
+        groupedStatuses[status.senderId].push(status);
+    });
+
+    const sortedGroups = Object.keys(groupedStatuses).sort((a, b) => {
+        if (a === myUserId) return -1;
+        if (b === myUserId) return 1;
+        return 0;
+    });
+
+    sortedGroups.forEach(senderId => {
+        const group = groupedStatuses[senderId];
+        const latestStatus = group[0]; 
+        const isMyStatus = senderId === myUserId;
+        const isViewedByMe = latestStatus.viewers.includes(myUserId);
+        
+        const item = document.createElement('div');
+        item.classList.add('status-item');
+        item.setAttribute('data-id', latestStatus.id);
+        
+        if (isViewedByMe) {
+            item.classList.add('viewed');
+        }
+        
+        // Klik pada item akan menampilkan status paling baru di grup tersebut
+        item.onclick = () => viewStatus(latestStatus.id); 
+        
+        // Tampilkan Teks/Media di daftar Status
+        const previewText = latestStatus.message.substring(0, 40) + (latestStatus.message.length > 40 ? '...' : '');
+
+        const preview = latestStatus.media 
+            ? `<span class="material-icons" style="font-size:0.9em; vertical-align:middle; margin-right: 5px;">image</span> ${previewText || 'Media Status'}`
+            : previewText;
+
+        item.innerHTML = `
+            <div style="font-weight:700; color: #ffe3f1;">
+                ${isMyStatus ? 'Status Saya' : latestStatus.senderName} 
+            </div>
+            <p style="margin:5px 0 0; font-size:1em; opacity: 0.9;">${preview}</p>
+            <div class="status-meta">
+                <span>${latestStatus.timestamp}</span>
+                ${isMyStatus ? 
+                    `<span class="viewed-icon">
+                        <span class="material-icons" style="font-size:0.9em;">visibility</span> 
+                        ${latestStatus.viewers.length} Dilihat
+                    </span>`
+                    : (isViewedByMe ? '' : '<span>Belum Dilihat</span>')
+                }
+            </div>
+        `;
+        
+        statusListEl.appendChild(item);
+    });
+}
+
+// Fungsi untuk melihat status (dengan Media Viewer)
+function viewStatus(id) {
+    let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+    const index = allStatuses.findIndex(s => s.id === id);
+    if (index === -1) return;
+
+    let status = allStatuses[index];
+    currentStatusId = id;
+    
+    // Media Viewer Element
+    const viewerMediaEl = document.getElementById('viewerMedia');
+
+    // Tampilkan Media jika ada
+    if (status.media) {
+        viewerMediaEl.src = status.media;
+        viewerMediaEl.style.display = 'block';
+    } else {
+        viewerMediaEl.style.display = 'none';
+    }
+
+    // LOGIKA IKON MATA: Tambahkan user ke daftar viewers jika belum dilihat
+    if (status.senderId !== myUserId && !status.viewers.includes(myUserId)) {
+        status.viewers.push(myUserId);
+        allStatuses[index] = status;
+        localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
+        renderStatusList(); // Refresh daftar Status agar ikon mata muncul
+    }
+    
+    document.getElementById('viewerSender').textContent = status.senderId === myUserId ? 'Anda' : status.senderName;
+    document.getElementById('viewerTime').textContent = `(${status.timestamp})`;
+    document.getElementById('viewerMessage').textContent = status.message;
+    document.getElementById('likeCount').textContent = status.likes.length;
+    document.getElementById('viewCount').textContent = status.viewers.length;
+
+    const likeBtn = document.getElementById('statusLikeBtn');
+    const isLiked = status.likes.includes(myUserId);
+    likeBtn.style.background = isLiked ? '#ff528a' : '#ff99c7';
+    likeBtn.textContent = isLiked ? 'Unlike' : 'Like';
+
+    const replyBtn = document.getElementById('statusReplyBtn');
+    const replySection = document.getElementById('replySection');
+    const likeDiv = document.getElementById('statusLikeBtn');
+    
+    if (status.senderId === myUserId) {
+        replyBtn.style.display = 'none';
+        replySection.style.display = 'none';
+        likeDiv.style.display = 'none';
+    } else {
+        replyBtn.style.display = 'inline-block';
+        likeDiv.style.display = 'inline-block';
+        replySection.style.display = 'none'; 
+    }
+    
+    document.getElementById('statusViewer').style.display = 'flex';
+}
+
+// Handler Like Status
+document.getElementById('statusLikeBtn').addEventListener('click', () => {
+    if (!currentStatusId) return;
+
+    let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+    const index = allStatuses.findIndex(s => s.id === currentStatusId);
+
+    if (index !== -1) {
+        let status = allStatuses[index];
+        const isLiked = status.likes.includes(myUserId);
+
+        if (isLiked) { status.likes = status.likes.filter(id => id !== myUserId); } 
+        else { status.likes.push(myUserId); }
+
+        allStatuses[index] = status;
+        localStorage.setItem(STATUS_KEY, JSON.stringify(allStatuses));
+        viewStatus(currentStatusId); 
+        renderStatusList(); 
+    }
+});
+
+// Handler Reply Status (Tampilkan input)
+document.getElementById('statusReplyBtn').addEventListener('click', () => { document.getElementById('replySection').style.display = 'flex'; });
+
+// Handler Kirim Reply
+document.getElementById('sendReplyBtn').addEventListener('click', () => {
+    const replyInput = document.getElementById('statusReplyInput');
+    const replyText = replyInput.value.trim();
+    
+    if (replyText === '') return;
+
+    let allStatuses = JSON.parse(localStorage.getItem(STATUS_KEY) || '[]');
+    const statusIndex = allStatuses.findIndex(s => s.id === currentStatusId);
+    
+    if (statusIndex !== -1) {
+        const originalStatus = allStatuses[statusIndex];
+        
+        const messageData = {
+            senderId: myUserId,
+            message: `[REPLY STATUS dari ${myUserName} ke ${originalStatus.senderName}: "${originalStatus.message.substring(0, 15)}..."] ${replyText}`,
+            media: null,
+            timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            status: 'pending', 
+            id: Date.now() 
+        };
+
+        // Kirim pesan ke chat (simulasi)
+        socket.emit('send_message', messageData);
+        
+        let history = JSON.parse(localStorage.getItem(getLocalStorageKey('chatHistory')) || '[]');
+        history.push(messageData);
+        saveChatHistory(history);
+        
+        alert(`Balasan Anda berhasil dikirim ke ${originalStatus.senderName} melalui Chat!`);
+        
+        replyInput.value = '';
+        document.getElementById('statusViewer').style.display = 'none';
+    }
+});
 </script>
 </body>
 </html>
+
