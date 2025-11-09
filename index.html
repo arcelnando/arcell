@@ -1021,7 +1021,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- KONFIGURASI CHAT & LOGIN ---
-const CHAT_SERVER_URL = ''; // GANTI DENGAN URL RENDER ANDA!
+const CHAT_SERVER_URL = 'https://arcell-production.up.railway.app'; 
 const socket = io(CHAT_SERVER_URL);  
 
 const loginCredentials = {
